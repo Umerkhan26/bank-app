@@ -1,14 +1,14 @@
 import Banner from "../../components/Banner/banner";
+import CampaignSteps from "../../components/Campaign Steps/campaignstep";
 import Campaigns from "../../components/Campaign/campaign";
 import CollectBanksPremium from "../../components/CollectBank/collectbank";
-import Header from "../../components/Header/header";
-import UpcomingPromotions from "../../components/Promotion/prmotion";
+import UpcomingPromotions from "../../components/Promotion/promotion";
 
 const Home: React.FC = () => {
   return (
     <>
-      <Header />
       <Banner />
+      <CampaignSteps />
       <Campaigns />
       <UpcomingPromotions />
       <CollectBanksPremium />

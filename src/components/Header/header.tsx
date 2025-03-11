@@ -1,251 +1,321 @@
-import React from "react";
-import styled from "styled-components";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faSearch, faBell } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faBell, faTimes } from "@fortawesome/free-solid-svg-icons";
+import Login from "../../pages/SignIn/SignIn";
+import Modal from "../Modal/modal";
+import SignUp from "../../pages/SignUp/signup";
+import { Link, useNavigate } from "react-router-dom";
+import jsQR from "jsqr";
+import { scanQRCode } from "../../services/qrcode";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import { logout } from "../../redux/slices/auth";
+import logo from "../../assets/bank_al_falah2.webp";
+
+import {
+  NavContainer,
+  MobileToggleButton,
+  RightActions,
+  NotificationDropdown,
+  NotificationButton,
+  NotificationBadge,
+  ProfileDropdown,
+  ProfileButton,
+  ProfileImage,
+  DropdownMenu,
+  DropdownItem,
+  DropdownFooter,
+  DropdownButton,
+  Button,
+  StoreButton,
+  DropdownItemTime,
+  ProfileFallback,
+  PointsDisplay,
+  QrCodeData,
+  ImagePreview,
+  QrCodeButton,
+  MobileMenuOverlay,
+  MobileMenu,
+} from "./header.styles";
+
+interface ScanResult {
+  userPoints: number;
+}
 
 const Header: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [qrCodeData, setQrCodeData] = useState<string | null>(null);
+  const [scanResult, setScanResult] = useState<ScanResult | null>(null);
+  const userId = localStorage.getItem("userId");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [userPointsState, setUserPointsState] = useState<number>(
+    parseInt(localStorage.getItem(`userPoints_${userId}`) || "0", 10)
+  );
+
+  const dispatch = useDispatch();
+  const isLoggedIn = useSelector(
+    (state: RootState) => state.auth?.isLoggedIn ?? false
+  );
+  const username =
+    useSelector((state: RootState) => state.auth.username) || "User";
+  const navigate = useNavigate();
+  const userPoints = useSelector((state: RootState) => state.auth.userPoints);
+  console.log("Redux userPoints:", userPoints);
+
+  const handleUploadClick = () => {
+    if (!isLoggedIn) {
+      setIsModalOpen(true);
+      return;
+    }
+
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.onchange = async (event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          const imageData = e.target?.result as string;
+          setSelectedImage(imageData);
+
+          const qrData = await extractQRCode(imageData);
+          if (qrData) {
+            console.log("Extracted QR Code Data:", qrData);
+            setQrCodeData(qrData);
+            setIsImageModalOpen(true);
+          } else {
+            alert("No QR code found in the image.");
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    input.click();
+  };
+
+  const extractQRCode = async (imageSrc: string): Promise<string | null> => {
+    return new Promise((resolve) => {
+      const image = new Image();
+      image.crossOrigin = "Anonymous";
+      image.src = imageSrc;
+
+      image.onload = () => {
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        if (!context) return resolve(null);
+
+        canvas.width = image.width;
+        canvas.height = image.height;
+        context.drawImage(image, 0, 0, image.width, image.height);
+
+        const imageData = context.getImageData(0, 0, image.width, image.height);
+        const code = jsQR(imageData.data, image.width, image.height);
+        if (code) {
+          const qrCode = code.data.split("/").pop() || null;
+          resolve(qrCode);
+        } else {
+          resolve(null);
+        }
+      };
+
+      image.onerror = () => resolve(null);
+    });
+  };
+
+  useEffect(() => {
+    console.log("Updated userPointsState:", userPointsState);
+  }, [userPointsState]);
+
+  const handleLoginClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    navigate("/");
+  };
+
+  const handleLogout = () => {
+    const userId = localStorage.getItem("userId");
+    if (userId) {
+      localStorage.removeItem(`userPoints_${userId}`);
+    }
+
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    dispatch(logout());
+  };
+
+  const handleScanSubmit = async () => {
+    if (!qrCodeData) {
+      alert("No QR code data to submit.");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
+
+    if (!token || !userId) {
+      alert("No user information found. Please log in again.");
+      return;
+    }
+
+    try {
+      const result = await scanQRCode(token, qrCodeData);
+      setScanResult(result);
+
+      // setUserPointsState(result.userPoints);
+      // localStorage.setItem(
+      //   `userPoints_${userId}`,
+      //   result.userPoints.toString()
+      // );
+
+      alert("QR Code scanned successfully!");
+      setIsImageModalOpen(false);
+    } catch (error) {
+      console.error("Error scanning QR code:", error);
+      alert("Failed to scan QR code. Please try again.");
+    }
+  };
+
+  useEffect(() => {
+    const updatedPoints = parseInt(
+      localStorage.getItem(`userPoints_${userId}`) || "0",
+      10
+    );
+    setUserPointsState(updatedPoints);
+  }, [scanResult]);
+
+  const handlestoreClick = () => {
+    navigate("/store");
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
-    <NavContainer>
-      {/* Mobile Toggle Button */}
-      <MobileToggleButton>
-        <FontAwesomeIcon icon={faBars} />
-      </MobileToggleButton>
+    <>
+      <NavContainer>
+        <MobileToggleButton onClick={toggleMobileMenu}>
+          <FontAwesomeIcon icon={isMobileMenuOpen ? faTimes : faBars} />
+        </MobileToggleButton>
 
-      {/* Brand/Logo */}
-      <BrandLogo>BankApp</BrandLogo>
+        <Link to="/">
+          <img
+            src={logo}
+            alt="BankApp Logo"
+            style={{
+              maxHeight: "50px",
+              width: "auto",
+              marginLeft: "25px",
+              cursor: "pointer",
+            }}
+          />
+        </Link>
 
-      {/* Right Side Actions */}
-      <RightActions>
-        {/* Points Display */}
-        <PointsDisplay>36 points</PointsDisplay>
+        <RightActions>
+          <StoreButton onClick={handlestoreClick}>Store</StoreButton>
+          {!isLoggedIn ? (
+            <Button onClick={handleLoginClick}>Login</Button>
+          ) : (
+            <span>Welcome, {username}!</span>
+          )}
+          <Button onClick={handleUploadClick}>Upload A Qrcode</Button>
+          <PointsDisplay>{userPoints} points</PointsDisplay>
 
-        {/* Search Icon */}
-        <SearchButton>
-          <FontAwesomeIcon icon={faSearch} />
-        </SearchButton>
+          <NotificationDropdown>
+            <NotificationButton>
+              <FontAwesomeIcon icon={faBell} />
+              <NotificationBadge>1</NotificationBadge>
+            </NotificationButton>
 
-        {/* Notifications Dropdown */}
-        <NotificationDropdown>
-          <NotificationButton>
-            <FontAwesomeIcon icon={faBell} />
-            <NotificationBadge>1</NotificationBadge>
-          </NotificationButton>
+            <DropdownMenu>
+              <DropdownItem>
+                Support Team posted a message in Box set (existing design) $40
+                <DropdownItemTime>2 weeks ago</DropdownItemTime>
+              </DropdownItem>
 
-          <DropdownMenu>
-            <DropdownItem>
-              Support Team posted a message in Box set (existing design) $40
-              <DropdownItemTime>2 weeks ago</DropdownItemTime>
-            </DropdownItem>
+              <DropdownFooter>
+                <DropdownButton>Show all</DropdownButton>
+                <DropdownButton>Mark all as read</DropdownButton>
+              </DropdownFooter>
+            </DropdownMenu>
+          </NotificationDropdown>
 
-            <DropdownFooter>
-              <DropdownButton>Show all</DropdownButton>
-              <DropdownButton>Mark all as read</DropdownButton>
-            </DropdownFooter>
-          </DropdownMenu>
-        </NotificationDropdown>
+          <ProfileDropdown>
+            <ProfileButton>
+              <ProfileImage
+                src="https://www.gravatar.com/avatar/9095632f1181c0f40a37d853f66cfc40?s=100&d=404&r=g"
+                alt="Umar Faiz"
+                onError={(e) => {
+                  e.currentTarget.hidden = true;
+                  e.currentTarget.nextElementSibling?.removeAttribute("hidden");
+                }}
+              />
+              <ProfileFallback>
+                <span>UF</span>
+              </ProfileFallback>
+            </ProfileButton>
 
-        {/* User Profile Dropdown */}
-        <ProfileDropdown>
-          <ProfileButton>
-            <ProfileImage
-              src="https://www.gravatar.com/avatar/9095632f1181c0f40a37d853f66cfc40?s=100&d=404&r=g"
-              alt="Umar Faiz"
-              onError={(e) => {
-                e.currentTarget.hidden = true;
-                e.currentTarget.nextElementSibling?.removeAttribute("hidden");
-              }}
+            <DropdownMenu>
+              <DropdownItem>Profile</DropdownItem>
+              <DropdownItem onClick={handleLogout}>Sign out</DropdownItem>
+            </DropdownMenu>
+          </ProfileDropdown>
+        </RightActions>
+
+        <MobileMenuOverlay
+          isOpen={isMobileMenuOpen}
+          onClick={toggleMobileMenu}
+        />
+        <MobileMenu isOpen={isMobileMenuOpen}>
+          <StoreButton onClick={handlestoreClick}>Store</StoreButton>
+          {!isLoggedIn ? (
+            <Button onClick={handleLoginClick}>Login</Button>
+          ) : (
+            <span>Welcome, {username}!</span>
+          )}
+          <Button onClick={handleUploadClick}>Upload A Qrcode</Button>
+          <PointsDisplay>{userPoints} points</PointsDisplay>
+        </MobileMenu>
+
+        <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+          {isLogin ? (
+            <Login
+              onClose={handleCloseModal}
+              onSwitchToSignUp={() => setIsLogin(false)}
             />
-            <ProfileFallback>
-              <span>UF</span>
-            </ProfileFallback>
-          </ProfileButton>
+          ) : (
+            <SignUp
+              onClose={handleCloseModal}
+              onSwitchToLogin={() => setIsLogin(true)}
+            />
+          )}
+        </Modal>
 
-          <DropdownMenu>
-            <DropdownItem>Profile</DropdownItem>
-            <DropdownItem>Team</DropdownItem>
-            <DropdownItem as="button" type="submit">
-              Sign out
-            </DropdownItem>
-          </DropdownMenu>
-        </ProfileDropdown>
-      </RightActions>
-    </NavContainer>
+        <Modal
+          isOpen={isImageModalOpen}
+          onClose={() => setIsImageModalOpen(false)}
+        >
+          {qrCodeData ? (
+            <div>
+              <QrCodeData>{qrCodeData}</QrCodeData>
+              <QrCodeButton onClick={handleScanSubmit}>Submit</QrCodeButton>
+            </div>
+          ) : (
+            selectedImage && <ImagePreview src={selectedImage} alt="QR Code" />
+          )}
+        </Modal>
+      </NavContainer>
+    </>
   );
 };
 
 export default Header;
-
-// Styled Components
-const NavContainer = styled.nav`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 2rem;
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-`;
-
-const MobileToggleButton = styled.button`
-  display: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #6b7280;
-  font-size: 1.5rem;
-
-  @media (max-width: 1024px) {
-    display: block;
-  }
-`;
-
-const BrandLogo = styled.div`
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #1e40af;
-`;
-
-const RightActions = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-`;
-
-const PointsDisplay = styled.div`
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  color: #374151;
-  background-color: #f3f4f6;
-  border-radius: 0.5rem;
-`;
-
-const SearchButton = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #6b7280;
-  font-size: 1.2rem;
-  transition: color 0.2s;
-
-  &:hover {
-    color: #1e40af;
-  }
-`;
-
-const NotificationDropdown = styled.div`
-  position: relative;
-`;
-
-const NotificationButton = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #6b7280;
-  font-size: 1.2rem;
-  position: relative;
-  transition: color 0.2s;
-
-  &:hover {
-    color: #1e40af;
-  }
-`;
-
-const NotificationBadge = styled.span`
-  position: absolute;
-  top: -0.5rem;
-  right: -0.5rem;
-  background-color: #ef4444;
-  color: #ffffff;
-  font-size: 0.75rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: 50%;
-`;
-
-const ProfileDropdown = styled.div`
-  position: relative;
-`;
-
-const ProfileButton = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-`;
-
-const ProfileImage = styled.img`
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
-  object-fit: cover;
-`;
-
-const ProfileFallback = styled.div`
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
-  background-color: #a3e635;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #ffffff;
-  font-size: 1rem;
-  font-weight: 600;
-`;
-
-const DropdownMenu = styled.div`
-  position: absolute;
-  right: 0;
-  top: 2.5rem;
-  background-color: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  min-width: 16rem;
-  z-index: 10;
-  display: none;
-  padding: 0.5rem 0;
-
-  ${NotificationDropdown}:hover &,
-  ${ProfileDropdown}:hover & {
-    display: block;
-  }
-`;
-
-const DropdownItem = styled.div`
-  padding: 0.75rem 1rem;
-  color: #374151;
-  cursor: pointer;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: #f3f4f6;
-  }
-`;
-
-const DropdownItemTime = styled.div`
-  font-size: 0.75rem;
-  color: #6b7280;
-  margin-top: 0.25rem;
-`;
-
-const DropdownFooter = styled.div`
-  padding: 0.75rem 1rem;
-  display: flex;
-  justify-content: space-between;
-  border-top: 1px solid #e5e7eb;
-`;
-
-const DropdownButton = styled.button`
-  font-size: 0.875rem;
-  color: #3b82f6;
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: text-decoration 0.2s;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;

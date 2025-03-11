@@ -1,49 +1,62 @@
-import React from "react";
-import styled from "styled-components";
-import Slider from "react-slick";
+import React, { useEffect, useState } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { fetchBankPremiums } from "../../services/bank";
+import { useNavigate } from "react-router-dom";
+import {
+  PremiumContainer,
+  StyledSlider,
+  PremiumCard,
+  PremiumImage,
+  PremiumContent,
+  PremiumPoints,
+  Title,
+  PremiumTitle,
+  ApplyButton,
+} from "./collectbank.styles";
+import { LoadingContainer, LoadingSpinner } from "../Campaign/campaign.styles";
 
-const premiumData = [
-  {
-    id: 1,
-    title: "Premium 1",
-    points: "200 points",
-    buttonText: "Apply",
-  },
-  {
-    id: 2,
-    title: "Premium 2",
-    points: "500 points",
-    buttonText: "Apply",
-  },
-  {
-    id: 3,
-    title: "Premium 3",
-    points: "300 points",
-    buttonText: "Apply",
-  },
-  {
-    id: 4,
-    title: "Premium 4",
-    points: "400 points",
-    buttonText: "Apply",
-  },
-  {
-    id: 5,
-    title: "Premium 5",
-    points: "600 points",
-    buttonText: "Apply",
-  },
-  {
-    id: 6,
-    title: "Premium 6",
-    points: "700 points",
-    buttonText: "Apply",
-  },
-];
-
+interface BankPremium {
+  _id: string;
+  id: string;
+  title: string;
+  image_url: string;
+  points_required: number;
+  buttonText?: string;
+}
 const CollectBanksPremium: React.FC = () => {
+  const [premiumData, setPremiumData] = useState<BankPremium[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+
+  const handleApply = (id: string) => {
+    navigate(`/bank-premium/${id}`);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetchBankPremiums();
+        console.log("banksss", response);
+
+        // Extract the `bankPremiums` array from the response
+        const bankPremiums = response.bankPremiums || [];
+        setPremiumData(bankPremiums);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unexpected error occurred.");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const settings = {
     dots: true,
     infinite: true,
@@ -68,16 +81,36 @@ const CollectBanksPremium: React.FC = () => {
     ],
   };
 
+  if (loading) {
+    return (
+      <LoadingContainer>
+        <LoadingSpinner />
+      </LoadingContainer>
+    );
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <PremiumContainer>
-      <PremiumTitle>Collect Banks Premium</PremiumTitle>
-
+      <Title>Collect Banks Premium</Title>
       <StyledSlider {...settings}>
         {premiumData.map((premium) => (
-          <PremiumCard key={premium.id}>
-            <PremiumPoints>{premium.points}</PremiumPoints>
-            <PremiumTitle>{premium.title}</PremiumTitle>
-            <ApplyButton>{premium.buttonText}</ApplyButton>
+          <PremiumCard key={premium._id}>
+            {" "}
+            {/* Use _id as the key */}
+            <PremiumImage src={premium.image_url} alt={premium.title} />
+            <PremiumContent>
+              <PremiumPoints>{premium.points_required} points</PremiumPoints>
+              <PremiumTitle>{premium.title}</PremiumTitle>
+              <ApplyButton
+                onClick={() => handleApply(premium._id || premium.id)}
+              >
+                {premium.buttonText || "Apply"}
+              </ApplyButton>
+            </PremiumContent>
           </PremiumCard>
         ))}
       </StyledSlider>
@@ -86,72 +119,3 @@ const CollectBanksPremium: React.FC = () => {
 };
 
 export default CollectBanksPremium;
-
-// Styled Components
-const PremiumContainer = styled.div`
-  padding: 4rem 2rem;
-  background-color: #f8f9fa;
-`;
-
-const PremiumTitle = styled.h2`
-  font-size: 2.5rem;
-  color: #1e40af;
-  margin-bottom: 2rem;
-  text-align: center;
-  font-weight: bold;
-`;
-
-const StyledSlider = styled(Slider)`
-  .slick-slide {
-    padding: 0 10px;
-  }
-
-  .slick-dots {
-    bottom: -30px;
-
-    li button:before {
-      color: #1e40af;
-    }
-
-    li.slick-active button:before {
-      color: #1e40af;
-    }
-  }
-`;
-
-const PremiumCard = styled.div`
-  background-color: #ffffff;
-  border-radius: 1rem;
-  padding: 2rem;
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  }
-`;
-
-const PremiumPoints = styled.div`
-  font-size: 1.75rem;
-  color: #ef4444;
-  font-weight: bold;
-  margin-bottom: 1rem;
-`;
-
-const ApplyButton = styled.button`
-  background-color: #1e40af;
-  color: #ffffff;
-  border: none;
-  border-radius: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #1d4ed8;
-  }
-`;

@@ -1,10 +1,14 @@
 import React from "react";
-import styled from "styled-components";
-
 import AppStore from "../../assets/appsotre.png";
 import PlayStore from "../../assets/playstore.png";
-import BannerBackground from "../../assets/option 1.jpg";
-
+import {
+  BannerContainer,
+  BannerContent,
+  BannerTitle,
+  DownloadButtons,
+  DownloadImage,
+  DownloadLink,
+} from "./banner.styles";
 const Banner: React.FC = () => {
   return (
     <BannerContainer>
@@ -35,99 +39,118 @@ const Banner: React.FC = () => {
 
 export default Banner;
 
-const BannerContainer = styled.div`
-  background-image: url(${BannerBackground});
-  background-size: cover;
-  background-position: center;
-  color: #ffffff;
-  padding: 6rem 2rem;
-  text-align: left;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  min-height: 580px;
+// import React, { useEffect, useState } from "react";
+// import { useParams } from "react-router-dom";
+// import { fetchCampaignById, redeemCampaign } from "../../services/campaign";
+// import { Message } from "../SignUp/signup.styles";
+// import { toast } from "react-toastify";
+// import { useDispatch, useSelector } from "react-redux";
+// import { RootState } from "../../redux/store";
+// import { updatePoints } from "../../redux/slices/auth";
+// import {
+//   CampaignInfo,
+//   Container,
+//   ContentContainer,
+//   DateRange,
+//   Description,
+//   ErrorMessage,
+//   Image,
+//   ImageContainer,
+//   LoadingContainer,
+//   LoadingSpinner,
+//   Points,
+//   QrCodeButton,
+//   RedeemContainer,
+//   SectionWrapper,
+//   Title,
+// } from "./campaigndetails.styles";
 
-  @media (max-width: 768px) {
-    padding: 4rem 1rem;
-    min-height: 400px;
-    justify-content: center;
-    text-align: center;
-  }
+// const CampaignDetail: React.FC = () => {
+//   const { id } = useParams();
+//   const dispatch = useDispatch();
+//   const [campaign, setCampaign] = useState<any>(null);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState<string | null>(null);
 
-  @media (max-width: 480px) {
-    padding: 2rem 1rem;
-    min-height: 300px;
-  }
-`;
+//   const [redeemMessage, setRedeemMessage] = useState<string | null>(null);
+//   const userPoints = useSelector((state: RootState) => state.auth.userPoints);
 
-const BannerContent = styled.div`
-  max-width: 800px;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  @media (max-width: 768px) {
-    align-items: center;
-  }
-`;
+//   useEffect(() => {
+//     const getCampaign = async () => {
+//       try {
+//         if (!id) return;
+//         const data = await fetchCampaignById(id);
+//         setCampaign(data);
+//       } catch (err: any) {
+//         setError(err.message || "Failed to load campaign.");
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
 
-const BannerTitle = styled.h1`
-  margin-bottom: 200px;
-  font-size: 5vw;
-  font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  line-height: 1.2;
-  text-align: left;
+//     getCampaign();
+//   }, [id]);
 
-  @media (max-width: 768px) {
-    font-size: 2rem;
-    margin-bottom: 50px;
-    text-align: center;
-  }
+//   const handleRedeem = async () => {
+//     try {
+//       const token = localStorage.getItem("token");
+//       if (!token) {
+//         toast.error("Unauthorized: Please login first.");
+//         return;
+//       }
 
-  @media (max-width: 480px) {
-    font-size: 1.5rem;
-    margin-bottom: 30px;
-  }
-`;
+//       const response = await redeemCampaign(id!, token);
+//       dispatch(updatePoints(response.user.remaining_points));
+//       setRedeemMessage(response);
+//       toast.success(response.message || "Campaign redeemed successfully!");
+//     } catch (err: any) {
+//       toast.error(err.response?.data?.message || "Failed to redeem campaign.");
+//     }
+//   };
 
-const DownloadButtons = styled.div`
-  display: flex;
-  gap: 1.5rem;
-  align-items: flex-start;
-  margin-top: -10rem;
+//   if (loading)
+//     return (
+//       <LoadingContainer>
+//         <LoadingSpinner />
+//       </LoadingContainer>
+//     );
 
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
+//   if (error) return <ErrorMessage>{error}</ErrorMessage>;
+//   if (!campaign) return <ErrorMessage>Campaign not found.</ErrorMessage>;
 
-  @media (max-width: 480px) {
-    margin-top: -5rem;
-  }
-`;
+//   return (
+//     <Container>
+//       <Title>{campaign.title || "No Title Available"}</Title>
+//       <SectionWrapper>
+//         <ImageContainer>
+//           <Image
+//             src={campaign.image_url || "/default-image.jpg"}
+//             alt={campaign.title || "Campaign"}
+//           />
+//         </ImageContainer>
+//         <ContentContainer>
+//           <CampaignInfo>
+//             <Description>
+//               {campaign.description || "No description available."}
+//             </Description>
+//             <Points>🔥 Points Required: {campaign.points_required || 0}</Points>
+//             <DateRange>
+//               📅 Start Date:{" "}
+//               {new Date(campaign.start_date).toLocaleDateString()}
+//             </DateRange>
+//             <DateRange>
+//               ⏳ End Date: {new Date(campaign.end_date).toLocaleDateString()}
+//             </DateRange>
+//             <DateRange>💰 Your Points: {userPoints}</DateRange>
+//           </CampaignInfo>
+//           <RedeemContainer>
+//             <QrCodeButton onClick={handleRedeem}>Redeem</QrCodeButton>
+//             {redeemMessage && <Message>{redeemMessage}</Message>}
+//           </RedeemContainer>
+//         </ContentContainer>
+//       </SectionWrapper>
+//     </Container>
+//   );
+// };
 
-const DownloadLink = styled.a`
-  display: inline-block;
-  transition: transform 0.2s;
-
-  &:hover {
-    transform: scale(1.05);
-  }
-`;
-
-const DownloadImage = styled.img`
-  width: 180px;
-  height: auto;
-  border-radius: 0.5rem;
-
-  @media (max-width: 768px) {
-    width: 150px;
-  }
-
-  @media (max-width: 480px) {
-    width: 120px;
-  }
-`;
+// export default CampaignDetail;
