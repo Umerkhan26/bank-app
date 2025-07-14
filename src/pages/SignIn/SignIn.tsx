@@ -63,6 +63,76 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [isTokenFound, setTokenFound] = useState(false); // Track notification permission
 
+  useEffect(() => {
+    console.log("[LOGIN] Setting up notifications...");
+
+    const setupNotifications = async () => {
+      try {
+        console.log("[LOGIN] Checking service worker support...");
+        if ("serviceWorker" in navigator) {
+          const registrations =
+            await navigator.serviceWorker.getRegistrations();
+          console.log("[LOGIN] Existing service workers:", registrations);
+        }
+
+        console.log("[LOGIN] Requesting notification permission...");
+        const token = await requestNotificationPermission();
+        setTokenFound(!!token);
+
+        if (!token) {
+          console.warn(
+            "[LOGIN] No FCM token due to permission denial or error"
+          );
+          toast.warn(
+            "Please enable notifications in your browser settings to receive push notifications",
+            {
+              autoClose: 5000,
+            }
+          );
+        } else {
+          console.log("[LOGIN] Setting up foreground message handler...");
+          onForegroundMessage((payload) => {
+            console.log("[LOGIN] Foreground message received:", payload);
+
+            if (payload.notification) {
+              new Notification(
+                payload.notification.title || "New Notification",
+                {
+                  body: payload.notification.body,
+                  icon: "/logo192.png",
+                }
+              );
+            }
+
+            toast.info(
+              <div>
+                <strong>
+                  {payload.notification?.title || "New Notification"}
+                </strong>
+                <p>{payload.notification?.body || ""}</p>
+              </div>,
+              {
+                autoClose: 5000,
+                closeOnClick: true,
+                pauseOnHover: true,
+              }
+            );
+          });
+        }
+      } catch (error) {
+        console.error("[LOGIN] Notification setup error:", error);
+        setTokenFound(false);
+        toast.error("Failed to set up notifications", { autoClose: 5000 });
+      }
+    };
+
+    setupNotifications();
+
+    return () => {
+      // Cleanup if needed
+    };
+  }, []);
+
   const onSubmit: SubmitHandler<SignInFormValues> = async (data) => {
     setLoading(true);
     console.log("[LOGIN] Login attempt with:", data);
@@ -108,7 +178,7 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
   const handleFcmToken = async (
     token: string,
     userId: string,
-    address?: string
+    address?: string // Make address optional
   ) => {
     try {
       console.log("[LOGIN] Handling FCM token registration...");
@@ -126,7 +196,6 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
         return;
       }
 
-      // Verify token validity (optional: ping Firebase to check token)
       console.log("[LOGIN] Updating FCM token on server...");
       toast.update(fcmToast, {
         render: "Registering device for notifications...",
@@ -135,7 +204,7 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
       });
 
       const payload = { fcmToken };
-      if (address) payload.address = address;
+      if (address) payload.address = address; // Only include address if it exists
 
       const response = await axios.put(
         `${API_BASE_URL}/user/${userId}/fcm-token`,
@@ -168,76 +237,6 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
       throw error;
     }
   };
-
-  // Update useEffect to recheck permission before showing notification
-  useEffect(() => {
-    console.log("[LOGIN] Setting up notifications...");
-
-    const setupNotifications = async () => {
-      try {
-        console.log("[LOGIN] Checking service worker support...");
-        if ("serviceWorker" in navigator) {
-          const registrations =
-            await navigator.serviceWorker.getRegistrations();
-          console.log("[LOGIN] Existing service workers:", registrations);
-        }
-
-        console.log("[LOGIN] Requesting notification permission...");
-        const token = await requestNotificationPermission();
-        setTokenFound(!!token);
-
-        if (!token) {
-          console.warn(
-            "[LOGIN] No FCM token due to permission denial or error"
-          );
-          toast.warn(
-            "Please enable notifications in your browser settings to receive push notifications",
-            { autoClose: 5000 }
-          );
-          return;
-        }
-
-        console.log("[LOGIN] Setting up foreground message handler...");
-        onForegroundMessage(async (payload) => {
-          console.log("[LOGIN] Foreground message received:", payload);
-
-          // Recheck permission before showing notification
-          const permission = await Notification.requestPermission();
-          if (permission === "granted" && payload.notification) {
-            new Notification(payload.notification.title || "New Notification", {
-              body: payload.notification.body,
-              icon: "/logo192.png",
-            });
-          } else {
-            console.warn(
-              "[LOGIN] Notification permission not granted:",
-              permission
-            );
-          }
-
-          toast.info(
-            <div>
-              <strong>
-                {payload.notification?.title || "New Notification"}
-              </strong>
-              <p>{payload.notification?.body || ""}</p>
-            </div>,
-            {
-              autoClose: 5000,
-              closeOnClick: true,
-              pauseOnHover: true,
-            }
-          );
-        });
-      } catch (error) {
-        console.error("[LOGIN] Notification setup error:", error);
-        setTokenFound(false);
-        toast.error("Failed to set up notifications", { autoClose: 5000 });
-      }
-    };
-
-    setupNotifications();
-  }, []);
 
   return (
     <>
