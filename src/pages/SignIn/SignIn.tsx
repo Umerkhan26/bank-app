@@ -1,138 +1,3 @@
-// import React, { useState } from "react";
-// import { useForm, SubmitHandler } from "react-hook-form";
-// import { yupResolver } from "@hookform/resolvers/yup";
-// import * as yup from "yup";
-// import { toast } from "react-toastify"; // Import Toast
-// import "react-toastify/dist/ReactToastify.css"; // Import CSS
-// import Input from "../../components/Inputs/input";
-// import {
-//   ButtonDiv,
-//   FooterText,
-//   FormGroup,
-//   Label,
-//   SubmitButton,
-//   SwitchText,
-//   Title,
-//   Underline,
-// } from "./signin.styles";
-// import { loginUser } from "../../services/auth";
-// import { useDispatch } from "react-redux";
-// import { login } from "../../redux/slices/auth";
-// import Loader from "../../components/Loader/loader";
-
-// interface LoginProps {
-//   onSwitchToSignUp?: () => void;
-//   onClose?: () => void;
-// }
-
-// interface SignInFormValues {
-//   email: string;
-//   password: string;
-// }
-
-// const signInValidationSchema: yup.ObjectSchema<SignInFormValues> = yup.object({
-//   email: yup
-//     .string()
-//     .email("Invalid email format")
-//     .required("Email is required"),
-//   password: yup
-//     .string()
-//     .min(6, "Password must be at least 6 characters")
-//     .required("Password is required"),
-// });
-
-// const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
-//   const {
-//     register,
-//     handleSubmit,
-//     formState: { errors },
-//   } = useForm<SignInFormValues>({
-//     resolver: yupResolver(signInValidationSchema),
-//     mode: "onChange",
-//   });
-
-//   const dispatch = useDispatch();
-//   const [loading, setLoading] = useState(false);
-
-//   const onSubmit: SubmitHandler<SignInFormValues> = async (data) => {
-//     setLoading(true);
-//     try {
-//       const response = await loginUser(data);
-//       console.log("Login Successful:", response);
-
-//       if (response.token) {
-//         const userId = response.token;
-//         const userPoints = response.user.points;
-//         dispatch(
-//           login({
-//             token: response.token,
-//             userId,
-//             username: response.user.name,
-//             userPoints: response.user.points,
-//           })
-//         );
-//         toast.success("Login successful!");
-//         onClose?.();
-
-//         localStorage.setItem(`userPoints_${userId}`, userPoints.toString());
-//       }
-//     } catch (error) {
-//       console.error("Login Error:", error);
-//       toast.error("Login failed! Please check your credentials.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <>
-//       {loading && <Loader />}
-//       <Title>Sign In</Title>
-//       <Underline />
-
-//       <form onSubmit={handleSubmit(onSubmit)}>
-//         <FormGroup>
-//           <Label>
-//             Email<span className="text-red-500">*</span>
-//           </Label>
-//           <Input
-//             type="email"
-//             placeholder="Enter your email"
-//             registration={register("email")}
-//             error={errors.email?.message}
-//           />
-//         </FormGroup>
-
-//         <FormGroup>
-//           <Label>
-//             Password<span className="text-red-500">*</span>
-//           </Label>
-//           <Input
-//             type="password"
-//             placeholder="Enter your password"
-//             registration={register("password")}
-//             error={errors.password?.message}
-//             isPassword
-//           />
-//         </FormGroup>
-
-//         <ButtonDiv>
-//           <SubmitButton type="submit" disabled={loading}>
-//             {loading ? "Signing In..." : "Sign In"}
-//           </SubmitButton>
-//         </ButtonDiv>
-//       </form>
-
-//       <FooterText>
-//         Don't have an account?{" "}
-//         <SwitchText onClick={onSwitchToSignUp}>Register Here</SwitchText>
-//       </FooterText>
-//     </>
-//   );
-// };
-
-// export default Login;
-
 import React, { useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -198,76 +63,6 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [isTokenFound, setTokenFound] = useState(false); // Track notification permission
 
-  useEffect(() => {
-    console.log("[LOGIN] Setting up notifications...");
-
-    const setupNotifications = async () => {
-      try {
-        console.log("[LOGIN] Checking service worker support...");
-        if ("serviceWorker" in navigator) {
-          const registrations =
-            await navigator.serviceWorker.getRegistrations();
-          console.log("[LOGIN] Existing service workers:", registrations);
-        }
-
-        console.log("[LOGIN] Requesting notification permission...");
-        const token = await requestNotificationPermission();
-        setTokenFound(!!token);
-
-        if (!token) {
-          console.warn(
-            "[LOGIN] No FCM token due to permission denial or error"
-          );
-          toast.warn(
-            "Please enable notifications in your browser settings to receive push notifications",
-            {
-              autoClose: 5000,
-            }
-          );
-        } else {
-          console.log("[LOGIN] Setting up foreground message handler...");
-          onForegroundMessage((payload) => {
-            console.log("[LOGIN] Foreground message received:", payload);
-
-            if (payload.notification) {
-              new Notification(
-                payload.notification.title || "New Notification",
-                {
-                  body: payload.notification.body,
-                  icon: "/logo192.png",
-                }
-              );
-            }
-
-            toast.info(
-              <div>
-                <strong>
-                  {payload.notification?.title || "New Notification"}
-                </strong>
-                <p>{payload.notification?.body || ""}</p>
-              </div>,
-              {
-                autoClose: 5000,
-                closeOnClick: true,
-                pauseOnHover: true,
-              }
-            );
-          });
-        }
-      } catch (error) {
-        console.error("[LOGIN] Notification setup error:", error);
-        setTokenFound(false);
-        toast.error("Failed to set up notifications", { autoClose: 5000 });
-      }
-    };
-
-    setupNotifications();
-
-    return () => {
-      // Cleanup if needed
-    };
-  }, []);
-
   const onSubmit: SubmitHandler<SignInFormValues> = async (data) => {
     setLoading(true);
     console.log("[LOGIN] Login attempt with:", data);
@@ -313,7 +108,7 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
   const handleFcmToken = async (
     token: string,
     userId: string,
-    address?: string // Make address optional
+    address?: string
   ) => {
     try {
       console.log("[LOGIN] Handling FCM token registration...");
@@ -331,6 +126,7 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
         return;
       }
 
+      // Verify token validity (optional: ping Firebase to check token)
       console.log("[LOGIN] Updating FCM token on server...");
       toast.update(fcmToast, {
         render: "Registering device for notifications...",
@@ -339,7 +135,7 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
       });
 
       const payload = { fcmToken };
-      if (address) payload.address = address; // Only include address if it exists
+      if (address) payload.address = address;
 
       const response = await axios.put(
         `${API_BASE_URL}/user/${userId}/fcm-token`,
@@ -372,6 +168,76 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
       throw error;
     }
   };
+
+  // Update useEffect to recheck permission before showing notification
+  useEffect(() => {
+    console.log("[LOGIN] Setting up notifications...");
+
+    const setupNotifications = async () => {
+      try {
+        console.log("[LOGIN] Checking service worker support...");
+        if ("serviceWorker" in navigator) {
+          const registrations =
+            await navigator.serviceWorker.getRegistrations();
+          console.log("[LOGIN] Existing service workers:", registrations);
+        }
+
+        console.log("[LOGIN] Requesting notification permission...");
+        const token = await requestNotificationPermission();
+        setTokenFound(!!token);
+
+        if (!token) {
+          console.warn(
+            "[LOGIN] No FCM token due to permission denial or error"
+          );
+          toast.warn(
+            "Please enable notifications in your browser settings to receive push notifications",
+            { autoClose: 5000 }
+          );
+          return;
+        }
+
+        console.log("[LOGIN] Setting up foreground message handler...");
+        onForegroundMessage(async (payload) => {
+          console.log("[LOGIN] Foreground message received:", payload);
+
+          // Recheck permission before showing notification
+          const permission = await Notification.requestPermission();
+          if (permission === "granted" && payload.notification) {
+            new Notification(payload.notification.title || "New Notification", {
+              body: payload.notification.body,
+              icon: "/logo192.png",
+            });
+          } else {
+            console.warn(
+              "[LOGIN] Notification permission not granted:",
+              permission
+            );
+          }
+
+          toast.info(
+            <div>
+              <strong>
+                {payload.notification?.title || "New Notification"}
+              </strong>
+              <p>{payload.notification?.body || ""}</p>
+            </div>,
+            {
+              autoClose: 5000,
+              closeOnClick: true,
+              pauseOnHover: true,
+            }
+          );
+        });
+      } catch (error) {
+        console.error("[LOGIN] Notification setup error:", error);
+        setTokenFound(false);
+        toast.error("Failed to set up notifications", { autoClose: 5000 });
+      }
+    };
+
+    setupNotifications();
+  }, []);
 
   return (
     <>

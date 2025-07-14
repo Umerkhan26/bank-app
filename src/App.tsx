@@ -34,7 +34,6 @@
 // }
 
 // export default App;
-
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "./redux/slices/auth";
@@ -44,7 +43,8 @@ import {
   requestNotificationPermission,
   onForegroundMessage,
 } from "./utils/firebase";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // ✅ Required for styling
 
 function App() {
   const dispatch = useDispatch();
@@ -69,14 +69,14 @@ function App() {
     requestNotificationPermission()
       .then((token) => {
         if (token) {
-          toast.success("Push notifications enabled!");
+          toast.success("✅ Push notifications enabled!");
         } else {
-          toast.warn("Please enable browser notifications.");
+          toast.warn("⚠️ Please enable browser notifications.");
         }
       })
       .catch((err) => {
         console.error(err);
-        toast.error("Failed to enable push notifications");
+        toast.error("❌ Failed to enable push notifications");
       });
 
     onForegroundMessage((payload) => {
@@ -86,7 +86,7 @@ function App() {
         payload.notification?.title || payload.data?.title || "New Message";
       const body = payload.notification?.body || payload.data?.body || "";
 
-      // ✅ Show system notification
+      // ✅ System-level browser notification
       if (Notification.permission === "granted") {
         new Notification(title, {
           body,
@@ -94,7 +94,7 @@ function App() {
         });
       }
 
-      // ✅ Show toast
+      // ✅ In-app toast
       toast.info(
         <div>
           <strong>{title}</strong>
@@ -110,9 +110,12 @@ function App() {
   }, [dispatch]);
 
   return (
-    <Router>
-      <AppRoutes />
-    </Router>
+    <>
+      <Router>
+        <AppRoutes />
+      </Router>
+      <ToastContainer position="top-right" theme="colored" />
+    </>
   );
 }
 
