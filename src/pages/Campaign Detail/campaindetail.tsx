@@ -14,8 +14,6 @@ import {
   ErrorMessage,
   Image,
   ImageContainer,
-  LoadingContainer,
-  LoadingSpinner,
   Points,
   QrCodeButton,
   RedeemContainer,
@@ -24,18 +22,20 @@ import {
 } from "./campaigndetails.styles";
 import Login from "../SignIn/SignIn";
 import Modal from "../../components/Modal/modal";
+import Loader from "../../components/Loader/loader";
 
 const CampaignDetail: React.FC = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const [campaign, setCampaign] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const userPoints = useSelector((state: RootState) => state.auth.userPoints);
 
   useEffect(() => {
     const getCampaign = async () => {
+      setLoading(true);
       try {
         if (!id) return;
         const data = await fetchCampaignById(id);
@@ -69,14 +69,7 @@ const CampaignDetail: React.FC = () => {
       toast.error(err.response?.data?.message || "Failed to redeem campaign.");
     }
   };
-
-  if (loading)
-    return (
-      <LoadingContainer>
-        <LoadingSpinner />
-      </LoadingContainer>
-    );
-
+  if (loading) return <Loader />;
   if (error) return <ErrorMessage>{error}</ErrorMessage>;
   if (!campaign) return <ErrorMessage>Campaign not found.</ErrorMessage>;
 

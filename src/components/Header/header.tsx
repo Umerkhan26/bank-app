@@ -170,12 +170,6 @@ const Header: React.FC = () => {
       const result = await scanQRCode(token, qrCodeData);
       setScanResult(result);
 
-      // setUserPointsState(result.userPoints);
-      // localStorage.setItem(
-      //   `userPoints_${userId}`,
-      //   result.userPoints.toString()
-      // );
-
       alert("QR Code scanned successfully!");
       setIsImageModalOpen(false);
     } catch (error) {
@@ -265,7 +259,10 @@ const Header: React.FC = () => {
             </ProfileButton>
 
             <DropdownMenu>
-              <DropdownItem>Profile</DropdownItem>
+              <DropdownItem>
+                <Link to="/profile">Profile</Link>
+              </DropdownItem>
+
               <DropdownItem onClick={handleLogout}>Sign out</DropdownItem>
             </DropdownMenu>
           </ProfileDropdown>

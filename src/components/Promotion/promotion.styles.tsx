@@ -40,6 +40,7 @@ export const PromotionCard = styled.div`
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   width: 280px;
+  height: 440px;
   margin: 0 auto;
   margin-bottom: 10px;
 
@@ -66,13 +67,23 @@ export const PromotionPoints = styled.div`
   color: #ef4444;
   font-weight: bold;
   margin-bottom: 0.75rem;
+  text-align: left;
 `;
 
 export const PromotionTitle = styled.h3`
   font-size: 1.5rem;
   color: #374151;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.7rem;
   font-weight: 600;
+  text-align: left;
+`;
+
+export const PromotionDescription = styled.h3`
+  font-size: 1.1rem;
+  color: #374151;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  text-align: left;
 `;
 
 export const ApplyButton = styled.button`

@@ -9,6 +9,7 @@ import {
   ApplyButton,
   PromotionCard,
   PromotionContent,
+  PromotionDescription,
   PromotionImage,
   PromotionPoints,
   PromotionsContainer,
@@ -93,17 +94,20 @@ const UpcomingPromotions: React.FC = () => {
             style={{ cursor: "pointer" }}
           >
             <PromotionImage
-              // src={promotion.image_url || img1}
-              src={img1}
+              src={promotion.image_url || img1}
+              // src={img1}
               alt={promotion.title || "Promotion Image"}
             />
 
             <PromotionContent>
               <PromotionPoints>
-                {/* {promotion.points_required} Points */}
-                200 Points
+                {promotion.points_required} Points
+                {/* 200 Points */}
               </PromotionPoints>
               <PromotionTitle>{promotion.title}</PromotionTitle>
+              <PromotionDescription>
+                {promotion.description}
+              </PromotionDescription>
               {/* <ApplyButton
                 onClick={() => handleApply(promotion._id || promotion.id)}
               >

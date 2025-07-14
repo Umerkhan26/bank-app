@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { fetchCampaigns } from "../../services/campaign";
-import campaignImage from "./campaign-toolkit01.png";
+// import campaignImage from "./campaign-toolkit01.png";
 import { useNavigate } from "react-router-dom";
 import {
   ApplyButton,
   CampaignCard,
   CampaignContent,
+  CampaignDescription,
   CampaignImage,
   CampaignPoints,
   CampaignsContainer,
@@ -86,17 +87,18 @@ const Campaigns: React.FC = () => {
         {campaigns.map((campaign) => (
           <CampaignCard key={campaign._id || campaign.id}>
             <CampaignImage
-              // src={campaign.image_url || campaign.image}
-              src={campaignImage}
+              src={campaign.image_url || campaign.image}
+              // src={campaignImage}
               alt={campaign.title}
             />
             <CampaignContent>
               <CampaignPoints>
-                {/* {campaign.points_required || campaign.points} Points */}
-                100 Points
+                {campaign.points_required || campaign.points} Points
+                {/* 100 Points */}
               </CampaignPoints>
-              {/* <CampaignTitle>{campaign.title}</CampaignTitle> */}
-              <CampaignTitle>START A WORKPLACE CAMPAIGN</CampaignTitle>
+              <CampaignTitle>{campaign.title}</CampaignTitle>
+
+              <CampaignDescription>{campaign.description}</CampaignDescription>
               <ApplyButton
                 onClick={() => handleApply(campaign._id || campaign.id)}
               >

@@ -70,3 +70,23 @@ export const verifyEmail = async (token: string): Promise<any> => {
     throw error.response?.data?.message || "Email verification failed.";
   }
 };
+
+export const fetchUserHistory = async (userId: string): Promise<any[]> => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Unauthorized. Please log in.");
+
+    const response = await axios.get(
+      `${API_BASE_URL}/userHistoryByUserId/${userId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    return response.data.userHistory || [];
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "Failed to fetch user history."
+    );
+  }
+};

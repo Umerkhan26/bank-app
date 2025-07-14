@@ -59,6 +59,7 @@ export const PremiumPoints = styled.div`
   color: #ef4444;
   font-weight: bold;
   margin-bottom: 0.75rem;
+  text-align: left;
 `;
 
 export const Title = styled.h3`
@@ -72,8 +73,17 @@ export const Title = styled.h3`
 export const PremiumTitle = styled.h3`
   font-size: 1.5rem;
   color: #374151;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.7rem;
   font-weight: 600;
+  text-align: left;
+`;
+
+export const PremiumDescription = styled.h3`
+  font-size: 1.1rem;
+  color: #374151;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  text-align: left;
 `;
 
 export const ApplyButton = styled.button`

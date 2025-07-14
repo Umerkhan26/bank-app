@@ -13,6 +13,7 @@ import {
   Title,
   PremiumTitle,
   ApplyButton,
+  PremiumDescription,
 } from "./collectbank.styles";
 import { LoadingContainer, LoadingSpinner } from "../Campaign/campaign.styles";
 
@@ -23,6 +24,7 @@ interface BankPremium {
   image_url: string;
   points_required: number;
   buttonText?: string;
+  description: string;
 }
 const CollectBanksPremium: React.FC = () => {
   const [premiumData, setPremiumData] = useState<BankPremium[]>([]);
@@ -105,6 +107,7 @@ const CollectBanksPremium: React.FC = () => {
             <PremiumContent>
               <PremiumPoints>{premium.points_required} points</PremiumPoints>
               <PremiumTitle>{premium.title}</PremiumTitle>
+              <PremiumDescription>{premium.description}</PremiumDescription>
               <ApplyButton
                 onClick={() => handleApply(premium._id || premium.id)}
               >
