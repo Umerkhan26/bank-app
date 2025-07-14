@@ -61,112 +61,81 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [isTokenFound, setTokenFound] = useState(false);
+  const [notification, setNotification] = useState({ title: "", body: "" });
 
   useEffect(() => {
-    console.log("[ADMIN_LOGIN] Setting up notifications...");
-
     const setupNotifications = async () => {
       try {
-        console.log("[ADMIN_LOGIN] Checking service worker support...");
+        console.log("[USER_LOGIN] Setting up notifications...");
         if ("serviceWorker" in navigator) {
           const registrations =
             await navigator.serviceWorker.getRegistrations();
-          console.log("[ADMIN_LOGIN] Existing service workers:", registrations);
+          console.log("[USER_LOGIN] Existing service workers:", registrations);
+          for (const registration of registrations) {
+            if (
+              registration.scope !==
+              "http://localhost:5173/firebase-cloud-messaging-push-scope"
+            ) {
+              await registration.unregister();
+              console.log(
+                "[USER_LOGIN] Unregistered unused service worker:",
+                registration.scope
+              );
+            }
+          }
         }
 
-        console.log("[ADMIN_LOGIN] Requesting notification permission...");
         const token = await requestNotificationPermission();
-        setTokenFound(!!token);
-
-        if (!token) {
-          console.warn(
-            "[ADMIN_LOGIN] No FCM token due to permission denial or error"
-          );
-          toast.warn(
-            "Please enable notifications in your browser settings to receive push notifications",
-            { autoClose: 5000 }
-          );
+        if (token) {
+          console.log("[USER_LOGIN] FCM token obtained:", token);
+          setTokenFound(true);
+          toast.success("Push notifications enabled!");
+        } else {
+          console.warn("[USER_LOGIN] No FCM token obtained");
+          setTokenFound(false);
+          toast.warn("Please enable notifications in your browser settings");
         }
+
+        onForegroundMessage((payload) => {
+          console.log("[USER_LOGIN] Foreground message received:", payload);
+          const { notification: { title, body } = {} } = payload;
+          setNotification({
+            title: title || "New Notification",
+            body: body || "",
+          });
+          toast.info(
+            <div>
+              <strong>{title || "New Notification"}</strong>
+              <p>{body || ""}</p>
+            </div>,
+            { autoClose: 5000, closeOnClick: true, pauseOnHover: true }
+          );
+        });
       } catch (error) {
-        console.error("[ADMIN_LOGIN] Notification setup error:", error);
+        console.error("[USER_LOGIN] Notification setup error:", error);
         setTokenFound(false);
-        toast.error("Failed to set up notifications", { autoClose: 5000 });
+        toast.error("Failed to enable push notifications");
       }
     };
 
     setupNotifications();
   }, []);
 
-  const onSubmit: SubmitHandler<SignInFormValues> = async (data) => {
-    setLoading(true);
-    console.log("[ADMIN_LOGIN] Login attempt with:", data);
-
+  const handleRequestPermission = async () => {
     try {
-      const response = await loginUser(data);
-      console.log("[ADMIN_LOGIN] Login successful:", response);
-
-      if (response.token) {
-        const userId = response.user._id;
-        const userPoints = response.user.points;
-
-        dispatch(
-          login({
-            token: response.token,
-            userId,
-            username: response.user.name,
-            userPoints: response.user.points,
-          })
-        );
-
-        toast.success("Login successful!");
-        onClose?.();
-
-        localStorage.setItem(`userPoints_${userId}`, userPoints.toString());
-
-        console.log("[ADMIN_LOGIN] Registering FCM token...");
-        await handleFcmToken(
-          response.token,
-          userId,
-          response.user.address || ""
-        );
+      const token = await requestNotificationPermission();
+      if (token) {
+        setTokenFound(true);
+        toast.success("Notifications enabled!");
+      } else {
+        setTokenFound(false);
+        toast.warn("Please enable notifications in your browser settings");
       }
     } catch (error) {
-      console.error("[ADMIN_LOGIN] Login error:", error);
-      toast.error("Login failed! Please check your credentials.");
-    } finally {
-      setLoading(false);
+      console.error("[USER_LOGIN] Error requesting permission:", error);
+      toast.error("Failed to enable notifications");
     }
   };
-
-  // In Login.tsx (user side)
-  const handleRequestPermission = async () => {
-    const token = await requestNotificationPermission();
-    if (token) {
-      setTokenFound(true);
-      toast.success("Notifications enabled!");
-    } else {
-      setTokenFound(false);
-      toast.warn("Please enable notifications in your browser settings");
-    }
-  };
-
-  // Add a button to the form if isTokenFound is false
-  <div className="text-center mb-3">
-    {isTokenFound ? (
-      <span className="text-success">Notification permission enabled 👍</span>
-    ) : (
-      <div>
-        <span className="text-warning">Need notification permission ❗</span>
-        <button
-          type="button"
-          className="btn btn-link"
-          onClick={handleRequestPermission}
-        >
-          Enable Notifications
-        </button>
-      </div>
-    )}
-  </div>;
 
   const handleFcmToken = async (
     token: string,
@@ -176,7 +145,9 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
     try {
       console.log("[FCM] Starting FCM token registration for user:", userId);
       const fcmToast = toast.loading("Setting up push notifications...");
+
       const fcmToken = await refreshFcmToken();
+      console.log("[FCM] Retrieved FCM token:", fcmToken);
 
       if (!fcmToken) {
         console.warn("[FCM] No FCM token obtained");
@@ -189,7 +160,12 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
         throw new Error("Notification permission denied");
       }
 
-      console.log("[FCM] Sending FCM token to server:", fcmToken);
+      console.log(
+        "[FCM] Sending FCM token to server:",
+        fcmToken,
+        "API_URL:",
+        API_BASE_URL
+      );
       const response = await axios.put(
         `${API_BASE_URL}/user/${userId}/fcm-token`,
         { fcmToken, address },
@@ -219,6 +195,48 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
         "Failed to enable notifications";
       toast.error(errorMessage, { autoClose: 5000 });
       throw error;
+    }
+  };
+
+  const onSubmit: SubmitHandler<SignInFormValues> = async (data) => {
+    setLoading(true);
+    console.log("[USER_LOGIN] Login attempt with:", data);
+
+    try {
+      const response = await loginUser(data);
+      console.log("[USER_LOGIN] Login successful:", response);
+
+      if (response.token) {
+        const userId = response.user._id;
+        const userPoints = response.user.points ?? 0; // Default to 0 if undefined
+
+        dispatch(
+          login({
+            token: response.token,
+            userId,
+            username: response.user.name,
+            userPoints,
+          })
+        );
+
+        toast.success("Login successful!");
+        onClose?.();
+
+        // Store userPoints safely
+        localStorage.setItem(`userPoints_${userId}`, userPoints.toString());
+
+        console.log("[USER_LOGIN] Registering FCM token...");
+        await handleFcmToken(
+          response.token,
+          userId,
+          response.user.address || ""
+        );
+      }
+    } catch (error: any) {
+      console.error("[USER_LOGIN] Login error:", error);
+      toast.error("Login failed! Please check your credentials.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -260,9 +278,18 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
               Notification permission enabled 👍
             </span>
           ) : (
-            <span className="text-warning">
-              Need notification permission ❗
-            </span>
+            <div>
+              <span className="text-warning">
+                Need notification permission ❗
+              </span>
+              <button
+                type="button"
+                className="btn btn-link"
+                onClick={handleRequestPermission}
+              >
+                Enable Notifications
+              </button>
+            </div>
           )}
         </div>
 

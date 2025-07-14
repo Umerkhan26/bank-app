@@ -67,50 +67,78 @@ function App() {
           const registrations =
             await navigator.serviceWorker.getRegistrations();
           console.log("[APP] Existing service workers:", registrations);
+          // Unregister non-FCM service workers
+          for (const registration of registrations) {
+            if (
+              registration.scope !==
+              "http://localhost:5173/firebase-cloud-messaging-push-scope"
+            ) {
+              await registration.unregister();
+              console.log(
+                "[APP] Unregistered unused service worker:",
+                registration.scope
+              );
+            }
+          }
         }
 
         const token = await requestNotificationPermission();
         if (token) {
           console.log("[APP] FCM token obtained:", token);
-          toast.success("✅ Push notifications enabled!");
+          toast.success("✅ Push notifications enabled!", {
+            position: "top-right",
+            autoClose: 5000,
+          });
         } else {
           console.warn("[APP] No FCM token obtained");
-          toast.warn("⚠️ Please enable browser notifications.");
+          toast.warn("⚠️ Please enable browser notifications.", {
+            position: "top-right",
+            autoClose: 5000,
+          });
         }
 
-        onForegroundMessage(async (payload) => {
+        onForegroundMessage((payload) => {
           console.log("[APP] Foreground message received:", payload);
-          try {
-            const permission = await Notification.requestPermission();
-            if (permission === "granted" && payload.notification) {
-              new Notification(
-                payload.notification.title || "New Notification",
-                {
-                  body: payload.notification.body,
-                  icon: "/logo192.png",
-                }
-              );
-            }
+          if (payload.notification) {
+            // Use toast for foreground notifications
             toast.info(
               <div>
                 <strong>
-                  {payload.notification?.title || "New Notification"}
+                  {payload.notification.title || "New Notification"}
                 </strong>
-                <p>{payload.notification?.body || ""}</p>
+                <p>{payload.notification.body || ""}</p>
               </div>,
               {
                 autoClose: 5000,
                 closeOnClick: true,
                 pauseOnHover: true,
+                position: "top-right",
+                toastId: payload.messageId, // Prevent duplicates
               }
             );
-          } catch (error) {
-            console.error("[APP] Error displaying notification:", error);
+
+            // Use Notification API only if permission is granted
+            if (Notification.permission === "granted") {
+              new Notification(
+                payload.notification.title || "New Notification",
+                {
+                  body: payload.notification.body || "",
+                  icon: "/logo192.png",
+                }
+              );
+            } else {
+              console.warn(
+                "[APP] Notification permission not granted, skipping Notification API"
+              );
+            }
           }
         });
       } catch (error) {
         console.error("[APP] Notification setup error:", error);
-        toast.error("❌ Failed to enable push notifications");
+        toast.error("❌ Failed to enable push notifications", {
+          position: "top-right",
+          autoClose: 5000,
+        });
       }
     };
 
@@ -120,7 +148,19 @@ function App() {
   return (
     <Router>
       <AppRoutes />
-      <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        style={{ zIndex: 9999 }} // Ensure toast is visible
+      />
     </Router>
   );
 }
