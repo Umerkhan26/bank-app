@@ -1,4 +1,3 @@
-// Enhanced Firebase Messaging Service Worker
 importScripts(
   "https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"
 );
@@ -63,7 +62,6 @@ self.addEventListener("notificationclick", (event) => {
   if (event.action === "open_app") {
     event.waitUntil(
       clients.matchAll({ type: "window" }).then((windowClients) => {
-        // Check if there's already a window/tab open
         const matchingClient = windowClients.find(
           (client) => client.url === urlToOpen
         );

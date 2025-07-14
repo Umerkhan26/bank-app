@@ -56,7 +56,6 @@ export const requestNotificationPermission = async (): Promise<
       return null;
     }
 
-    // Check existing permission
     if (Notification.permission === "denied") {
       console.warn("[FIREBASE] Notifications are blocked by user");
       return null;
@@ -94,21 +93,29 @@ export const refreshFcmToken = async (): Promise<string | null> => {
   try {
     console.log("[FIREBASE] Refreshing FCM token...");
     const messagingInstance = await messagingPromise;
-    if (!messagingInstance) return null;
+    if (!messagingInstance) {
+      console.warn("[FIREBASE] Messaging not available");
+      return null;
+    }
 
-    // Delete existing token
-    const currentToken = await getToken(messagingInstance);
-    if (currentToken) {
+    try {
       await deleteToken(messagingInstance);
       console.log("[FIREBASE] Previous FCM token deleted");
+    } catch (error) {
+      console.warn("[FIREBASE] No previous token or deletion failed:", error);
     }
 
     const registration = await navigator.serviceWorker.register(
       "/firebase-messaging-sw.js",
       { scope: "/firebase-cloud-messaging-push-scope" }
     );
+    console.log("[FIREBASE] Service worker registered:", registration);
 
     const permission = await Notification.requestPermission();
+    console.log(
+      "[FIREBASE] Notification permission during refresh:",
+      permission
+    );
     if (permission !== "granted") {
       console.warn("[FIREBASE] Notification permission denied during refresh");
       return null;
@@ -134,8 +141,24 @@ export const onForegroundMessage = (
   console.log("[FIREBASE] Setting up foreground message listener");
   messagingPromise.then((messagingInstance) => {
     if (messagingInstance) {
-      onMessage(messagingInstance, (payload) => {
+      onMessage(messagingInstance, async (payload) => {
         console.log("[FIREBASE] Foreground message received:", payload);
+        try {
+          const permission = await Notification.requestPermission();
+          if (permission === "granted" && payload.notification) {
+            new Notification(payload.notification.title || "New Notification", {
+              body: payload.notification.body,
+              icon: "/logo192.png",
+            });
+          } else {
+            console.warn(
+              "[FIREBASE] Notification permission not granted:",
+              permission
+            );
+          }
+        } catch (error) {
+          console.error("[FIREBASE] Error displaying notification:", error);
+        }
         callback(payload);
       });
     }
