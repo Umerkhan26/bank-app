@@ -56,7 +56,13 @@ export const requestNotificationPermission = async (): Promise<
       return null;
     }
 
-    if (Notification.permission === "denied") {
+    const currentPermission = Notification.permission;
+    console.log(
+      "[FIREBASE] Current notification permission:",
+      currentPermission
+    );
+
+    if (currentPermission === "denied") {
       console.warn("[FIREBASE] Notifications are blocked by user");
       return null;
     }
@@ -68,7 +74,10 @@ export const requestNotificationPermission = async (): Promise<
     console.log("[FIREBASE] Service worker registered:", registration);
 
     const permission = await Notification.requestPermission();
-    console.log("[FIREBASE] Notification permission:", permission);
+    console.log(
+      "[FIREBASE] Notification permission after request:",
+      permission
+    );
 
     if (permission !== "granted") {
       console.warn("[FIREBASE] Notification permission denied");

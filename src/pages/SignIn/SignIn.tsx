@@ -138,40 +138,61 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
     }
   };
 
+  // In Login.tsx (user side)
+  const handleRequestPermission = async () => {
+    const token = await requestNotificationPermission();
+    if (token) {
+      setTokenFound(true);
+      toast.success("Notifications enabled!");
+    } else {
+      setTokenFound(false);
+      toast.warn("Please enable notifications in your browser settings");
+    }
+  };
+
+  // Add a button to the form if isTokenFound is false
+  <div className="text-center mb-3">
+    {isTokenFound ? (
+      <span className="text-success">Notification permission enabled 👍</span>
+    ) : (
+      <div>
+        <span className="text-warning">Need notification permission ❗</span>
+        <button
+          type="button"
+          className="btn btn-link"
+          onClick={handleRequestPermission}
+        >
+          Enable Notifications
+        </button>
+      </div>
+    )}
+  </div>;
+
   const handleFcmToken = async (
     token: string,
     userId: string,
-    address?: string
+    address: string
   ) => {
     try {
-      console.log("[ADMIN_LOGIN] Handling FCM token registration...");
+      console.log("[FCM] Starting FCM token registration for user:", userId);
       const fcmToast = toast.loading("Setting up push notifications...");
-
       const fcmToken = await refreshFcmToken();
+
       if (!fcmToken) {
-        console.warn("[ADMIN_LOGIN] No FCM token obtained");
+        console.warn("[FCM] No FCM token obtained");
         toast.update(fcmToast, {
           render: "Notifications permission not granted",
           type: "warning",
           isLoading: false,
           autoClose: 3000,
         });
-        return;
+        throw new Error("Notification permission denied");
       }
 
-      console.log("[ADMIN_LOGIN] Updating FCM token on server...");
-      toast.update(fcmToast, {
-        render: "Registering device for notifications...",
-        type: "info",
-        isLoading: true,
-      });
-
-      const payload = { fcmToken };
-      if (address) payload.address = address;
-
+      console.log("[FCM] Sending FCM token to server:", fcmToken);
       const response = await axios.put(
-        `${API_BASE_URL}/user/${userId}/fcm-token`,
-        payload,
+        `${API_URL}/user/${userId}/fcm-token`,
+        { fcmToken, address },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -180,26 +201,23 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
           timeout: 10000,
         }
       );
+      console.log("[FCM] Server response:", response.data);
 
-      console.log("[ADMIN_LOGIN] FCM token update response:", response.data);
       toast.update(fcmToast, {
         render: "Push notifications enabled!",
         type: "success",
         isLoading: false,
         autoClose: 3000,
       });
+
+      return response.data;
     } catch (error: any) {
-      console.error("[ADMIN_LOGIN] FCM token registration error:", error);
+      console.error("[FCM] Error updating FCM token:", error);
       const errorMessage =
         error.response?.data?.message ||
         error.message ||
         "Failed to enable notifications";
-      toast.update(fcmToast, {
-        render: errorMessage,
-        type: "error",
-        isLoading: false,
-        autoClose: 5000,
-      });
+      toast.error(errorMessage, { autoClose: 5000 });
       throw error;
     }
   };
