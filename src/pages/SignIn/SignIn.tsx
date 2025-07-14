@@ -191,7 +191,7 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
 
       console.log("[FCM] Sending FCM token to server:", fcmToken);
       const response = await axios.put(
-        `${API_URL}/user/${userId}/fcm-token`,
+        `${API_BASE_URL}/user/${userId}/fcm-token`,
         { fcmToken, address },
         {
           headers: {
