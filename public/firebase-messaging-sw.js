@@ -1,3 +1,4 @@
+// Enhanced Firebase Messaging Service Worker
 importScripts(
   "https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"
 );
@@ -15,17 +16,27 @@ const firebaseConfig = {
   measurementId: "G-632GTJBXF2",
 };
 
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
+// Configure notification appearance
+const NOTIFICATION_ICON = "/logo192.png";
+const NOTIFICATION_BADGE = "/badge.png";
+
+// Enhanced background message handler
 messaging.onBackgroundMessage((payload) => {
-  console.log("[SW] Background message:", payload);
+  console.log("[SW] Received background message:", {
+    ...payload,
+    notification: payload.notification,
+    data: payload.data,
+  });
 
   const notificationTitle = payload.notification?.title || "New Notification";
   const notificationOptions = {
-    body: payload.notification?.body || "You have a new message.",
-    icon: "/logo192.png",
-    badge: "/favicon.ico",
+    body: payload.notification?.body || "You have a new message",
+    icon: NOTIFICATION_ICON,
+    badge: NOTIFICATION_BADGE,
     data: payload.data || {},
     vibrate: [200, 100, 200],
     requireInteraction: true,
@@ -35,22 +46,31 @@ messaging.onBackgroundMessage((payload) => {
     ],
   };
 
-  self.registration.showNotification(notificationTitle, notificationOptions);
+  // Show notification
+  return self.registration.showNotification(
+    notificationTitle,
+    notificationOptions
+  );
 });
 
+// Notification click handler
 self.addEventListener("notificationclick", (event) => {
+  console.log("[SW] Notification click:", event.notification);
   event.notification.close();
+
   const urlToOpen = event.notification.data.url || "/";
 
   if (event.action === "open_app") {
     event.waitUntil(
       clients.matchAll({ type: "window" }).then((windowClients) => {
-        for (const client of windowClients) {
-          if (client.url === urlToOpen && "focus" in client) {
-            return client.focus();
-          }
-        }
-        if (clients.openWindow) {
+        // Check if there's already a window/tab open
+        const matchingClient = windowClients.find(
+          (client) => client.url === urlToOpen
+        );
+
+        if (matchingClient) {
+          return matchingClient.focus();
+        } else {
           return clients.openWindow(urlToOpen);
         }
       })
@@ -58,12 +78,25 @@ self.addEventListener("notificationclick", (event) => {
   }
 });
 
+// Service Worker Lifecycle
 self.addEventListener("install", (event) => {
-  self.skipWaiting();
-  console.log("[SW] Installed");
+  console.log("[SW] Installing service worker");
+  event.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener("activate", (event) => {
+  console.log("[SW] Activating service worker");
   event.waitUntil(clients.claim());
-  console.log("[SW] Activated");
 });
+
+// Periodic sync for background updates (optional)
+self.addEventListener("periodicsync", (event) => {
+  if (event.tag === "update-notifications") {
+    console.log("[SW] Periodic sync for notifications");
+    event.waitUntil(handlePeriodicSync());
+  }
+});
+
+async function handlePeriodicSync() {
+  // Implement background sync logic if needed
+}
