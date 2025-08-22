@@ -76,7 +76,7 @@ export const MobileMenu = styled.div<{ isOpen: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
+  width: 80%; // Changed from 100% to 80% for better appearance
   height: 100vh;
   background-color: #ffffff;
   padding: 2rem;
@@ -84,10 +84,26 @@ export const MobileMenu = styled.div<{ isOpen: boolean }>`
   transform: ${({ isOpen }) =>
     isOpen ? "translateX(0)" : "translateX(-100%)"};
   transition: transform 0.3s ease;
+  overflow-y: auto;
 
   @media (max-width: 1024px) {
     display: flex;
   }
+`;
+
+export const MobileMenuHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+`;
+
+export const MobileCloseButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+  font-size: 1.5rem;
 `;
 
 export const MobileMenuOverlay = styled.div<{ isOpen: boolean }>`

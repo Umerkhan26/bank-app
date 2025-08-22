@@ -4,7 +4,6 @@ import PlayStore from "../../assets/playstore.png";
 import {
   BannerContainer,
   BannerContent,
-  BannerTitle,
   DownloadButtons,
   DownloadImage,
   DownloadLink,
@@ -13,9 +12,6 @@ const Banner: React.FC = () => {
   return (
     <BannerContainer>
       <BannerContent>
-        <BannerTitle>
-          Download Banks <br /> Beer Promotion <br /> App
-        </BannerTitle>
         <DownloadButtons>
           <DownloadLink
             href="https://play.google.com/store"

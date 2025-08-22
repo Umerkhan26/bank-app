@@ -13,6 +13,7 @@ interface LoginResponse {
     name: string;
     email: string;
     points: number;
+    address?: string;
   };
 }
 
@@ -89,4 +90,19 @@ export const fetchUserHistory = async (userId: string): Promise<any[]> => {
       error.response?.data?.message || "Failed to fetch user history."
     );
   }
+};
+
+export const getAllBrands = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/getAllBrands`);
+    return response.data.brands;
+  } catch (error) {
+    console.error("Error fetching brands:", error);
+    throw error;
+  }
+};
+
+export const verifyEmailCode = async (code: string) => {
+  const response = await axios.get(`${API_BASE_URL}/verify-email/${code}`);
+  return response.data;
 };

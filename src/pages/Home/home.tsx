@@ -1,3 +1,4 @@
+import BankOffer from "../../components/Bank Offer/BankOffer";
 import Banner from "../../components/Banner/banner";
 import CampaignSteps from "../../components/Campaign Steps/campaignstep";
 import Campaigns from "../../components/Campaign/campaign";
@@ -8,10 +9,11 @@ const Home: React.FC = () => {
   return (
     <>
       <Banner />
-      <CampaignSteps />
+      {/* <CampaignSteps /> */}
       <Campaigns />
-      <UpcomingPromotions />
       <CollectBanksPremium />
+      <UpcomingPromotions />
+      <BankOffer />
     </>
   );
 };

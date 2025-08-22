@@ -98,7 +98,7 @@ const InputContainer = styled.div`
 
 const StyledInput = styled.input`
   width: 100%;
-  padding: 12px 16px; /* Increased left & right padding */
+  padding: 8px 10px; /* Increased left & right padding */
   border: 1px solid #d1d5db;
   border-radius: 0.5rem;
   font-size: 1rem;

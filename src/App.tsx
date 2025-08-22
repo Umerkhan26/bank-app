@@ -34,6 +34,7 @@
 // }
 
 // export default App;import React, { useEffect } from "react";
+
 import { useEffect } from "react";
 import AppRoutes from "./routes/AppRoutes";
 import "bootstrap/dist/css/bootstrap.min.css";

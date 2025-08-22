@@ -89,7 +89,7 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
         if (token) {
           console.log("[USER_LOGIN] FCM token obtained:", token);
           setTokenFound(true);
-          toast.success("Push notifications enabled!");
+          // toast.success("Push notifications enabled!");
         } else {
           console.warn("[USER_LOGIN] No FCM token obtained");
           setTokenFound(false);
@@ -180,7 +180,7 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
       console.log("[FCM] Server response:", response.data);
 
       toast.update(fcmToast, {
-        render: "Push notifications enabled!",
+        // render: "Push notifications enabled!",
         type: "success",
         isLoading: false,
         autoClose: 3000,
@@ -208,7 +208,7 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
 
       if (response.token) {
         const userId = response.user._id;
-        const userPoints = response.user.points ?? 0; // Default to 0 if undefined
+        const userPoints = response.user.points ?? 0;
 
         dispatch(
           login({

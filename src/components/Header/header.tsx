@@ -9,8 +9,12 @@ import jsQR from "jsqr";
 import { scanQRCode } from "../../services/qrcode";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { logout } from "../../redux/slices/auth";
-import logo from "../../assets/bank_al_falah2.webp";
+import {
+  logout,
+  setSelectedBrand,
+  updatePoints,
+} from "../../redux/slices/auth";
+import logo from "../../assets/Png/BANKS CURVED LOGO-09.png";
 
 import {
   NavContainer,
@@ -36,7 +40,10 @@ import {
   QrCodeButton,
   MobileMenuOverlay,
   MobileMenu,
+  MobileMenuHeader,
+  MobileCloseButton,
 } from "./header.styles";
+import { getAllBrands } from "../../services/auth";
 
 interface ScanResult {
   userPoints: number;
@@ -55,8 +62,11 @@ const Header: React.FC = () => {
   const [userPointsState, setUserPointsState] = useState<number>(
     parseInt(localStorage.getItem(`userPoints_${userId}`) || "0", 10)
   );
-
+  const [brands, setBrands] = useState<string[]>([]);
   const dispatch = useDispatch();
+  const selectedBrand = useSelector(
+    (state: RootState) => state.auth.selectedBrand
+  );
   const isLoggedIn = useSelector(
     (state: RootState) => state.auth?.isLoggedIn ?? false
   );
@@ -97,6 +107,18 @@ const Header: React.FC = () => {
     };
     input.click();
   };
+
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        const data = await getAllBrands();
+        setBrands(data);
+      } catch (error) {
+        console.error("Error fetching brands:", error);
+      }
+    };
+    fetchBrands();
+  }, []);
 
   const extractQRCode = async (imageSrc: string): Promise<string | null> => {
     return new Promise((resolve) => {
@@ -150,6 +172,7 @@ const Header: React.FC = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
     dispatch(logout());
+    dispatch(updatePoints(0));
   };
 
   const handleScanSubmit = async () => {
@@ -169,9 +192,15 @@ const Header: React.FC = () => {
     try {
       const result = await scanQRCode(token, qrCodeData);
       setScanResult(result);
+      console.log("qrcode data", result);
 
       alert("QR Code scanned successfully!");
       setIsImageModalOpen(false);
+      const totalPoints = Array.isArray(result.userPoints)
+        ? result.userPoints.reduce((sum, item) => sum + (item.points || 0), 0)
+        : result.userPoints;
+
+      dispatch(updatePoints(totalPoints));
     } catch (error) {
       console.error("Error scanning QR code:", error);
       alert("Failed to scan QR code. Please try again.");
@@ -200,20 +229,18 @@ const Header: React.FC = () => {
         <MobileToggleButton onClick={toggleMobileMenu}>
           <FontAwesomeIcon icon={isMobileMenuOpen ? faTimes : faBars} />
         </MobileToggleButton>
-
         <Link to="/">
           <img
             src={logo}
             alt="BankApp Logo"
             style={{
-              maxHeight: "50px",
+              maxHeight: "55px",
               width: "auto",
               marginLeft: "25px",
               cursor: "pointer",
             }}
           />
         </Link>
-
         <RightActions>
           <StoreButton onClick={handlestoreClick}>Store</StoreButton>
           {!isLoggedIn ? (
@@ -223,6 +250,31 @@ const Header: React.FC = () => {
           )}
           <Button onClick={handleUploadClick}>Upload A Qrcode</Button>
           <PointsDisplay>{userPoints} points</PointsDisplay>
+
+          <select
+            style={{
+              padding: "6px 10px",
+              borderRadius: "6px",
+              border: "1px solid #ccc",
+              marginLeft: "15px",
+              cursor: "pointer",
+            }}
+            value={selectedBrand || ""}
+            onChange={(e) => {
+              const brandId = e.target.value;
+              dispatch(setSelectedBrand(brandId));
+              setSelectedBrand(brandId);
+            }}
+          >
+            <option value="" disabled>
+              Select Brand
+            </option>
+            {brands.map((brand: any, index: number) => (
+              <option key={brand._id || index} value={brand._id}>
+                {brand.brandName}
+              </option>
+            ))}
+          </select>
 
           <NotificationDropdown>
             <NotificationButton>
@@ -267,22 +319,49 @@ const Header: React.FC = () => {
             </DropdownMenu>
           </ProfileDropdown>
         </RightActions>
-
         <MobileMenuOverlay
           isOpen={isMobileMenuOpen}
           onClick={toggleMobileMenu}
         />
+
         <MobileMenu isOpen={isMobileMenuOpen}>
-          <StoreButton onClick={handlestoreClick}>Store</StoreButton>
+          <MobileMenuHeader>
+            <h3>Menu</h3>
+            <MobileCloseButton onClick={toggleMobileMenu}>
+              <FontAwesomeIcon icon={faTimes} />
+            </MobileCloseButton>
+          </MobileMenuHeader>
+
+          <StoreButton
+            onClick={() => {
+              handlestoreClick();
+              toggleMobileMenu();
+            }}
+          >
+            Store
+          </StoreButton>
           {!isLoggedIn ? (
-            <Button onClick={handleLoginClick}>Login</Button>
+            <Button
+              onClick={() => {
+                handleLoginClick();
+                toggleMobileMenu();
+              }}
+            >
+              Login
+            </Button>
           ) : (
             <span>Welcome, {username}!</span>
           )}
-          <Button onClick={handleUploadClick}>Upload A Qrcode</Button>
+          <Button
+            onClick={() => {
+              handleUploadClick();
+              toggleMobileMenu();
+            }}
+          >
+            Upload A Qrcode
+          </Button>
           <PointsDisplay>{userPoints} points</PointsDisplay>
         </MobileMenu>
-
         <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
           {isLogin ? (
             <Login
@@ -296,7 +375,6 @@ const Header: React.FC = () => {
             />
           )}
         </Modal>
-
         <Modal
           isOpen={isImageModalOpen}
           onClose={() => setIsImageModalOpen(false)}

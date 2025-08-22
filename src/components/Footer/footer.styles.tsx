@@ -33,8 +33,8 @@ export const FooterPartnerLogo = styled.div`
   margin-bottom: 2rem;
 
   img {
-    width: 100px;
-    height: 100px;
+    width: 140px;
+    height: 120px;
     object-fit: cover;
   }
 `;

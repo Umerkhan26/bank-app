@@ -8,11 +8,12 @@ import Store from "../pages/Store/store";
 import VerifyEmail from "../pages/Verify Email/verifyemail";
 import ProfileMenu from "../pages/Profile/profile";
 import UserHistory from "../components/User History/userhistory";
-import { RootState } from "../redux/store";
-import { useSelector } from "react-redux";
+import ReceiptPage from "../pages/Collect Bank Detail/ReceiptPage";
+import OfferDetails from "../components/Bank Offer/OfferDetails";
+import BankPremiumsList from "../components/CollectBank/BankPremiumsList";
+import NoPromotion from "../components/Promotion/NoPromotion";
 
 const AppRoutes: React.FC = () => {
-  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
@@ -22,6 +23,10 @@ const AppRoutes: React.FC = () => {
         <Route path="/promotion/:id" element={<PromotionDetail />} />
         <Route path="/store/:storeId" element={<Store />} />
         <Route path="/bank-premium/:id" element={<BankPremiumDetail />} />
+        <Route path="/receipt" element={<ReceiptPage />} />
+        <Route path="/offer-details/:offerId" element={<OfferDetails />} />
+        <Route path="/bank-premiums-list" element={<BankPremiumsList />} />
+        <Route path="/no-promotion" element={<NoPromotion />} />
         {/* <Route path="/register" element={<SignUp />} /> */}
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/store" element={<Store />} />

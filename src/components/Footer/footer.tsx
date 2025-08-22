@@ -1,6 +1,6 @@
 import React from "react";
 import { FaFacebook, FaInstagram, FaTwitter, FaLinkedin } from "react-icons/fa";
-import partnerLogo from "../../assets/bank_al_falah2.webp";
+import partnerLogo from "../../assets/Png/BANKS CURVED LOGO-09.png";
 import {
   FooterContainer,
   Container,

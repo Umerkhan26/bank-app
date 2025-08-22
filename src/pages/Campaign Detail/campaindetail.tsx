@@ -39,6 +39,7 @@ const CampaignDetail: React.FC = () => {
       try {
         if (!id) return;
         const data = await fetchCampaignById(id);
+        console.log("campaignbyid", data);
         setCampaign(data);
       } catch (err: any) {
         setError(err.message || "Failed to load campaign.");
@@ -63,12 +64,24 @@ const CampaignDetail: React.FC = () => {
       }
 
       const response = await redeemCampaign(id!, token);
-      dispatch(updatePoints(response.user.remaining_points));
+
+      console.log("🎉 Redeem success payload:", response);
+
+      dispatch(updatePoints(response.user?.remaining_points ?? 0));
+
       toast.success(response.message || "Campaign redeemed successfully!");
     } catch (err: any) {
+      // 👇 detailed error logging
+      if (err.response) {
+        console.error("❌ Redeem error (API):", err.response.data);
+      } else {
+        console.error("❌ Redeem error (Unexpected):", err.message);
+      }
+
       toast.error(err.response?.data?.message || "Failed to redeem campaign.");
     }
   };
+
   if (loading) return <Loader />;
   if (error) return <ErrorMessage>{error}</ErrorMessage>;
   if (!campaign) return <ErrorMessage>Campaign not found.</ErrorMessage>;

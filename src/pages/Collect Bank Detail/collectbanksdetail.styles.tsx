@@ -9,6 +9,38 @@ export const Container = styled.div`
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 `;
 
+export const RedeemContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+`;
+
+export const QrCodeButton = styled.button`
+  background: black;
+  color: white;
+  padding: 15px 25px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+
+  &:hover {
+    background: #333;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+    padding: 12px 20px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1rem;
+    padding: 10px 15px;
+  }
+`;
+
 export const Title = styled.h2`
   font-size: 2.5rem;
   font-weight: bold;

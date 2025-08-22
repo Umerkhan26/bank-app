@@ -6,16 +6,13 @@ interface Campaign {
   title: string;
   description: string;
   image_url?: string;
-  startDate: string;
-  endDate: string;
+  points_required: number | string;
+  start_date: string;
+  end_date: string;
 }
 
 interface FetchCampaignsResponse {
   campaigns: Campaign[];
-}
-
-interface FetchCampaignByIdResponse {
-  campaign: Campaign;
 }
 
 export const fetchCampaigns = async (): Promise<Campaign[]> => {
@@ -35,11 +32,11 @@ export const fetchCampaigns = async (): Promise<Campaign[]> => {
 // Fetch campaign by ID
 export const fetchCampaignById = async (id: string): Promise<Campaign> => {
   try {
-    const response = await axios.get<FetchCampaignByIdResponse>(
-      `${API_BASE_URL}/getCampaignsById/${id}`
-    );
+    const response = await axios.get(`${API_BASE_URL}/getCampaignsById/${id}`);
     console.log("campaignss id", response.data);
-    return response.data.campaign;
+
+    // FIX: response.data is the campaign itself
+    return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response?.data?.message) {
       throw new Error(error.response.data.message);

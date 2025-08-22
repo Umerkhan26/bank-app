@@ -12,6 +12,14 @@ export const Underline = styled.hr`
   margin: 0 auto 1rem;
 `;
 
+export const Input = styled.input`
+  width: 100%;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 13px;
+`;
+
 export const FormGroup = styled.div`
   margin-bottom: 15px;
   padding: 0 20px;
@@ -27,14 +35,13 @@ export const Label = styled.label`
 
 export const SubmitButton = styled.button`
   background: black;
-  width: 100%;
   color: white;
-  padding: 12px;
+  width: 100%;
+  padding: 6px;
   border: none;
-  border-radius: 5px;
-  font-size: 1rem;
+  border-radius: 4px;
+  font-size: 13px;
   cursor: pointer;
-  transition: 0.3s;
 
   &:hover {
     background: #000;
