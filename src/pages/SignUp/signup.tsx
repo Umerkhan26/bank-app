@@ -221,7 +221,6 @@ import {
   FormGroup,
   Input,
   Label,
-  Message,
   SubmitButton,
   SwitchText,
   Title,

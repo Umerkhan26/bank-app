@@ -246,6 +246,12 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
       <Title>Sign In</Title>
       <Underline />
 
+      {notification.title && (
+        <div className="notification-banner">
+          <strong>{notification.title}</strong>
+          <p>{notification.body}</p>
+        </div>
+      )}
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormGroup>
           <Label>

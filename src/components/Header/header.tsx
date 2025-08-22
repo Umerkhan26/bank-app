@@ -197,7 +197,11 @@ const Header: React.FC = () => {
       alert("QR Code scanned successfully!");
       setIsImageModalOpen(false);
       const totalPoints = Array.isArray(result.userPoints)
-        ? result.userPoints.reduce((sum, item) => sum + (item.points || 0), 0)
+        ? result.userPoints.reduce(
+            (sum: number, item: { points?: number }) =>
+              sum + (item.points || 0),
+            0
+          )
         : result.userPoints;
 
       dispatch(updatePoints(totalPoints));

@@ -96,12 +96,9 @@ import { LoadingContainer, LoadingSpinner } from "../Campaign/campaign.styles";
 import {
   BankOfferCard,
   BankOfferContent,
-  BankOfferDescription,
   BankOfferImage,
-  BankOfferPoints,
   BankOffersContainer,
   BankOffersTitle,
-  BankOfferTitle,
 } from "./bankOffer.styles";
 import { getBankOffersData } from "../../services/bankofferservice";
 

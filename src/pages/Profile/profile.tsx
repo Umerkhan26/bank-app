@@ -197,7 +197,7 @@
 
 // export default ProfileMenu;
 
-import React, { useRef } from "react";
+import { useRef } from "react";
 import img1 from "../../assets/pngegg.png";
 import { Outlet } from "react-router-dom";
 import { MdCameraAlt, MdDashboard } from "react-icons/md";
@@ -392,7 +392,7 @@ export const NavUL = styled.ul`
 `;
 
 const ProfileMenu = () => {
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const profile = {
     firstName: "Debby",
@@ -401,12 +401,6 @@ const ProfileMenu = () => {
     city: "New York",
     country: "USA",
     phonenumber: "+1-541-754-3010",
-  };
-
-  const stats = {
-    posts: 892,
-    followers: "22.5k",
-    following: 150,
   };
 
   const handleIconClick = () => {
