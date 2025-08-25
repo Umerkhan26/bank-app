@@ -7,6 +7,8 @@ interface AuthState {
   username: string | null;
   userPoints?: number;
   selectedBrand: string | null;
+  city?: string | null;
+  country?: string | null;
 }
 
 const initialState: AuthState = {
@@ -16,6 +18,8 @@ const initialState: AuthState = {
   username: localStorage.getItem("username"),
   userPoints: parseInt(localStorage.getItem("userPoints") || "0", 10),
   selectedBrand: null,
+  city: localStorage.getItem("city"),
+  country: localStorage.getItem("country"),
 };
 
 // const authSlice = createSlice({
@@ -86,6 +90,8 @@ const authSlice = createSlice({
         userId: string;
         username: string;
         userPoints: number;
+        city?: string;
+        country?: string;
       }>
     ) {
       console.log("Updating Redux state with:", action.payload);
@@ -103,6 +109,10 @@ const authSlice = createSlice({
         "userPoints",
         (action.payload.userPoints ?? 0).toString()
       );
+      if (action.payload.city)
+        localStorage.setItem("city", action.payload.city);
+      if (action.payload.country)
+        localStorage.setItem("country", action.payload.country);
     },
 
     logout(state) {
@@ -119,6 +129,8 @@ const authSlice = createSlice({
       localStorage.removeItem("username");
       localStorage.removeItem("userPoints"); // ✅ clear points
       localStorage.removeItem("selectedBrand");
+
+      localStorage.clear();
     },
 
     updatePoints: (state, action: PayloadAction<number | undefined>) => {

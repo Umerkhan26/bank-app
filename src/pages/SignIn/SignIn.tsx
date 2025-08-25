@@ -208,7 +208,9 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
 
       if (response.token) {
         const userId = response.user._id;
-        const userPoints = response.user.points ?? 0;
+        const userPoints = Array.isArray(response.user.points)
+          ? response.user.points.reduce((acc, p) => acc + p.points, 0)
+          : 0;
 
         dispatch(
           login({
@@ -280,21 +282,15 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
 
         <div className="text-center mb-3">
           {isTokenFound ? (
-            <span className="text-success">
-              Notification permission enabled 👍
-            </span>
+            <span className="text-success"></span>
           ) : (
             <div>
-              <span className="text-warning">
-                Need notification permission ❗
-              </span>
+              <span className="text-warning"></span>
               <button
                 type="button"
                 className="btn btn-link"
                 onClick={handleRequestPermission}
-              >
-                Enable Notifications
-              </button>
+              ></button>
             </div>
           )}
         </div>

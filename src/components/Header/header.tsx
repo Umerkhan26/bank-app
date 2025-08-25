@@ -44,6 +44,7 @@ import {
   MobileCloseButton,
 } from "./header.styles";
 import { getAllBrands } from "../../services/auth";
+import { toast } from "react-toastify";
 
 interface ScanResult {
   userPoints: number;
@@ -220,9 +221,12 @@ const Header: React.FC = () => {
   }, [scanResult]);
 
   const handlestoreClick = () => {
+    if (!isLoggedIn) {
+      toast.error("You are not logged in");
+      return;
+    }
     navigate("/store");
   };
-
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
@@ -246,83 +250,85 @@ const Header: React.FC = () => {
           />
         </Link>
         <RightActions>
-          <StoreButton onClick={handlestoreClick}>Store</StoreButton>
           {!isLoggedIn ? (
+            // Show only login button when not logged in
             <Button onClick={handleLoginClick}>Login</Button>
           ) : (
-            <span>Welcome, {username}!</span>
-          )}
-          <Button onClick={handleUploadClick}>Upload A Qrcode</Button>
-          <PointsDisplay>{userPoints} points</PointsDisplay>
+            <>
+              <StoreButton onClick={handlestoreClick}>Store</StoreButton>
+              <span>Welcome, {username}!</span>
+              <Button onClick={handleUploadClick}>Upload A Qrcode</Button>
+              <PointsDisplay>{userPoints} points</PointsDisplay>
 
-          <select
-            style={{
-              padding: "6px 10px",
-              borderRadius: "6px",
-              border: "1px solid #ccc",
-              marginLeft: "15px",
-              cursor: "pointer",
-            }}
-            value={selectedBrand || ""}
-            onChange={(e) => {
-              const brandId = e.target.value;
-              dispatch(setSelectedBrand(brandId));
-              setSelectedBrand(brandId);
-            }}
-          >
-            <option value="" disabled>
-              Select Brand
-            </option>
-            {brands.map((brand: any, index: number) => (
-              <option key={brand._id || index} value={brand._id}>
-                {brand.brandName}
-              </option>
-            ))}
-          </select>
-
-          <NotificationDropdown>
-            <NotificationButton>
-              <FontAwesomeIcon icon={faBell} />
-              <NotificationBadge>1</NotificationBadge>
-            </NotificationButton>
-
-            <DropdownMenu>
-              <DropdownItem>
-                Support Team posted a message in Box set (existing design) $40
-                <DropdownItemTime>2 weeks ago</DropdownItemTime>
-              </DropdownItem>
-
-              <DropdownFooter>
-                <DropdownButton>Show all</DropdownButton>
-                <DropdownButton>Mark all as read</DropdownButton>
-              </DropdownFooter>
-            </DropdownMenu>
-          </NotificationDropdown>
-
-          <ProfileDropdown>
-            <ProfileButton>
-              <ProfileImage
-                src="https://www.gravatar.com/avatar/9095632f1181c0f40a37d853f66cfc40?s=100&d=404&r=g"
-                alt="Umar Faiz"
-                onError={(e) => {
-                  e.currentTarget.hidden = true;
-                  e.currentTarget.nextElementSibling?.removeAttribute("hidden");
+              <select
+                style={{
+                  padding: "6px 10px",
+                  borderRadius: "6px",
+                  border: "1px solid #ccc",
+                  marginLeft: "15px",
+                  cursor: "pointer",
                 }}
-              />
-              <ProfileFallback>
-                <span>UF</span>
-              </ProfileFallback>
-            </ProfileButton>
+                value={selectedBrand || ""}
+                onChange={(e) => {
+                  const brandId = e.target.value;
+                  dispatch(setSelectedBrand(brandId));
+                  setSelectedBrand(brandId);
+                }}
+              >
+                <option value="" disabled>
+                  Select Brand
+                </option>
+                {brands.map((brand: any, index: number) => (
+                  <option key={brand._id || index} value={brand._id}>
+                    {brand.brandName}
+                  </option>
+                ))}
+              </select>
 
-            <DropdownMenu>
-              <DropdownItem>
-                <Link to="/profile">Profile</Link>
-              </DropdownItem>
+              <NotificationDropdown>
+                <NotificationButton>
+                  <FontAwesomeIcon icon={faBell} />
+                  <NotificationBadge>1</NotificationBadge>
+                </NotificationButton>
+                <DropdownMenu>
+                  <DropdownItem>
+                    Support Team posted a message...
+                    <DropdownItemTime>2 weeks ago</DropdownItemTime>
+                  </DropdownItem>
+                  <DropdownFooter>
+                    <DropdownButton>Show all</DropdownButton>
+                    <DropdownButton>Mark all as read</DropdownButton>
+                  </DropdownFooter>
+                </DropdownMenu>
+              </NotificationDropdown>
 
-              <DropdownItem onClick={handleLogout}>Sign out</DropdownItem>
-            </DropdownMenu>
-          </ProfileDropdown>
+              <ProfileDropdown>
+                <ProfileButton>
+                  <ProfileImage
+                    src="https://www.gravatar.com/avatar/9095632f1181c0f40a37d853f66cfc40?s=100&d=404&r=g"
+                    alt="Umar Faiz"
+                    onError={(e) => {
+                      e.currentTarget.hidden = true;
+                      e.currentTarget.nextElementSibling?.removeAttribute(
+                        "hidden"
+                      );
+                    }}
+                  />
+                  <ProfileFallback>
+                    <span>UF</span>
+                  </ProfileFallback>
+                </ProfileButton>
+                <DropdownMenu>
+                  <DropdownItem>
+                    <Link to="/profile/user-history">Profile</Link>
+                  </DropdownItem>
+                  <DropdownItem onClick={handleLogout}>Sign out</DropdownItem>
+                </DropdownMenu>
+              </ProfileDropdown>
+            </>
+          )}
         </RightActions>
+
         <MobileMenuOverlay
           isOpen={isMobileMenuOpen}
           onClick={toggleMobileMenu}
