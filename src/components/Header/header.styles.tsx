@@ -135,10 +135,10 @@ export const StoreButton = styled.div`
   }
 `;
 
-export const QrCodeButton = styled.div`
+export const QrCodeButton = styled.button`
   background: black;
   color: white;
-  margin-top: 10px;
+  margin-top: 5px;
   width: 100%;
   padding: 12px 10px;
   border: none;
@@ -146,6 +146,11 @@ export const QrCodeButton = styled.div`
   border-radius: 5px;
   font-size: 1rem;
   cursor: pointer;
+
+  &:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
 `;
 
 export const PointsDisplay = styled.div`
