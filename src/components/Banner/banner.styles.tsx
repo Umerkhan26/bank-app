@@ -178,33 +178,40 @@ import BannerBackground from "../../assets/Png/Banks Web Banners_433 X 254 Scan 
 
 export const BannerContainer = styled.div`
   background-image: url(${BannerBackground});
-  background-size: cover; /* Reverted to cover for web */
-  background-position: center; /* Reverted to center for web */
+  background-size: 100% auto;
+  background-position: center top;
   background-repeat: no-repeat;
   color: #ffffff;
   width: 100%;
-  padding: 6rem 2rem;
-  text-align: left;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  min-height: 490px;
+  min-height: 350px;
+  padding: 2rem 1rem;
+  text-align: left; /* Keep left aligned */
   position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: flex-start; /* Align to start (left) */
+  align-items: flex-end; /* Align items to bottom */
+
+  @media (min-width: 1200px) {
+    background-size: 100% auto;
+    background-position: center top;
+    min-height: 800px;
+    padding: 4rem 2rem;
+    align-items: flex-end; /* Keep at bottom */
+  }
 
   @media (max-width: 768px) {
-    padding: 4rem 1rem;
-    min-height: 400px;
-    justify-content: center;
-    text-align: center;
-    background-size: 100% auto; /* Full width on tablet */
-    background-position: left top;
+    padding: 1.5rem 0.5rem;
+    min-height: 300px;
+    background-size: 100% auto;
+    background-position: center top;
   }
 
   @media (max-width: 480px) {
-    padding: 2rem 1rem;
-    min-height: 300px;
-    background-size: 100% auto; /* Full width on mobile */
-    background-position: left top;
+    padding: 1rem 0.5rem;
+    min-height: 250px;
+    background-size: 100% auto;
+    background-position: center top;
   }
 `;
 
@@ -213,10 +220,26 @@ export const BannerContent = styled.div`
   margin: 0;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: flex-start; /* Align to start (left) */
+  justify-content: flex-end; /* Align to bottom */
+  height: 100%;
+  padding-bottom: 2rem;
+  padding-left: 2rem; /* Add left padding */
+
+  @media (min-width: 1200px) {
+    padding-bottom: 4rem;
+    padding-left: 4rem;
+    margin-top: 40%; /* Adjust this value to position below text */
+  }
 
   @media (max-width: 768px) {
-    align-items: center;
+    padding-bottom: 1.5rem;
+    padding-left: 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    padding-bottom: 1rem;
+    padding-left: 1rem;
   }
 `;
 
@@ -224,19 +247,20 @@ export const DownloadButtons = styled.div`
   display: flex;
   gap: 1.5rem;
   align-items: center;
-  margin-top: auto;
-  position: absolute;
-  bottom: 0.6rem;
+  justify-content: flex-start; /* Align buttons to start (left) */
+
+  @media (max-width: 1200px) and (min-width: 769px) {
+    gap: 1rem;
+  }
 
   @media (max-width: 768px) {
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start; /* Keep left aligned on mobile */
     gap: 1rem;
-    bottom: 11rem;
   }
 
   @media (max-width: 480px) {
-    bottom: 10rem;
+    gap: 0.8rem;
   }
 `;
 
@@ -253,6 +277,10 @@ export const DownloadImage = styled.img`
   width: 180px;
   height: auto;
   border-radius: 0.5rem;
+
+  @media (min-width: 1200px) {
+    width: 200px;
+  }
 
   @media (max-width: 768px) {
     width: 150px;
