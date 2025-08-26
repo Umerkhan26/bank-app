@@ -139,7 +139,7 @@ const Header: React.FC = () => {
         const imageData = context.getImageData(0, 0, image.width, image.height);
         const code = jsQR(imageData.data, image.width, image.height);
         if (code) {
-          const qrCode = code.data.split("/").pop() || null;
+          const qrCode = code.data.trim() || null;
           resolve(qrCode);
         } else {
           resolve(null);
