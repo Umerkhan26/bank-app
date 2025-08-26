@@ -138,6 +138,8 @@ import {
   PremiumPoints,
   PremiumTitle,
   PremiumDescription,
+  HeaderContainer,
+  ViewMoreButton,
 } from "./collectbank.styles";
 import { LoadingContainer, LoadingSpinner } from "../Campaign/campaign.styles";
 
@@ -199,29 +201,12 @@ const CollectBanksPremium: React.FC = () => {
 
   return (
     <PremiumContainer>
-      <Title>Collect Banks Premium</Title>
+      <HeaderContainer>
+        <Title>Collect Banks Premium</Title>
+        <ViewMoreButton onClick={handleViewMore}>View More</ViewMoreButton>
+      </HeaderContainer>
 
       <PremiumListContainer>
-        <div
-          style={{
-            gridColumn: "span 3",
-            textAlign: "right",
-          }}
-        >
-          <button
-            onClick={handleViewMore}
-            style={{
-              padding: "10px 20px",
-              backgroundColor: "black",
-              color: "#fff",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-            }}
-          >
-            View More
-          </button>
-        </div>
         {premiumData.slice(0, 3).map((premium) => (
           <PremiumCard key={premium._id}>
             <PremiumImageBox>

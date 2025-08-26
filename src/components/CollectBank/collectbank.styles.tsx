@@ -1,10 +1,83 @@
 import styled from "styled-components";
-import Slider from "react-slick";
 
 export const PremiumContainer = styled.div`
-  padding: 2rem 2rem;
+  padding: 1.5rem 1rem;
   background-color: #f8f9fa;
   margin-bottom: 30px;
+
+  @media (max-width: 768px) {
+    padding: 1rem 0.5rem;
+  }
+`;
+
+export const HeaderContainer = styled.div`
+  display: flex;
+  justify-content: center; /* Center content on large screens */
+  align-items: center;
+  margin-bottom: 2rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative; /* For absolute positioning of button */
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    justify-content: center; /* Center on mobile too */
+  }
+`;
+
+export const PremiumPoints = styled.div`
+  font-size: 1.25rem;
+  color: #ef4444;
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+  text-align: left;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+`;
+
+export const Title = styled.h3`
+  font-size: 2.5rem;
+  color: black;
+  margin-bottom: 30px;
+  text-align: center;
+  font-weight: bold;
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
+`;
+
+export const PremiumTitle = styled.h3`
+  font-size: 1.25rem;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  text-align: left;
+
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+    margin-bottom: 0.4rem;
+  }
+`;
+
+export const PremiumDescription = styled.p`
+  font-size: 1rem;
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+  font-weight: 400;
+  text-align: left;
+  line-height: 1.4;
+
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
 `;
 
 export const PremiumListContainer = styled.div`
@@ -16,109 +89,126 @@ export const PremiumListContainer = styled.div`
 
   @media (max-width: 1024px) {
     grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
   }
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
-  }
-`;
-
-export const StyledSlider = styled(Slider)`
-  .slick-slide {
-    padding: 0 10px;
-  }
-
-  .slick-dots {
-    bottom: -30px;
-
-    li button:before {
-      color: #1e40af;
-    }
-
-    li.slick-active button:before {
-      color: #1e40af;
-    }
+    gap: 16px;
+    padding: 0 0.5rem;
   }
 `;
 
 export const PremiumCard = styled.div`
   background-color: #ffffff;
-  border-radius: 1rem;
+  border-radius: 0.75rem;
   overflow: hidden;
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  width: 340px;
-  max-width: 100%;
-  margin: 0 auto 10px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
   @media (max-width: 768px) {
-    width: 100%; /* full width on mobile */
+    flex-direction: row;
+    min-height: auto;
+    border-radius: 0.5rem;
+  }
+`;
+
+export const PremiumImageBox = styled.div`
+  height: 200px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+
+  @media (max-width: 768px) {
+    height: auto;
+    width: 120px;
+    min-width: 120px;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 0.5rem;
+    padding: 8px;
   }
 `;
 
 export const PremiumImage = styled.img`
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-top-left-radius: 1rem;
-  border-top-right-radius: 1rem;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+
+  @media (max-width: 768px) {
+    max-height: 80px;
+  }
 `;
 
 export const PremiumContent = styled.div`
-  padding: 1.5rem;
-`;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
 
-export const PremiumPoints = styled.div`
-  font-size: 1.25rem;
-  color: #ef4444;
-  font-weight: bold;
-  margin-bottom: 0.75rem;
-  text-align: left;
-`;
-
-export const Title = styled.h3`
-  font-size: 2.5rem;
-  color: black;
-  margin-bottom: 2rem;
-  text-align: center;
-  font-weight: bold;
-`;
-
-export const PremiumTitle = styled.h3`
-  font-size: 1.5rem;
-  color: #374151;
-  margin-bottom: 0.7rem;
-  font-weight: 600;
-  text-align: left;
-`;
-
-export const PremiumDescription = styled.h3`
-  font-size: 1.1rem;
-  color: #374151;
-  margin-bottom: 1.5rem;
-  font-weight: 500;
-  text-align: left;
+  @media (max-width: 768px) {
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
 `;
 
 export const ApplyButton = styled.button`
   background-color: black;
   color: #ffffff;
   border: none;
-  border-radius: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  font-weight: bold;
+  border-radius: 0.375rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s ease;
   width: 100%;
+  margin-top: auto;
 
   &:hover {
-    background-color: #000;
+    background-color: #333;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.25rem;
+  }
+`;
+
+export const ViewMoreButton = styled.button`
+  padding: 0.75rem 1.5rem;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  cursor: pointer;
+  position: absolute; /* Position absolutely on large screens */
+  right: 0; /* Place on the right side */
+
+  &:hover {
+    background-color: #333;
+  }
+
+  @media (max-width: 768px) {
+    position: static; /* Back to normal flow on mobile */
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
   }
 `;
