@@ -204,7 +204,6 @@ import { useNavigate } from "react-router-dom";
 import {
   CampaignCard,
   CampaignContent,
-  CampaignDescription,
   CampaignImage,
   CampaignPoints,
   CampaignsContainer,
@@ -271,7 +270,7 @@ const Campaigns: React.FC = () => {
             {campaign.points_required || campaign.points} Points
           </CampaignPoints>
           <CampaignTitle>{campaign.title}</CampaignTitle>
-          <CampaignDescription>{campaign.description}</CampaignDescription>
+          {/* <CampaignDescription>{campaign.description}</CampaignDescription> */}
         </CampaignContent>
       </CampaignCard>
     </CampaignsContainer>

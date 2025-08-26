@@ -195,7 +195,7 @@ const Header: React.FC = () => {
       setScanResult(result);
       console.log("qrcode data", result);
 
-      alert("QR Code scanned successfully!");
+      toast.success("QR Code scanned successfully!");
       setIsImageModalOpen(false);
       const totalPoints = Array.isArray(result.userPoints)
         ? result.userPoints.reduce(
@@ -208,7 +208,7 @@ const Header: React.FC = () => {
       dispatch(updatePoints(totalPoints));
     } catch (error) {
       console.error("Error scanning QR code:", error);
-      alert("Failed to scan QR code. Please try again.");
+      toast.error("Failed to scan QR code. Please try again.");
     }
   };
 

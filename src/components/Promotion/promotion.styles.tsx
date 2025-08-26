@@ -180,7 +180,7 @@ export const PromotionImage = styled.img`
 `;
 
 export const PromotionContent = styled.div`
-  padding: 1.5rem;
+  // padding: 1.5rem;
 `;
 
 export const PromotionPoints = styled.div`

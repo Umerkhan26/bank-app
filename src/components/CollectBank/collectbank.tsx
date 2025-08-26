@@ -127,14 +127,16 @@ import React, { useEffect, useState } from "react";
 import { fetchBankPremiums } from "../../services/bank";
 import { useNavigate } from "react-router-dom";
 import {
-  PremiumContainer,
   PremiumCard,
   PremiumImage,
   PremiumContent,
-  PremiumPoints,
-  Title,
-  PremiumTitle,
   ApplyButton,
+  PremiumListContainer,
+  PremiumImageBox,
+  PremiumContainer,
+  Title,
+  PremiumPoints,
+  PremiumTitle,
   PremiumDescription,
 } from "./collectbank.styles";
 import { LoadingContainer, LoadingSpinner } from "../Campaign/campaign.styles";
@@ -199,29 +201,33 @@ const CollectBanksPremium: React.FC = () => {
     <PremiumContainer>
       <Title>Collect Banks Premium</Title>
 
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
-        <button
-          onClick={handleViewMore}
+      <PremiumListContainer>
+        <div
           style={{
-            marginTop: "10px",
-            marginBottom: "10px",
-            padding: "10px 20px",
-            backgroundColor: "black",
-            marginRight: "25px",
-            color: "#fff",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
+            gridColumn: "span 3",
+            textAlign: "right",
           }}
         >
-          View More
-        </button>
-      </div>
-
-      <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
+          <button
+            onClick={handleViewMore}
+            style={{
+              padding: "10px 20px",
+              backgroundColor: "black",
+              color: "#fff",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+            }}
+          >
+            View More
+          </button>
+        </div>
         {premiumData.slice(0, 3).map((premium) => (
           <PremiumCard key={premium._id}>
-            <PremiumImage src={premium.image_url} alt={premium.title} />
+            <PremiumImageBox>
+              <PremiumImage src={premium.image_url} alt={premium.title} />
+            </PremiumImageBox>
+
             <PremiumContent>
               <PremiumPoints>{premium.points_required} points</PremiumPoints>
               <PremiumTitle>{premium.title}</PremiumTitle>
@@ -234,7 +240,7 @@ const CollectBanksPremium: React.FC = () => {
             </PremiumContent>
           </PremiumCard>
         ))}
-      </div>
+      </PremiumListContainer>
     </PremiumContainer>
   );
 };

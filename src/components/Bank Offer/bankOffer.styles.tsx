@@ -63,7 +63,7 @@ export const BankOfferImage = styled.img`
 `;
 
 export const BankOfferContent = styled.div`
-  padding: 1.5rem;
+  // padding: 1.5rem;
 `;
 
 export const BankOfferPoints = styled.div`
