@@ -2936,6 +2936,7 @@ const Header: React.FC = () => {
     "Preparing image for scanning..."
   );
   const [isScanning, setIsScanning] = useState(false);
+  const [isDetecting, setIsDetecting] = useState(false); // Track detection state
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -3012,6 +3013,7 @@ const Header: React.FC = () => {
       return;
     }
     setIsScanning(true);
+    setIsDetecting(false); // Reset detection state
     setupCamera();
   };
 
@@ -3029,6 +3031,10 @@ const Header: React.FC = () => {
         video: {
           facingMode: backCamera ? { exact: "environment" } : "environment",
           deviceId: backCamera ? { exact: backCamera.deviceId } : undefined,
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+          focusMode: "continuous", // Attempt continuous autofocus
+          frameRate: { ideal: 30 }, // Match mobile scanner frame rate
         },
       };
 
@@ -3055,49 +3061,64 @@ const Header: React.FC = () => {
         canvas.width = videoRef.current.videoWidth;
         canvas.height = videoRef.current.videoHeight;
         context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-        const imageData = context.getImageData(
-          0,
-          0,
-          canvas.width,
-          canvas.height
-        );
-        console.log("first", imageData);
 
-        // Apply preprocessing to improve detection
+        // Draw focus box
+        const boxSize = Math.min(canvas.width, canvas.height) * 0.6;
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        context.strokeStyle = isDetecting
+          ? "rgba(0, 255, 0, 0.8)"
+          : "rgba(255, 0, 0, 0.8)"; // Green when detecting, red otherwise
+        context.lineWidth = 4;
+        context.strokeRect(
+          centerX - boxSize / 2,
+          centerY - boxSize / 2,
+          boxSize,
+          boxSize
+        );
+
+        // Get image data only within the focus box
+        const imageData = context.getImageData(
+          centerX - boxSize / 2,
+          centerY - boxSize / 2,
+          boxSize,
+          boxSize
+        );
+        console.log("Scanning within focus box", imageData);
+
+        // Apply preprocessing and detect QR code
         let processedImageData = applyContrastEnhancement(
           context,
-          canvas.width,
-          canvas.height
+          boxSize,
+          boxSize
         );
-        let code = jsQR(processedImageData.data, canvas.width, canvas.height);
+        let code = jsQR(processedImageData.data, boxSize, boxSize);
 
         if (!code) {
-          processedImageData = applyBinarization(
-            context,
-            canvas.width,
-            canvas.height
-          );
-          code = jsQR(processedImageData.data, canvas.width, canvas.height);
+          processedImageData = applyBinarization(context, boxSize, boxSize);
+          code = jsQR(processedImageData.data, boxSize, boxSize);
         }
 
         if (!code) {
-          processedImageData = applySharpening(
-            context,
-            canvas.width,
-            canvas.height
-          );
-          code = jsQR(processedImageData.data, canvas.width, canvas.height);
+          processedImageData = applySharpening(context, boxSize, boxSize);
+          code = jsQR(processedImageData.data, boxSize, boxSize);
         }
 
         if (code) {
           const extracted = code.data.split("/").pop()?.trim() || null;
           if (extracted) {
             setQrCodeData(extracted);
+            setIsDetecting(true); // Highlight detection
             setIsImageModalOpen(true);
-            stopCamera();
+            setTimeout(() => {
+              setIsDetecting(false); // Reset after detection
+              stopCamera();
+            }, 500); // Brief highlight
           } else {
             toast.error("Invalid QR code data extracted.");
           }
+        } else {
+          setIsDetecting(false); // Reset if no code
         }
       }
     }
@@ -3669,8 +3690,20 @@ const Header: React.FC = () => {
             alignItems: "center",
           }}
         >
-          <video ref={videoRef} style={{ width: "100%", height: "100%" }} />
-          <canvas ref={canvasRef} style={{ display: "none" }} />
+          <video
+            ref={videoRef}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+          <canvas
+            ref={canvasRef}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+            }}
+          />
           <button
             onClick={stopCamera}
             style={{
