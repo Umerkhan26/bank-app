@@ -55,6 +55,7 @@ import {
 import { getAllBrands } from "../../services/auth";
 import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";
+import QrScanner from "../scanning/QrScanner";
 
 interface ScanResult {
   userPoints: number;
@@ -77,6 +78,7 @@ const Header: React.FC = () => {
   const [isScanning, setIsScanning] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [qrValue, setQrValue] = useState("");
 
   const [userPointsState, setUserPointsState] = useState<number>(
     parseInt(localStorage.getItem(`userPoints_${userId}`) || "0", 10)
@@ -796,7 +798,21 @@ const tick = () => {
           <Logo src={logo} alt="BankApp Logo" />
         </Link>
         <ScanButton onClick={handleScanClick}>
-          <FontAwesomeIcon icon={faCamera} />
+          {/* <FontAwesomeIcon icon={faCamera} /> */}
+          <QrScanner
+        onScan={(data) => {
+          console.log("QR Scanned:", data);
+          setQrValue(data);
+        }}
+        onError={(err:any) => console.error("QR Error:", err)}
+      />
+
+      {qrValue && (
+        <div className="mt-4 p-2 bg-green-100 text-green-800 rounded">
+          ✅ QR Code Extracted: {qrValue}
+        </div>
+      )}
+  
         </ScanButton>
         <RightActions>
           {!isLoggedIn ? (
