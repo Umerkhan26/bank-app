@@ -1966,8 +1966,16 @@ const Header: React.FC = () => {
   };
 
   const handleScanClick = () => {
-    if (!isLoggedIn) {
-      setIsModalOpen(true);
+    // if (!isLoggedIn) {
+    //   setIsModalOpen(true);
+    //   return;
+    // }
+
+    const isMobile = window.innerWidth <= 768; // adjust breakpoint if needed
+
+    if (!isLoggedIn && !isMobile) {
+      // On desktop → still need login
+      handleLoginClick();
       return;
     }
     setIsScanning(true);
