@@ -1054,8 +1054,15 @@ const Header: React.FC = () => {
       image.crossOrigin = "Anonymous";
       image.src = imageSrc;
 
+      // Helper to extract last segment of URL or code
+      const getLastSegment = (
+        data: string | undefined | null
+      ): string | null => {
+        if (!data) return null;
+        return data.trim().split("/").pop() || null;
+      };
+
       image.onload = () => {
-        // Validate image dimensions
         if (image.width <= 0 || image.height <= 0) {
           console.error(
             `Invalid image dimensions: width=${image.width}, height=${image.height}`
@@ -1088,7 +1095,6 @@ const Header: React.FC = () => {
           return resolve(null);
         }
 
-        // Validate ImageData
         if (
           !imageData.data ||
           imageData.data.length !== image.width * image.height * 4
@@ -1104,11 +1110,7 @@ const Header: React.FC = () => {
         // Strategy 1: Try the original image first
         try {
           const code = jsQR(imageData.data, image.width, image.height);
-          if (code) {
-            let qrCode = code.data.split("/").pop() || null;
-            if (qrCode) qrCode = qrCode.trim();
-            return resolve(qrCode);
-          }
+          if (code) return resolve(getLastSegment(code.data));
         } catch (e) {
           console.error("jsQR error on original image:", e);
         }
@@ -1128,7 +1130,6 @@ const Header: React.FC = () => {
               image.width,
               image.height
             );
-            // Validate processed ImageData
             if (
               !processedImageData.data ||
               processedImageData.data.length !== image.width * image.height * 4
@@ -1141,18 +1142,14 @@ const Header: React.FC = () => {
               image.width,
               processedImageData.height
             );
-            if (code) {
-              let qrCode = code.data.split("/").pop() || null;
-              if (qrCode) qrCode = qrCode.trim();
-              return resolve(qrCode);
-            }
+            if (code) return resolve(getLastSegment(code.data));
           } catch (e) {
             console.error(`Error in preprocessing method ${method.name}:`, e);
           }
         }
 
-        // Strategy 3: Try multiple regions of interest with different sizes
-        const roiSizes = [0.3, 0.5, 0.7]; // Different ROI sizes
+        // Strategy 3: Try multiple regions of interest
+        const roiSizes = [0.3, 0.5, 0.7];
         for (const size of roiSizes) {
           try {
             const qrCode = tryMultipleROIs(
@@ -1161,7 +1158,7 @@ const Header: React.FC = () => {
               image.height,
               size
             );
-            if (qrCode) return resolve(qrCode);
+            if (qrCode) return resolve(getLastSegment(qrCode));
           } catch (e) {
             console.error(`Error in tryMultipleROIs with size ${size}:`, e);
           }
@@ -1177,14 +1174,12 @@ const Header: React.FC = () => {
               image.height,
               scale
             );
-            if (qrCode) return resolve(qrCode);
+            if (qrCode) return resolve(getLastSegment(qrCode));
           } catch (e) {
             console.error(`Error in tryScaling with scale ${scale}:`, e);
           }
         }
 
-        // Strategy 5: As a last resort, try external QR code detection API
-        // Note: This would require a backend service
         console.warn("All QR code detection strategies failed");
         resolve(null);
       };
@@ -1198,7 +1193,6 @@ const Header: React.FC = () => {
     });
   };
 
-  // Preprocessing functions
   const applyContrastEnhancement = (
     context: CanvasRenderingContext2D,
     width: number,
