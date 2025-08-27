@@ -144,28 +144,28 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
   ) => {
     try {
       console.log("[FCM] Starting FCM token registration for user:", userId);
-      const fcmToast = toast.loading("Setting up push notifications...");
+      // const fcmToast = toast.loading("Setting up push notifications...");
 
       const fcmToken = await refreshFcmToken();
       console.log("[FCM] Retrieved FCM token:", fcmToken);
 
-      if (!fcmToken) {
-        console.warn("[FCM] No FCM token obtained");
-        toast.update(fcmToast, {
-          render: "Notifications permission not granted",
-          type: "warning",
-          isLoading: false,
-          autoClose: 3000,
-        });
-        throw new Error("Notification permission denied");
-      }
+      // if (!fcmToken) {
+      //   console.warn("[FCM] No FCM token obtained");
+      //   toast.update(fcmToast, {
+      //     render: "Notifications permission not granted",
+      //     type: "warning",
+      //     isLoading: false,
+      //     autoClose: 3000,
+      //   });
+      //   throw new Error("Notification permission denied");
+      // }
 
-      console.log(
-        "[FCM] Sending FCM token to server:",
-        fcmToken,
-        "API_URL:",
-        API_BASE_URL
-      );
+      // console.log(
+      //   "[FCM] Sending FCM token to server:",
+      //   fcmToken,
+      //   "API_URL:",
+      //   API_BASE_URL
+      // );
       const response = await axios.put(
         `${API_BASE_URL}/user/${userId}/fcm-token`,
         { fcmToken, address },
@@ -179,21 +179,21 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
       );
       console.log("[FCM] Server response:", response.data);
 
-      toast.update(fcmToast, {
-        // render: "Push notifications enabled!",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      // toast.update(fcmToast, {
+      //   // render: "Push notifications enabled!",
+      //   type: "success",
+      //   isLoading: false,
+      //   autoClose: 3000,
+      // });
 
       return response.data;
     } catch (error: any) {
       console.error("[FCM] Error updating FCM token:", error);
-      const errorMessage =
-        error.response?.data?.message ||
-        error.message ||
-        "Failed to enable notifications";
-      toast.error(errorMessage, { autoClose: 5000 });
+      // const errorMessage =
+      //   error.response?.data?.message ||
+      //   error.message ||
+      //   "Failed to enable notifications";
+      // toast.error(errorMessage, { autoClose: 5000 });
       throw error;
     }
   };

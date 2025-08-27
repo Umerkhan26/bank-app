@@ -39,7 +39,7 @@ import { useEffect } from "react";
 import AppRoutes from "./routes/AppRoutes";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import { BrowserRouter as Router } from "react-router-dom";
 import axios from "axios";
 import {
@@ -63,11 +63,11 @@ function App() {
   useEffect(() => {
     const setupNotifications = async () => {
       try {
-        console.log("[APP] Setting up notifications...");
+        // console.log("[APP] Setting up notifications...");
         if ("serviceWorker" in navigator) {
           const registrations =
             await navigator.serviceWorker.getRegistrations();
-          console.log("[APP] Existing service workers:", registrations);
+          // console.log("[APP] Existing service workers:", registrations);
           // Unregister non-FCM service workers
           for (const registration of registrations) {
             if (
@@ -75,48 +75,48 @@ function App() {
               "http://localhost:5173/firebase-cloud-messaging-push-scope"
             ) {
               await registration.unregister();
-              console.log(
-                "[APP] Unregistered unused service worker:",
-                registration.scope
-              );
+              // console.log(
+              //   "[APP] Unregistered unused service worker:",
+              //   registration.scope
+              // );
             }
           }
         }
 
         const token = await requestNotificationPermission();
         if (token) {
-          console.log("[APP] FCM token obtained:", token);
-          toast.success("✅ Push notifications enabled!", {
-            position: "top-right",
-            autoClose: 5000,
-          });
+          // console.log("[APP] FCM token obtained:", token);
+          // toast.success("✅ Push notifications enabled!", {
+          //   position: "top-right",
+          //   autoClose: 5000,
+          // });
         } else {
-          console.warn("[APP] No FCM token obtained");
-          toast.warn("⚠️ Please enable browser notifications.", {
-            position: "top-right",
-            autoClose: 5000,
-          });
+          // console.warn("[APP] No FCM token obtained");
+          // toast.warn("⚠️ Please enable browser notifications.", {
+          //   position: "top-right",
+          //   autoClose: 5000,
+          // });
         }
 
         onForegroundMessage((payload) => {
-          console.log("[APP] Foreground message received:", payload);
+          // console.log("[APP] Foreground message received:", payload);
           if (payload.notification) {
             // Use toast for foreground notifications
-            toast.info(
-              <div>
-                <strong>
-                  {payload.notification.title || "New Notification"}
-                </strong>
-                <p>{payload.notification.body || ""}</p>
-              </div>,
-              {
-                autoClose: 5000,
-                closeOnClick: true,
-                pauseOnHover: true,
-                position: "top-right",
-                toastId: payload.messageId, // Prevent duplicates
-              }
-            );
+            // toast.info(
+            //   <div>
+            //     <strong>
+            //       {payload.notification.title || "New Notification"}
+            //     </strong>
+            //     <p>{payload.notification.body || ""}</p>
+            //   </div>,
+            //   {
+            //     autoClose: 5000,
+            //     closeOnClick: true,
+            //     pauseOnHover: true,
+            //     position: "top-right",
+            //     toastId: payload.messageId, // Prevent duplicates
+            //   }
+            // );
 
             // Use Notification API only if permission is granted
             if (Notification.permission === "granted") {
@@ -136,10 +136,10 @@ function App() {
         });
       } catch (error) {
         console.error("[APP] Notification setup error:", error);
-        toast.error("❌ Failed to enable push notifications", {
-          position: "top-right",
-          autoClose: 5000,
-        });
+        // toast.error("❌ Failed to enable push notifications", {
+        //   position: "top-right",
+        //   autoClose: 5000,
+        // });
       }
     };
 
@@ -160,7 +160,7 @@ function App() {
         draggable
         pauseOnHover
         theme="colored"
-        style={{ zIndex: 9999 }} // Ensure toast is visible
+        style={{ zIndex: 9999 }}
       />
     </Router>
   );

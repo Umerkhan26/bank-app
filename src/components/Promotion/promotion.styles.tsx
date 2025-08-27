@@ -111,8 +111,12 @@ import styled from "styled-components";
 import Slider from "react-slick";
 
 export const PromotionsContainer = styled.div`
-  padding: 2rem 2rem;
+  padding: 1.5rem 2rem;
   background-color: #f8f9fa;
+
+  @media (max-width: 768px) {
+    padding: 0.6rem 1rem;
+  }
 `;
 
 export const Title = styled.h2`
@@ -121,6 +125,11 @@ export const Title = styled.h2`
   margin-bottom: 2rem;
   text-align: center;
   font-weight: bold;
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
 `;
 
 export const PromotionsTitle = styled.h2`
@@ -129,6 +138,11 @@ export const PromotionsTitle = styled.h2`
   margin-bottom: 2rem;
   text-align: center;
   font-weight: bold;
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
 `;
 
 export const StyledSlider = styled(Slider)`

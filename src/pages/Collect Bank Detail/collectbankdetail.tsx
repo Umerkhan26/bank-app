@@ -120,8 +120,126 @@
 
 // export default BankPremiumDetail;
 
+// import React, { useEffect, useState } from "react";
+// import { useParams, useNavigate } from "react-router-dom"; // Add useNavigate
+// import { fetchBankPremiumById, redeemBankPremium } from "../../services/bank";
+// import { toast } from "react-toastify";
+// import { useDispatch, useSelector } from "react-redux";
+// import { RootState } from "../../redux/store";
+// import { updatePoints } from "../../redux/slices/auth";
+// import {
+//   BankPremiumInfo,
+//   Container,
+//   DateRange,
+//   Description,
+//   ErrorMessage,
+//   Image,
+//   ImageContainer,
+//   Points,
+//   Title,
+//   RedeemContainer,
+//   QrCodeButton,
+// } from "./collectbanksdetail.styles";
+// import Login from "../SignIn/SignIn";
+// import Modal from "../../components/Modal/modal";
+// import Loader from "../../components/Loader/loader";
+
+// const BankPremiumDetail: React.FC = () => {
+//   const { id } = useParams();
+//   const navigate = useNavigate(); // Initialize navigate
+//   const dispatch = useDispatch();
+//   const [bankPremium, setBankPremium] = useState<any>(null);
+//   const [loading, setLoading] = useState(false);
+//   const [isModalOpen, setIsModalOpen] = useState(false);
+//   const [error, setError] = useState<string | null>(null);
+//   const userPoints = useSelector((state: RootState) => state.auth.userPoints);
+
+//   useEffect(() => {
+//     const getBankPremium = async () => {
+//       setLoading(true);
+//       try {
+//         if (!id) return;
+//         const data = await fetchBankPremiumById(id);
+//         setBankPremium(data);
+//       } catch (err: any) {
+//         setError(err.message || "Failed to load bank premium.");
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     getBankPremium();
+//   }, [id]);
+
+//   const handleRedeem = async () => {
+//     if (!localStorage.getItem("token")) {
+//       setIsModalOpen(true);
+//       return;
+//     }
+
+//     try {
+//       console.log("🔄 Starting redeem process for premiumId:", id);
+//       const response = await redeemBankPremium(id!);
+//       console.log("🎉 Redeem success payload:", response);
+
+//       dispatch(updatePoints(response.user?.remaining_brand_points ?? 0));
+//       toast.success(`✅ Redeemed successfully! Code: ${response.receipt.code}`);
+
+//       // Navigate to receipt page with response data
+//       navigate("/receipt", { state: { redemptionData: response } });
+//     } catch (err: any) {
+//       console.error("⚠️ Redeem failed:", err);
+//       toast.error(
+//         err.response?.data?.message ||
+//           err.message ||
+//           "❌ Failed to redeem premium."
+//       );
+//     }
+//   };
+
+//   if (loading) return <Loader />;
+//   if (error) return <ErrorMessage>{error}</ErrorMessage>;
+//   if (!bankPremium) return <ErrorMessage>Bank premium not found.</ErrorMessage>;
+
+//   return (
+//     <Container>
+//       <Title>{bankPremium.title || "No Title Available"}</Title>
+//       <ImageContainer>
+//         <Image
+//           src={bankPremium.image_url || "/default-image.jpg"}
+//           alt={bankPremium.title || "Bank Premium"}
+//         />
+//       </ImageContainer>
+
+//       <Description>
+//         {bankPremium.description || "No description available."}
+//       </Description>
+
+//       <BankPremiumInfo>
+//         <Points>🔥 Points Required: {bankPremium.points_required || 0}</Points>
+//         <DateRange>
+//           📅 Start Date: {new Date(bankPremium.start_date).toLocaleDateString()}
+//         </DateRange>
+//         <DateRange>
+//           ⏳ End Date: {new Date(bankPremium.end_date).toLocaleDateString()}
+//         </DateRange>
+//         <DateRange>💰 Your Points: {userPoints}</DateRange>
+//         <RedeemContainer>
+//           <QrCodeButton onClick={handleRedeem}>Redeem</QrCodeButton>
+//         </RedeemContainer>
+//       </BankPremiumInfo>
+
+//       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+//         <Login onClose={() => setIsModalOpen(false)} />
+//       </Modal>
+//     </Container>
+//   );
+// };
+
+// export default BankPremiumDetail;
+
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // Add useNavigate
+import { useParams, useNavigate } from "react-router-dom";
 import { fetchBankPremiumById, redeemBankPremium } from "../../services/bank";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
@@ -143,14 +261,20 @@ import {
 import Login from "../SignIn/SignIn";
 import Modal from "../../components/Modal/modal";
 import Loader from "../../components/Loader/loader";
+import SignUp from "../SignUp/signup";
 
 const BankPremiumDetail: React.FC = () => {
   const { id } = useParams();
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const [bankPremium, setBankPremium] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // ✅ two states instead of one
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isSignUpOpen, setIsSignUpOpen] = useState(false);
+
   const [error, setError] = useState<string | null>(null);
   const userPoints = useSelector((state: RootState) => state.auth.userPoints);
 
@@ -173,19 +297,16 @@ const BankPremiumDetail: React.FC = () => {
 
   const handleRedeem = async () => {
     if (!localStorage.getItem("token")) {
-      setIsModalOpen(true);
+      setIsLoginOpen(true); // open login modal
       return;
     }
 
     try {
-      console.log("🔄 Starting redeem process for premiumId:", id);
       const response = await redeemBankPremium(id!);
-      console.log("🎉 Redeem success payload:", response);
-
       dispatch(updatePoints(response.user?.remaining_brand_points ?? 0));
+
       toast.success(`✅ Redeemed successfully! Code: ${response.receipt.code}`);
 
-      // Navigate to receipt page with response data
       navigate("/receipt", { state: { redemptionData: response } });
     } catch (err: any) {
       console.error("⚠️ Redeem failed:", err);
@@ -217,20 +338,38 @@ const BankPremiumDetail: React.FC = () => {
 
       <BankPremiumInfo>
         <Points>🔥 Points Required: {bankPremium.points_required || 0}</Points>
-        <DateRange>
+        {/* <DateRange>
           📅 Start Date: {new Date(bankPremium.start_date).toLocaleDateString()}
-        </DateRange>
-        <DateRange>
+        </DateRange> */}
+        {/* <DateRange>
           ⏳ End Date: {new Date(bankPremium.end_date).toLocaleDateString()}
-        </DateRange>
+        </DateRange> */}
         <DateRange>💰 Your Points: {userPoints}</DateRange>
         <RedeemContainer>
           <QrCodeButton onClick={handleRedeem}>Redeem</QrCodeButton>
         </RedeemContainer>
       </BankPremiumInfo>
 
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <Login onClose={() => setIsModalOpen(false)} />
+      {/* ✅ Login Modal */}
+      <Modal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)}>
+        <Login
+          onClose={() => setIsLoginOpen(false)}
+          onSwitchToSignUp={() => {
+            setIsLoginOpen(false);
+            setIsSignUpOpen(true);
+          }}
+        />
+      </Modal>
+
+      {/* ✅ SignUp Modal */}
+      <Modal isOpen={isSignUpOpen} onClose={() => setIsSignUpOpen(false)}>
+        <SignUp
+          onClose={() => setIsSignUpOpen(false)}
+          onSwitchToLogin={() => {
+            setIsSignUpOpen(false);
+            setIsLoginOpen(true);
+          }}
+        />
       </Modal>
     </Container>
   );

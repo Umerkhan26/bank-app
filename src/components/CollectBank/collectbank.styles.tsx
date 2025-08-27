@@ -12,19 +12,19 @@ export const PremiumContainer = styled.div`
 
 export const HeaderContainer = styled.div`
   display: flex;
-  justify-content: center; /* Center content on large screens */
+  justify-content: center;
   align-items: center;
   margin-bottom: 2rem;
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
-  position: relative; /* For absolute positioning of button */
+  position: relative;
 
   @media (max-width: 768px) {
     flex-direction: column;
     gap: 1rem;
-    margin-bottom: 1.5rem;
-    justify-content: center; /* Center on mobile too */
+    margin-bottom: 1rem;
+    justify-content: center;
   }
 `;
 
@@ -50,6 +50,7 @@ export const Title = styled.h3`
 
   @media (max-width: 768px) {
     font-size: 1.5rem;
+    margin-bottom: 10px;
   }
 `;
 
@@ -150,7 +151,7 @@ export const PremiumImage = styled.img`
   object-fit: contain;
 
   @media (max-width: 768px) {
-    max-height: 80px;
+    max-height: 140px;
   }
 `;
 
@@ -199,15 +200,17 @@ export const ViewMoreButton = styled.button`
   border-radius: 0.375rem;
   font-weight: 600;
   cursor: pointer;
-  position: absolute; /* Position absolutely on large screens */
-  right: 0; /* Place on the right side */
+  position: absolute;
+  right: 0;
 
   &:hover {
     background-color: #333;
   }
 
   @media (max-width: 768px) {
-    position: static; /* Back to normal flow on mobile */
+    position: static;
+    display: flex;
+    margin-left: auto;
     padding: 0.6rem 1.2rem;
     font-size: 0.9rem;
   }

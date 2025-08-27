@@ -341,7 +341,7 @@ const UpcomingPromotions: React.FC = () => {
   return (
     <PromotionsContainer>
       <Title>WHAT'S ON!</Title>
-      <PromotionsTitle>Upcoming Promotion</PromotionsTitle>
+      <PromotionsTitle>Upcoming Promotions</PromotionsTitle>
 
       <PromotionCard onClick={handleNavigate} style={{ cursor: "pointer" }}>
         <PromotionImage

@@ -220,7 +220,7 @@ const CollectBanksPremium: React.FC = () => {
               <ApplyButton
                 onClick={() => handleApply(premium._id || premium.id)}
               >
-                {premium.buttonText || "Apply"}
+                {premium.buttonText || "Radeem"}
               </ApplyButton>
             </PremiumContent>
           </PremiumCard>

@@ -243,7 +243,6 @@ interface FormData {
   password: string;
   confirmPassword: string;
   parish: string;
-  address: string;
 }
 
 const schema = yup.object().shape({
@@ -263,7 +262,6 @@ const schema = yup.object().shape({
     .oneOf([yup.ref("password")], "Passwords must match")
     .required("Confirm password is required"),
   parish: yup.string().required("Parish is required"),
-  address: yup.string().required("Address is required"),
 });
 
 const SignUp: React.FC<SignUpProps> = ({ onSwitchToLogin, onClose }) => {
@@ -280,14 +278,13 @@ const SignUp: React.FC<SignUpProps> = ({ onSwitchToLogin, onClose }) => {
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     try {
-      const { firstName, lastName, email, password, parish, address } = data;
+      const { firstName, lastName, email, password, parish } = data;
       const userData = {
         name: `${firstName} ${lastName}`,
         email,
         password,
         parish,
-        address,
-        date_of_birth: "2000-01-01", // ✅ Replace with real DOB if needed
+        date_of_birth: "2000-01-01",
         is_over_18: true,
       };
 
@@ -360,7 +357,7 @@ const SignUp: React.FC<SignUpProps> = ({ onSwitchToLogin, onClose }) => {
               <Label>Parish*</Label>
               <select
                 {...register("parish")}
-                defaultValue="St. Peter"
+                defaultValue="Saint Peter"
                 style={{
                   width: "100%",
                   padding: "6px",
@@ -369,21 +366,20 @@ const SignUp: React.FC<SignUpProps> = ({ onSwitchToLogin, onClose }) => {
                   border: "1px solid #ccc",
                 }}
               >
-                <option value="St. Peter">St. Peter</option>
-                <option value="St. Mary">St. Mary</option>
-                <option value="St. John">St. John</option>
-                <option value="St. Paul">St. Paul</option>
+                <option value="Saint Michael">Saint Michael</option>
+                <option value="Saint Peter">Saint Peter</option>
+                <option value="Saint Philip">Saint Philip</option>
+                <option value="Saint James">Saint James</option>
+                <option value="Saint John">Saint John</option>
+                <option value="Saint Joseph">Saint Joseph</option>
+                <option value="Saint Lucy">Saint Lucy</option>
+                <option value="Christ Church">Christ Church</option>
+                <option value="Saint Andrew">Saint Andrew</option>
+                <option value="Saint George">Saint George</option>
+                <option value="Saint James">Saint James</option>
               </select>
-              <ErrorMessage>{errors.parish?.message}</ErrorMessage>
-            </FormGroup>
 
-            <FormGroup>
-              <Label>Address*</Label>
-              <Input
-                {...register("address")}
-                placeholder="Enter your address"
-              />
-              <ErrorMessage>{errors.address?.message}</ErrorMessage>
+              <ErrorMessage>{errors.parish?.message}</ErrorMessage>
             </FormGroup>
 
             <FormGroup>

@@ -185,19 +185,19 @@ export const BannerContainer = styled.div`
   width: 100%;
   min-height: 350px;
   padding: 2rem 1rem;
-  text-align: left; /* Keep left aligned */
+  text-align: left;
   position: relative;
   overflow: hidden;
   display: flex;
-  justify-content: flex-start; /* Align to start (left) */
-  align-items: flex-end; /* Align items to bottom */
+  justify-content: flex-start;
+  align-items: flex-end;
 
   @media (min-width: 1200px) {
     background-size: 100% auto;
     background-position: center top;
     min-height: 800px;
     padding: 4rem 2rem;
-    align-items: flex-end; /* Keep at bottom */
+    align-items: flex-end;
   }
 
   @media (max-width: 768px) {
@@ -220,16 +220,16 @@ export const BannerContent = styled.div`
   margin: 0;
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* Align to start (left) */
-  justify-content: flex-end; /* Align to bottom */
+  align-items: flex-start;
+  justify-content: flex-end;
   height: 100%;
   padding-bottom: 2rem;
-  padding-left: 2rem; /* Add left padding */
+  padding-left: 2rem;
 
   @media (min-width: 1200px) {
     padding-bottom: 4rem;
     padding-left: 4rem;
-    margin-top: 40%; /* Adjust this value to position below text */
+    margin-top: 40%;
   }
 
   @media (max-width: 768px) {
@@ -240,6 +240,9 @@ export const BannerContent = styled.div`
   @media (max-width: 480px) {
     padding-bottom: 1rem;
     padding-left: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
   }
 `;
 
@@ -247,16 +250,17 @@ export const DownloadButtons = styled.div`
   display: flex;
   gap: 1.5rem;
   align-items: center;
-  justify-content: flex-start; /* Align buttons to start (left) */
+  justify-content: center;
 
   @media (max-width: 1200px) and (min-width: 769px) {
     gap: 1rem;
   }
 
   @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: flex-start; /* Keep left aligned on mobile */
+    flex-direction: row;
+    align-items: center;
     gap: 1rem;
+    margin-bottom: 12px;
   }
 
   @media (max-width: 480px) {
@@ -274,19 +278,19 @@ export const DownloadLink = styled.a`
 `;
 
 export const DownloadImage = styled.img`
-  width: 180px;
+  width: 120px;
   height: auto;
   border-radius: 0.5rem;
 
   @media (min-width: 1200px) {
-    width: 200px;
-  }
-
-  @media (max-width: 768px) {
     width: 150px;
   }
 
+  @media (max-width: 768px) {
+    width: 100px;
+  }
+
   @media (max-width: 480px) {
-    width: 120px;
+    width: 90px;
   }
 `;

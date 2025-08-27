@@ -4,6 +4,10 @@ import Slider from "react-slick";
 export const BankOffersContainer = styled.div`
   padding: 4rem 2rem;
   background-color: #f8f9fa;
+
+  @media (max-width: 768px) {
+    padding: 0.6rem 1rem;
+  }
 `;
 
 export const BankOffersTitle = styled.h2`
@@ -12,6 +16,11 @@ export const BankOffersTitle = styled.h2`
   margin-bottom: 2rem;
   text-align: center;
   font-weight: bold;
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
 `;
 
 export const StyledSlider = styled(Slider)`

@@ -17,6 +17,35 @@ export const NavContainer = styled.nav`
   }
 `;
 
+export const Logo = styled.img`
+  max-height: 60px;
+  width: auto;
+  margin-left: 25px;
+  cursor: pointer;
+
+  @media (max-width: 768px) {
+    max-height: 65px;
+    margin-left: 10px;
+  }
+
+  @media (max-width: 480px) {
+    max-height: 65px;
+    margin-left: 5px;
+  }
+`;
+
+export const ScanButton = styled.button`
+  display: none;
+  @media (max-width: 768px) {
+    display: inline-block;
+    margin: 0 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: #000;
+  }
+`;
 export const ImagePreview = styled.img`
   max-width: 100%;
   height: auto;

@@ -151,8 +151,12 @@ import styled from "styled-components";
 import Slider from "react-slick";
 
 export const CampaignsContainer = styled.div`
-  padding: 2rem 2rem;
+  padding: 1.5rem 2rem;
   background-color: #f8f9fa;
+
+  @media (max-width: 768px) {
+    padding: 0.6rem 1rem;
+  }
 `;
 
 export const LoadingContainer = styled.div`
@@ -186,6 +190,11 @@ export const CampaignsTitle = styled.h2`
   margin-bottom: 2rem;
   text-align: center;
   font-weight: bold;
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
 `;
 
 export const StyledSlider = styled(Slider)`
@@ -214,9 +223,8 @@ export const CampaignCard = styled.div`
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-
   width: 90%;
-  max-width: 1200px; // Corrected from 1200x to 1200px
+  max-width: 1200px;
   margin: 0 auto 20px;
 
   &:hover {
@@ -225,13 +233,14 @@ export const CampaignCard = styled.div`
   }
 
   @media (max-width: 768px) {
-    width: 95%; // Better for mobile
+    width: 95%;
+    margin: 0 auto 5px;
   }
 `;
 
 export const CampaignImage = styled.img`
   width: 100%;
-  height: 100%; // Changed from 180px to 100% to fit fully
+  height: 100%;
   object-fit: cover;
   border-top-left-radius: 1rem;
   border-top-right-radius: 1rem;
