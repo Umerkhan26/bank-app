@@ -153,6 +153,18 @@ export const QrCodeButton = styled.button`
   }
 `;
 
+export const CropContainer = styled.div`
+  text-align: center;
+  padding: 10px;
+`;
+
+export const CropControls = styled.div`
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+`;
+
 export const PointsDisplay = styled.div`
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
