@@ -289,6 +289,10 @@ import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 
+interface NavProps {
+  isOpen: boolean;
+}
+
 // Styled Components for Enhanced Sidebar
 export const MenuContainer = styled.div`
   display: flex;
@@ -302,7 +306,7 @@ export const MenuContainer = styled.div`
   }
 `;
 
-export const NavContainer = styled.div`
+export const NavContainer = styled.div<NavProps>`
   display: flex;
   flex-direction: column;
   background-color: #ffffff;

@@ -2005,6 +2005,7 @@ const Header: React.FC = () => {
           canvas.width,
           canvas.height
         );
+        console.log("first", imageData);
 
         // Apply preprocessing to improve detection
         let processedImageData = applyContrastEnhancement(
