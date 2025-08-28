@@ -311,7 +311,7 @@ const BankPremiumDetail: React.FC = () => {
     } catch (err: any) {
       console.error("⚠️ Redeem failed:", err);
       toast.error(
-        err.response?.data?.message ||
+        err.response?.data?.error ||
           err.message ||
           "❌ Failed to redeem premium."
       );

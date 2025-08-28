@@ -7,15 +7,15 @@ export const scanQRCode = async (
 ): Promise<any> => {
   try {
     const response = await axios.post(
-      `${API_BASE_URL}/scan`, // Your API endpoint for scanning QR codes
-      { scannedCode }, // Request body
+      `${API_BASE_URL}/scan`,
+      { scannedCode },
       {
         headers: {
-          Authorization: `Bearer ${token}`, // Include the token in the headers
+          Authorization: `Bearer ${token}`,
         },
       }
     );
-    return response.data; // Return the response data
+    return response.data;
   } catch (error: any) {
     console.error("QR Code Scan Error:", error.response?.data || error);
     throw error.response?.data?.message || "QR code scan failed.";

@@ -3027,7 +3027,8 @@ const Header: React.FC = () => {
       setScanResult(result);
       console.log("qrcode data", result);
 
-      toast.success("QR Code scanned successfully!");
+      toast.success("🎉 Congratulations! You have earned 20 points 🎯");
+
       setIsImageModalOpen(false);
       const totalPoints = Array.isArray(result.userPoints)
         ? result.userPoints.reduce(

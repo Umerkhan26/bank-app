@@ -193,9 +193,6 @@ const CampaignDetail: React.FC = () => {
         toast.error("Unauthorized: Please login first.");
         return;
       }
-      console.log("🚀 Redeem attempt:");
-      console.log("Campaign ID:", id);
-      console.log("Token (first 20 chars):", token.substring(0, 20) + "...");
 
       const response = await redeemCampaign(id!, token);
       console.log("✅ Redeem response:", response);
