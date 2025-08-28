@@ -208,7 +208,7 @@ const BankOffer: React.FC = () => {
 
   return (
     <BankOffersContainer>
-      <BankOffersTitle>Banks Offer</BankOffersTitle>
+      <BankOffersTitle>Banks Offers</BankOffersTitle>
 
       <BankOfferCard onClick={handleCardClick} style={{ cursor: "pointer" }}>
         <BankOfferImage

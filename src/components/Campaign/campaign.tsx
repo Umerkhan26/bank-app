@@ -255,7 +255,7 @@ const Campaigns: React.FC = () => {
 
   return (
     <CampaignsContainer>
-      <CampaignsTitle>Campaign</CampaignsTitle>
+      <CampaignsTitle>Campaigns</CampaignsTitle>
       <CampaignCard
         onClick={() => handleApply(campaign._id || campaign.id)}
         style={{ cursor: "pointer" }}
