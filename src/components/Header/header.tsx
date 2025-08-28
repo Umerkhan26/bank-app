@@ -3145,7 +3145,7 @@ const Header: React.FC = () => {
               setQrValue(data);
             }}
             onError={(err: any) => console.error("QR Error:", err)}
-            onRequireLogin={() => setIsLoginOpen(true)}
+            onRequireLogin={() => setIsModalOpen(true)}
           />
           {qrValue && (
             <div className="mt-4 p-2 bg-green-100 text-green-800 rounded">
