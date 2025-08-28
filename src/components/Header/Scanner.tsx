@@ -115,7 +115,10 @@ const QrScanner: React.FC<QrScannerProps> = () => {
   const lastScannedRef = useRef<string | null>(null); // ✅ store last QR code
   const handleResult = async (result: any, error: any) => {
     if (!!result && !scanned) {
-      const qrCodeData = result.getText();
+      let qrCodeData = result.getText();
+
+      // ✅ Clean QR data: remove whitespace, newlines, carriage returns
+      qrCodeData = qrCodeData.trim().replace(/\s+/g, "");
 
       // ✅ Ignore if same QR is detected again
       if (lastScannedRef.current === qrCodeData) {
@@ -124,13 +127,15 @@ const QrScanner: React.FC<QrScannerProps> = () => {
       lastScannedRef.current = qrCodeData;
 
       setScanned(true); // lock scanning immediately
+
+      // ✅ Extract last 6 chars safely
       const lastSixDigits = qrCodeData.slice(-6);
 
       const token = localStorage.getItem("token");
       const userId = localStorage.getItem("userId");
       if (!token || !userId) {
         toast.error("No user information found. Please log in again.");
-        setScanned(false); // unlock if failed
+        setScanned(false);
         return;
       }
 
@@ -151,14 +156,14 @@ const QrScanner: React.FC<QrScannerProps> = () => {
       } catch (err) {
         console.error("QR Scan API error:", err);
         toast.error("Failed to scan QR code. Please try again.");
-        setScanned(false); // unlock on error
+        setScanned(false);
       }
 
       // ✅ Start 5s cooldown before allowing next scan
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       timeoutRef.current = setTimeout(() => {
         setScanned(false);
-        lastScannedRef.current = null; // allow scanning a new QR again
+        lastScannedRef.current = null;
       }, 5000);
     }
 

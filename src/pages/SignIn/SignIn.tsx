@@ -91,9 +91,9 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
           setTokenFound(true);
           // toast.success("Push notifications enabled!");
         } else {
-          console.warn("[USER_LOGIN] No FCM token obtained");
+          // console.warn("[USER_LOGIN] No FCM token obtained");
           setTokenFound(false);
-          toast.warn("Please enable notifications in your browser settings");
+          // toast.warn("Please enable notifications in your browser settings");
         }
 
         onForegroundMessage((payload) => {
@@ -114,7 +114,7 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
       } catch (error) {
         console.error("[USER_LOGIN] Notification setup error:", error);
         setTokenFound(false);
-        toast.error("Failed to enable push notifications");
+        // toast.error("Failed to enable push notifications");
       }
     };
 
@@ -126,14 +126,14 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
       const token = await requestNotificationPermission();
       if (token) {
         setTokenFound(true);
-        toast.success("Notifications enabled!");
+        // toast.success("Notifications enabled!");
       } else {
         setTokenFound(false);
-        toast.warn("Please enable notifications in your browser settings");
+        // toast.warn("Please enable notifications in your browser settings");
       }
     } catch (error) {
       console.error("[USER_LOGIN] Error requesting permission:", error);
-      toast.error("Failed to enable notifications");
+      // toast.error("Failed to enable notifications");
     }
   };
 

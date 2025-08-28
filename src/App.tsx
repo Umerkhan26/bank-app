@@ -128,9 +128,9 @@ function App() {
                 }
               );
             } else {
-              console.warn(
-                "[APP] Notification permission not granted, skipping Notification API"
-              );
+              // console.warn(
+              //   "[APP] Notification permission not granted, skipping Notification API"
+              // );
             }
           }
         });

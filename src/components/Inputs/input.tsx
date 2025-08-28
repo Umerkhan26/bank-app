@@ -1,5 +1,6 @@
 import React, { forwardRef, useState } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
+import { IoEye, IoEyeOff } from "react-icons/io5";
 import styled from "styled-components";
 
 interface InputProps {
@@ -65,7 +66,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
           {isPassword && (
             <ToggleButton type="button" onClick={togglePassword}>
-              {showPassword ? "🙈" : "👁️"}
+              {showPassword ? <IoEyeOff size={18} /> : <IoEye size={18} />}
             </ToggleButton>
           )}
         </InputContainer>

@@ -12,6 +12,7 @@ import {
   PremiumTitle,
   ApplyButton,
   PremiumDescription,
+  PremiumImageBox,
 } from "./collectbank.styles";
 import { LoadingContainer, LoadingSpinner } from "../Campaign/campaign.styles";
 
@@ -73,7 +74,9 @@ const BankPremiumsList: React.FC = () => {
       <PremiumListContainer>
         {premiumData.map((premium) => (
           <PremiumCard key={premium._id}>
-            <PremiumImage src={premium.image_url} alt={premium.title} />
+            <PremiumImageBox>
+              <PremiumImage src={premium.image_url} alt={premium.title} />
+            </PremiumImageBox>
             <PremiumContent>
               <PremiumPoints>{premium.points_required} points</PremiumPoints>
               <PremiumTitle>{premium.title}</PremiumTitle>

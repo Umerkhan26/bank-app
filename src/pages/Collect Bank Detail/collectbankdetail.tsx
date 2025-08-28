@@ -303,7 +303,7 @@ const BankPremiumDetail: React.FC = () => {
 
     try {
       const response = await redeemBankPremium(id!);
-      dispatch(updatePoints(response.user?.remaining_brand_points ?? 0));
+      dispatch(updatePoints(response.user?.remaining_total_brand_points ?? 0));
 
       toast.success(`✅ Redeemed successfully! Code: ${response.receipt.code}`);
 

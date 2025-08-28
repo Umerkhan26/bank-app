@@ -259,12 +259,23 @@ export const DownloadButtons = styled.div`
   @media (max-width: 768px) {
     flex-direction: row;
     align-items: center;
-    gap: 1rem;
-    margin-bottom: 12px;
+    gap: 0.6rem;
+    margin-bottom: 10px;
+  }
+
+  @media (max-width: 540px) {
+    gap: 0.3rem;
+    margin-bottom: 0px;
   }
 
   @media (max-width: 480px) {
-    gap: 0.8rem;
+    gap: 0.3rem;
+    margin-bottom: 15px;
+  }
+
+  @media (max-width: 380px) {
+    gap: 0.3rem;
+    margin-bottom: 30px;
   }
 `;
 
@@ -283,14 +294,14 @@ export const DownloadImage = styled.img`
   border-radius: 0.5rem;
 
   @media (min-width: 1200px) {
-    width: 150px;
+    width: 140px;
   }
 
   @media (max-width: 768px) {
-    width: 100px;
+    width: 90px;
   }
 
   @media (max-width: 480px) {
-    width: 90px;
+    width: 70px;
   }
 `;

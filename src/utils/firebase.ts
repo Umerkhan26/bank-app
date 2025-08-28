@@ -31,7 +31,7 @@ const initMessaging = async (): Promise<Messaging | null> => {
     console.log("[FIREBASE] Initializing messaging...");
     const isSupportedBrowser = await isSupported();
     if (!isSupportedBrowser) {
-      console.warn("[FIREBASE] Messaging not supported in this browser");
+      // console.warn("[FIREBASE] Messaging not supported in this browser");
       return null;
     }
     messaging = getMessaging(app);
@@ -52,7 +52,7 @@ export const requestNotificationPermission = async (): Promise<
     console.log("[FIREBASE] Requesting notification permission...");
     const messagingInstance = await messagingPromise;
     if (!messagingInstance) {
-      console.warn("[FIREBASE] Messaging not available");
+      // console.warn("[FIREBASE] Messaging not available");
       return null;
     }
 
@@ -63,7 +63,7 @@ export const requestNotificationPermission = async (): Promise<
     );
 
     if (currentPermission === "denied") {
-      console.warn("[FIREBASE] Notifications are blocked by user");
+      // console.warn("[FIREBASE] Notifications are blocked by user");
       return null;
     }
 
@@ -80,7 +80,7 @@ export const requestNotificationPermission = async (): Promise<
     );
 
     if (permission !== "granted") {
-      console.warn("[FIREBASE] Notification permission denied");
+      // console.warn("[FIREBASE] Notification permission denied");
       return null;
     }
 
@@ -103,7 +103,7 @@ export const refreshFcmToken = async (): Promise<string | null> => {
     console.log("[FIREBASE] Refreshing FCM token...");
     const messagingInstance = await messagingPromise;
     if (!messagingInstance) {
-      console.warn("[FIREBASE] Messaging not available");
+      // console.warn("[FIREBASE] Messaging not available");
       return null;
     }
 
@@ -111,7 +111,7 @@ export const refreshFcmToken = async (): Promise<string | null> => {
       await deleteToken(messagingInstance);
       console.log("[FIREBASE] Previous FCM token deleted");
     } catch (error) {
-      console.warn("[FIREBASE] No previous token or deletion failed:", error);
+      // console.warn("[FIREBASE] No previous token or deletion failed:", error);
     }
 
     const registration = await navigator.serviceWorker.register(
@@ -126,7 +126,7 @@ export const refreshFcmToken = async (): Promise<string | null> => {
       permission
     );
     if (permission !== "granted") {
-      console.warn("[FIREBASE] Notification permission denied during refresh");
+      // console.warn("[FIREBASE] Notification permission denied during refresh");
       return null;
     }
 
@@ -160,13 +160,13 @@ export const onForegroundMessage = (
               icon: "/logo192.png",
             });
           } else {
-            console.warn(
-              "[FIREBASE] Notification permission not granted:",
-              permission
-            );
+            // console.warn(
+            //   "[FIREBASE] Notification permission not granted:",
+            //   permission
+            // );
           }
         } catch (error) {
-          console.error("[FIREBASE] Error displaying notification:", error);
+          // console.error("[FIREBASE] Error displaying notification:", error);
         }
         callback(payload);
       });
