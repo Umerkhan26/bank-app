@@ -2494,10 +2494,10 @@ const Header: React.FC = () => {
   };
 
   const handleScanClick = () => {
-    // if (!isLoggedIn) {
-    //   setIsModalOpen(true);
-    //   return;
-    // }
+    if (!isLoggedIn) {
+      setIsModalOpen(true);
+      return;
+    }
     setIsScanning(true);
     setupCamera();
   };
