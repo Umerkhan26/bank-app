@@ -62,9 +62,10 @@ import scan from "../../assets/Png/scan.jpg";
 interface QrScannerProps {
   onScan: (data: string) => void;
   onError: (error: any) => void;
+  onRequireLogin?: () => void;
 }
 
-const QrScanner: React.FC<QrScannerProps> = () => {
+const QrScanner: React.FC<QrScannerProps> = ({ onRequireLogin }) => {
   const [openScanner, setOpenScanner] = useState(false);
   const [scanned, setScanned] = useState(false);
   const dispatch = useDispatch();
@@ -177,6 +178,13 @@ const QrScanner: React.FC<QrScannerProps> = () => {
       {/* Camera Icon */}
       <button
         onClick={() => {
+          const token = localStorage.getItem("token");
+          const userId = localStorage.getItem("userId");
+
+          if (!token || !userId) {
+            onRequireLogin?.();
+            return;
+          }
           setOpenScanner(true);
           setScanned(false);
         }}
