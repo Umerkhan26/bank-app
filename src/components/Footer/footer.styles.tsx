@@ -199,8 +199,8 @@ export const FooterAnchor = styled.a`
   transition: color 0.3s ease;
 
   &:hover {
-    color: #1e40af;
-    text-decoration: underline;
+    color: #8b9197ff;
+    text-decoration: none;
   }
 `;
 

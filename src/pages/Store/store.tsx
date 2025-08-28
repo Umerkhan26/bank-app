@@ -110,7 +110,7 @@ import { getStores } from "../../services/store";
 import L, { LatLngExpression } from "leaflet";
 import ClipLoader from "react-spinners/ClipLoader";
 
-import logoIcon from "../../assets/bank_al_falah2.webp";
+import logoIcon from "../../assets/Png/BANKS CURVED LOGO-09.png";
 import { useParams } from "react-router-dom";
 
 const customIcon = L.icon({

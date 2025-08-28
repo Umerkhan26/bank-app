@@ -30,12 +30,13 @@ export const Logo = styled.img`
 
   @media (max-width: 480px) {
     max-height: 65px;
-    margin-left: 5px;
+    margin-left: -20px;
   }
 `;
 
 export const ScanButton = styled.button`
   display: none;
+
   @media (max-width: 768px) {
     display: inline-block;
     margin: 0 10px;

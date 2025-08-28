@@ -69,3 +69,14 @@ body {
 body {
   font-family: "Manrope", sans-serif;
 }
+
+button {
+  border: none;
+  outline: none;
+  background: transparent;
+}
+
+button:focus {
+  outline: none;
+  box-shadow: none;
+}

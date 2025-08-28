@@ -81,7 +81,7 @@ const BankPremiumsList: React.FC = () => {
               <ApplyButton
                 onClick={() => handleApply(premium._id || premium.id)}
               >
-                {premium.buttonText || "Apply"}
+                {premium.buttonText || "Redeem"}
               </ApplyButton>
             </PremiumContent>
           </PremiumCard>

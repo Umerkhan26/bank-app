@@ -152,8 +152,8 @@ const Footer: React.FC<FooterProps> = ({ copyrightText }) => {
 
           {/* Right: Privacy & Terms */}
           <FooterNav>
-            <FooterAnchor href="/privacy-policy">Privacy Policy</FooterAnchor>
-            <FooterAnchor href="/terms-and-conditions">
+            <FooterAnchor href="/privacy">Privacy Policy</FooterAnchor>
+            <FooterAnchor href="/terms-conditions">
               Terms & Conditions
             </FooterAnchor>
           </FooterNav>

@@ -965,6 +965,7 @@ const UserHistory = () => {
 
       try {
         const data = await fetchUserHistory(userId);
+        console.log("USer history", data);
         setHistory(data);
       } catch (err: any) {
         setError(err.message);
@@ -1062,7 +1063,7 @@ const UserHistory = () => {
             <Table>
               <thead>
                 <tr>
-                  <Th>Description</Th>
+                  <Th>Points Earned</Th>
                   <Th>Point Used</Th>
                   <Th>Reference ID</Th>
                   <Th>Type</Th>
@@ -1075,7 +1076,7 @@ const UserHistory = () => {
                     <Td>
                       <IconCell>
                         <IoDocument size={14} />
-                        {item.description}
+                        {item.points_earned}
                       </IconCell>
                     </Td>
                     <Td>
