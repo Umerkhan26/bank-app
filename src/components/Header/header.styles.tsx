@@ -173,6 +173,24 @@ export const Button = styled.div`
   border-radius: 5px;
 `;
 
+export const UploadButton = styled.div`
+  padding: 8px;
+  border: 1px solid black;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-right: 30px;
+
+  /* Hide on desktop by default */
+  display: none;
+  align-items: center;
+  justify-content: center;
+
+  /* Show only on mobile */
+  @media (max-width: 768px) {
+    display: flex;
+  }
+`;
+
 export const StoreButton = styled.div`
   padding: 10px 1px;
   cursor: pointer;

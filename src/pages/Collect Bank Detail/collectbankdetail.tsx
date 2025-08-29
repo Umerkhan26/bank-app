@@ -344,6 +344,7 @@ const BankPremiumDetail: React.FC = () => {
         </DateRange> */}
         <DateRange>💰 Your Points: {userPoints}</DateRange>
         <RedeemContainer>
+          <p>Scan your crown to redeem for points</p>
           <QrCodeButton onClick={handleRedeem}>Redeem</QrCodeButton>
         </RedeemContainer>
       </BankPremiumInfo>
