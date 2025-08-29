@@ -2494,10 +2494,10 @@ const Header: React.FC = () => {
   };
 
   const handleScanClick = () => {
-    if (!isLoggedIn) {
-      setIsModalOpen(true);
-      return;
-    }
+    // if (!isLoggedIn) {
+    //   setIsModalOpen(true);
+    //   return;
+    // }
     setIsScanning(true);
     setupCamera();
   };
@@ -3146,7 +3146,7 @@ const Header: React.FC = () => {
               setQrValue(data);
             }}
             onError={(err: any) => console.error("QR Error:", err)}
-            onRequireLogin={() => setIsModalOpen(true)}
+            // onRequireLogin={() => setIsModalOpen(true)}
           />
           {qrValue && (
             <div className="mt-4 p-2 bg-green-100 text-green-800 rounded">
