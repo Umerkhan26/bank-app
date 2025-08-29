@@ -143,7 +143,7 @@ const Banner: React.FC<BannerProps> = ({ onScanSuccess }) => {
             onClick={() => setIsScanning(false)}
             style={{
               marginTop: "20px",
-              padding: "10px 20px",
+              padding: "9px 20px",
               background: "red",
               color: "white",
               border: "none",
