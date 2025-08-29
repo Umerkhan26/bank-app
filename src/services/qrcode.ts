@@ -17,7 +17,6 @@ export const scanQRCode = async (
     );
     return response.data;
   } catch (error: any) {
-    console.error("QR Code Scan Error:", error.response?.data || error);
-    throw error.response?.data?.message || "QR code scan failed.";
+    throw error;
   }
 };

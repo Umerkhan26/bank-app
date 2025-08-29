@@ -154,9 +154,24 @@ const QrScanner: React.FC<QrScannerProps> = ({ onRequireLogin }) => {
           : response.userPoints;
 
         dispatch(updatePoints(totalPoints));
-      } catch (err) {
+      } catch (err: any) {
         console.error("QR Scan API error:", err);
-        toast.error("Failed to scan QR code. Please try again.");
+
+        // ✅ Handle backend error messages
+        const errorMsg =
+          err?.response?.data?.message ||
+          "Failed to scan QR code. Please try again.";
+
+        if (errorMsg.includes("already been used")) {
+          toast.error(" This QR Code has already been used.");
+        } else if (errorMsg.includes("already scanned by this user")) {
+          toast.error("⚠️ You have already scanned this QR Code.");
+        } else if (errorMsg.includes("not found")) {
+          toast.error(" Invalid QR Code.");
+        } else {
+          toast.error(errorMsg);
+        }
+
         setScanned(false);
       }
 

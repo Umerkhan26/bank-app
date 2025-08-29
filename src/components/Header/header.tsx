@@ -2399,6 +2399,7 @@ import {
   MobileCloseButton,
   Logo,
   ScanButton,
+  MobileMenuItem,
 } from "./header.styles";
 import { getAllBrands } from "../../services/auth";
 import { toast } from "react-toastify";
@@ -3027,7 +3028,7 @@ const Header: React.FC = () => {
       setScanResult(result);
       console.log("qrcode data", result);
 
-      toast.success("🎉 Congratulations! You have earned 20 points 🎯");
+      toast.success("Congratulations! You have earned 20 points 🎯");
 
       setIsImageModalOpen(false);
       const totalPoints = Array.isArray(result.userPoints)
@@ -3244,7 +3245,7 @@ const Header: React.FC = () => {
           onClick={toggleMobileMenu}
         />
 
-        <MobileMenu isOpen={isMobileMenuOpen}>
+        {/* <MobileMenu isOpen={isMobileMenuOpen}>
           <MobileMenuHeader>
             <h3>Menu</h3>
             <MobileCloseButton onClick={toggleMobileMenu}>
@@ -3299,6 +3300,103 @@ const Header: React.FC = () => {
               </Button>
             </>
           )}
+
+          <div>
+            <Link
+              to="/faq"
+              onClick={toggleMobileMenu}
+              style={{
+                display: "block",
+                padding: "6px 0",
+                color: "black",
+                textDecoration: "none",
+              }}
+            >
+              FAQ
+            </Link>
+            <Link
+              to="/terms"
+              onClick={toggleMobileMenu}
+              style={{
+                display: "block",
+                padding: "6px 0",
+                color: "black",
+                textDecoration: "none",
+              }}
+            >
+              Terms
+            </Link>
+            <Link
+              to="/privacy"
+              onClick={toggleMobileMenu}
+              style={{
+                display: "block",
+                padding: "6px 0",
+                color: "black",
+                textDecoration: "none",
+              }}
+            >
+              Privacy
+            </Link>
+          </div>
+        </MobileMenu> */}
+        <MobileMenu isOpen={isMobileMenuOpen}>
+          <MobileMenuHeader>
+            <h3>Menu</h3>
+            <MobileCloseButton onClick={toggleMobileMenu}>
+              <FontAwesomeIcon icon={faTimes} />
+            </MobileCloseButton>
+          </MobileMenuHeader>
+
+          <StoreButton
+            onClick={() => {
+              handlestoreClick();
+              toggleMobileMenu();
+            }}
+          >
+            Store
+          </StoreButton>
+
+          {!isLoggedIn ? (
+            <Button
+              onClick={() => {
+                handleLoginClick();
+                toggleMobileMenu();
+              }}
+            >
+              Login
+            </Button>
+          ) : (
+            <>
+              <span>Welcome, {username}!</span>
+              <PointsDisplay>{userPoints} points</PointsDisplay>
+              <MobileMenuItem
+                to="/profile/user-history"
+                onClick={toggleMobileMenu}
+              >
+                Profile
+              </MobileMenuItem>
+              <Button
+                onClick={() => {
+                  handleLogout();
+                  toggleMobileMenu();
+                }}
+              >
+                Sign out
+              </Button>
+            </>
+          )}
+
+          {/* Static footer links */}
+          <MobileMenuItem to="/faq" onClick={toggleMobileMenu}>
+            FAQ
+          </MobileMenuItem>
+          <MobileMenuItem to="/terms-conditions" onClick={toggleMobileMenu}>
+            Terms
+          </MobileMenuItem>
+          <MobileMenuItem to="/privacy" onClick={toggleMobileMenu}>
+            Privacy
+          </MobileMenuItem>
         </MobileMenu>
 
         <Modal isOpen={isModalOpen} onClose={handleCloseModal}>

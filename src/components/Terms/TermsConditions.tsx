@@ -13,21 +13,23 @@ import {
 
 const TermsConditions = () => {
   const sections = [
-    { id: "intro", title: "Welcome" },
-    { id: "acceptance", title: "1. Acceptance of Terms" },
-    { id: "services", title: "2. Services Provided" },
-    { id: "responsibilities", title: "3. User Responsibilities" },
-    { id: "loyalty", title: "4. Loyalty Points" },
-    { id: "termination", title: "5. Termination of Service" },
-    { id: "liability", title: "6. Limitation of Liability" },
-    { id: "privacy", title: "7. Privacy and Data Protection" },
-    { id: "thirdparty", title: "8. Third-Party Services" },
-    { id: "intellectual", title: "9. Intellectual Property" },
-    { id: "law", title: "10. Governing Law" },
-    { id: "updates", title: "11. Updates to Terms" },
+    { id: "intro", title: "Introduction" },
+    { id: "purpose", title: "1. Purpose of the App" },
+    { id: "eligibility", title: "2. User Eligibility" },
+    { id: "registration", title: "3. Registration & Account Use" },
+    { id: "promotions", title: "4. Promotions & Campaigns" },
+    { id: "functionality", title: "5. App Functionality" },
+    { id: "prizes", title: "6. Prizes & Rewards" },
+    { id: "prohibited", title: "7. Prohibited Conduct" },
+    { id: "privacy", title: "8. Privacy & Data" },
+    { id: "updates", title: "9. Updates & Availability" },
+    { id: "termination", title: "10. Termination of Use" },
+    { id: "intellectual", title: "11. Intellectual Property" },
+    { id: "law", title: "12. Governing Law" },
+    { id: "contact", title: "13. Contact Us" },
   ];
 
-  const scrollToSection =  (id: string)  => {
+  const scrollToSection = (id: string) => {
     const section = document.getElementById(id);
     if (section) {
       section.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -37,7 +39,7 @@ const TermsConditions = () => {
   return (
     <PageContainer>
       <Layout>
-        {/* Sidebar */}
+        {/* Sidebar Navigation */}
         <Sidebar>
           <SidebarList>
             {sections.map((section) => (
@@ -53,141 +55,164 @@ const TermsConditions = () => {
 
         {/* Main Content */}
         <ContentArea>
-          <Header>Terms & Conditions - Banks App</Header>
+          <Header>Terms & Conditions - Banks Beer App</Header>
 
           <Section id="intro">
             <SectionText>
-              Welcome to Banks App. Please read these Terms & Conditions
-              carefully before using our services. By continuing, you confirm
-              that you understand and agree to the rules, rights, and
-              responsibilities outlined below.
+              <strong>Effective Date:</strong> August 8, 2025 <br />
+              <strong>Last Updated:</strong> August 8, 2025
+            </SectionText>
+            <SectionText>
+              These Terms and Conditions ("Terms") govern your use of the{" "}
+              <strong>Banks Beer App</strong> (the “App”), operated by Banks
+              Holdings Limited (“Banks”, “we”, “us”, or “our”).
+            </SectionText>
+            <SectionText>
+              By downloading, registering, or using the App, you agree to these
+              Terms in full. If you do not agree, do not use the App.
             </SectionText>
           </Section>
 
-          <Section id="acceptance">
-            <SectionTitle>1. Acceptance of Terms</SectionTitle>
+          <Section id="purpose">
+            <SectionTitle>1. 🎯 Purpose of the App</SectionTitle>
+            <ul style={{ marginLeft: "1.5rem", lineHeight: "1.6" }}>
+              <li>Facilitate participation in Banks promotions</li>
+              <li>Track loyalty points and campaign entries</li>
+              <li>Provide product info, offers, and event updates</li>
+              <li>Enhance your overall experience with Banks Beer</li>
+            </ul>
+          </Section>
+
+          <Section id="eligibility">
+            <SectionTitle>2. 👤 User Eligibility</SectionTitle>
+            <ul style={{ marginLeft: "1.5rem", lineHeight: "1.6" }}>
+              <li>You must be 18+ to use the App (per local alcohol laws).</li>
+              <li>
+                You must be a legal resident of Barbados to enter local
+                campaigns.
+              </li>
+              <li>
+                By registering, you confirm the information provided is accurate
+                and truthful.
+              </li>
+            </ul>
+          </Section>
+
+          <Section id="registration">
+            <SectionTitle>3. 📝 Registration & Account Use</SectionTitle>
+            <ul style={{ marginLeft: "1.5rem", lineHeight: "1.6" }}>
+              <li>Register with valid name, email, parish address, and DOB.</li>
+              <li>You are responsible for keeping your login details safe.</li>
+              <li>
+                Banks may suspend/delete accounts that are fraudulent,
+                duplicated, or violate these Terms.
+              </li>
+            </ul>
+          </Section>
+
+          <Section id="promotions">
+            <SectionTitle>4. 🏆 Promotions & Campaigns</SectionTitle>
             <SectionText>
-              By accessing or using Banks App, you agree to be bound by these
-              Terms and Conditions. If you do not agree, please discontinue
-              using our services immediately. These terms apply to all users of
-              the application including customers, merchants, and partners.
+              Promotional activities are governed by campaign rules (e.g., “Win
+              a 2025 DMAX”).
+            </SectionText>
+            <SectionText>
+              Entry may require uploading receipts, scanning QR codes, or
+              entering promo codes.
+            </SectionText>
+            <SectionText>
+              Banks reserves the right to modify or cancel promotions without
+              notice.
             </SectionText>
           </Section>
 
-          <Section id="services">
-            <SectionTitle>2. Services Provided</SectionTitle>
+          <Section id="functionality">
+            <SectionTitle>5. 📱 App Functionality</SectionTitle>
+            <ul style={{ marginLeft: "1.5rem", lineHeight: "1.6" }}>
+              <li>Submit entries into promotions</li>
+              <li>View accumulated points</li>
+              <li>Receive prize/event notifications</li>
+              <li>Locate nearby Banks outlets</li>
+            </ul>
             <SectionText>
-              Banks App provides features such as promotional campaigns, special
-              offers, QR code scanning, and a loyalty rewards program. These
-              services may be updated, modified, or discontinued at any time at
-              our discretion without prior notice.
-            </SectionText>
-            <SectionText>
-              Access to certain features may be subject to eligibility criteria,
-              such as age, location, or verification through authorized
-              partners.
+              Some features may depend on your location, device, or network.
             </SectionText>
           </Section>
 
-          <Section id="responsibilities">
-            <SectionTitle>3. User Responsibilities</SectionTitle>
-            <SectionText>
-              You agree to use Banks App responsibly and only for lawful
-              purposes. You must not attempt to exploit the system, share
-              fraudulent QR codes, or misuse promotional offers.
-            </SectionText>
-            <SectionText>
-              Any unauthorized access, reverse engineering, distribution of
-              harmful software, or tampering with the app is strictly prohibited
-              and may result in permanent suspension or legal action.
-            </SectionText>
+          <Section id="prizes">
+            <SectionTitle>6. 🎁 Prizes & Rewards</SectionTitle>
+            <ul style={{ marginLeft: "1.5rem", lineHeight: "1.6" }}>
+              <li>
+                Prizes are non-transferable and cannot be exchanged for cash.
+              </li>
+              <li>Proof of identity may be required for prize claims.</li>
+              <li>Banks’ decision in disputes is final.</li>
+            </ul>
           </Section>
 
-          <Section id="loyalty">
-            <SectionTitle>4. Loyalty Points</SectionTitle>
-            <SectionText>
-              Points earned through Banks App have no monetary value and are
-              solely redeemable within the app. Points cannot be exchanged for
-              cash, sold, or transferred to another account.
-            </SectionText>
-            <SectionText>
-              Banks App reserves the right to modify, suspend, or discontinue
-              the rewards program without notice. Expired points cannot be
-              reinstated.
-            </SectionText>
-          </Section>
-
-          <Section id="termination">
-            <SectionTitle>5. Termination of Service</SectionTitle>
-            <SectionText>
-              We reserve the right to suspend or terminate your access to Banks
-              App at our sole discretion, without prior notice, if we detect
-              fraudulent activity, suspicious transactions, or violations of
-              these Terms.
-            </SectionText>
-            <SectionText>
-              Upon termination, all accumulated points and access to services
-              will be permanently forfeited.
-            </SectionText>
-          </Section>
-
-          <Section id="liability">
-            <SectionTitle>6. Limitation of Liability</SectionTitle>
-            <SectionText>
-              Banks App and its affiliates will not be liable for any indirect,
-              incidental, or consequential damages resulting from the use or
-              inability to use our services.
-            </SectionText>
+          <Section id="prohibited">
+            <SectionTitle>7. 🚫 Prohibited Conduct</SectionTitle>
+            <ul style={{ marginLeft: "1.5rem", lineHeight: "1.6" }}>
+              <li>Do not provide false or misleading information.</li>
+              <li>Do not upload offensive or abusive content.</li>
+              <li>Do not hack, manipulate, or misuse the App.</li>
+              <li>Do not violate laws or third-party rights.</li>
+            </ul>
           </Section>
 
           <Section id="privacy">
-            <SectionTitle>7. Privacy and Data Protection</SectionTitle>
+            <SectionTitle>8. 🔐 Privacy & Data</SectionTitle>
             <SectionText>
-              By using Banks App, you consent to our collection and use of
-              certain personal data as described in our Privacy Policy.
+              Use of the App is governed by our <strong>Privacy Policy</strong>,
+              which explains data collection and use.
             </SectionText>
-          </Section>
-
-          <Section id="thirdparty">
-            <SectionTitle>8. Third-Party Services</SectionTitle>
             <SectionText>
-              Banks App may integrate with third-party services, such as payment
-              gateways or promotional partners.
-            </SectionText>
-          </Section>
-
-          <Section id="intellectual">
-            <SectionTitle>9. Intellectual Property</SectionTitle>
-            <SectionText>
-              All content, logos, trademarks, and designs within Banks App are
-              the property of Banks App or its licensors.
-            </SectionText>
-          </Section>
-
-          <Section id="law">
-            <SectionTitle>10. Governing Law</SectionTitle>
-            <SectionText>
-              These Terms and Conditions are governed by and construed in
-              accordance with the laws of your jurisdiction.
+              🔗 <em>[Insert link to Privacy Policy here]</em>
             </SectionText>
           </Section>
 
           <Section id="updates">
-            <SectionTitle>11. Updates to Terms</SectionTitle>
+            <SectionTitle>9. 🛠️ Updates & Availability</SectionTitle>
+            <ul style={{ marginLeft: "1.5rem", lineHeight: "1.6" }}>
+              <li>The App may be updated with new features or bug fixes.</li>
+              <li>Banks does not guarantee uninterrupted service.</li>
+              <li>We may modify or suspend functions at any time.</li>
+            </ul>
+          </Section>
+
+          <Section id="termination">
+            <SectionTitle>10. 📵 Termination of Use</SectionTitle>
             <SectionText>
-              We may revise these Terms from time to time to reflect changes in
-              laws, services, or business practices. Continued use of Banks App
-              after updates indicates your acceptance of the revised Terms.
+              Banks may suspend or terminate accounts for breaches, fraud,
+              abuse, or if the App is discontinued.
             </SectionText>
           </Section>
 
-          {/* <Footer>
+          <Section id="intellectual">
+            <SectionTitle>11. 🧾 Intellectual Property</SectionTitle>
             <SectionText>
-              For any queries regarding these Terms, contact us at
-              <strong> support@banksapp.com</strong>.  
-              These Terms & Conditions were last updated on January 1, 2025.
+              All content (logos, graphics, text, videos, etc.) belongs to Banks
+              Holdings Limited and cannot be copied without permission.
             </SectionText>
-          </Footer> */}
+          </Section>
+
+          <Section id="law">
+            <SectionTitle>12. 📍 Governing Law</SectionTitle>
+            <SectionText>
+              These Terms are governed by the laws of Barbados. Disputes will be
+              resolved in the courts of Barbados.
+            </SectionText>
+          </Section>
+
+          <Section id="contact">
+            <SectionTitle>13. 📩 Contact Us</SectionTitle>
+            <SectionText>
+              Banks Holdings Limited <br />
+              📧 <strong>banksbeerpromotions@gmail.com</strong> <br />
+              📞 <strong>(246) 230-9047</strong> <br />
+              📍 Newton, Christ Church, Barbados
+            </SectionText>
+          </Section>
         </ContentArea>
       </Layout>
     </PageContainer>

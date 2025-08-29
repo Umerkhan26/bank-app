@@ -14,6 +14,7 @@ import BankPremiumsList from "../components/CollectBank/BankPremiumsList";
 import NoPromotion from "../components/Promotion/NoPromotion";
 import Privacy from "../components/privacyandPolicy/Privacy";
 import TermsConditions from "../components/Terms/TermsConditions";
+import FAQ from "../components/Faq/Faq";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -21,6 +22,8 @@ const AppRoutes: React.FC = () => {
       <Route path="/" element={<Layout />}>
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms-conditions" element={<TermsConditions />} />
+        <Route path="/faq" element={<FAQ />} />
+
         <Route index element={<Home />} />
         {/* <Route path="/login" element={<Login />} /> */}
         <Route path="/campaign/:id" element={<CampaignDetail />} />

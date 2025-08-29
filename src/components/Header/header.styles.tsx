@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 export const NavContainer = styled.nav`
@@ -121,6 +122,24 @@ export const MobileMenu = styled.div<{ isOpen: boolean }>`
   }
 `;
 
+export const MobileMenuItem = styled(Link)`
+  display: block;
+  padding: 10px 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #000;
+  text-decoration: none;
+  border-bottom: 1px solid #f0f0f0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    color: #e53935;
+  }
+`;
+
 export const MobileMenuHeader = styled.div`
   display: flex;
   justify-content: space-between;
@@ -148,14 +167,14 @@ export const MobileMenuOverlay = styled.div<{ isOpen: boolean }>`
 `;
 
 export const Button = styled.div`
-  padding: 10px 10px;
+  padding: 10px 8px;
   border: 1px solid black;
   cursor: pointer;
   border-radius: 5px;
 `;
 
 export const StoreButton = styled.div`
-  padding: 10px 10px;
+  padding: 10px 1px;
   cursor: pointer;
   border-radius: 5px;
   transition: color 0.3s ease;

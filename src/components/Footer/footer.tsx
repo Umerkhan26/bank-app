@@ -156,6 +156,8 @@ const Footer: React.FC<FooterProps> = ({ copyrightText }) => {
             <FooterAnchor href="/terms-conditions">
               Terms & Conditions
             </FooterAnchor>
+
+            <FooterAnchor href="/faq">Faq</FooterAnchor>
           </FooterNav>
         </Row>
       </Container>
