@@ -18,6 +18,7 @@ import {
 } from "./signup.styles";
 import Loader from "../../components/Loader/loader";
 import VerifyCode from "../VerifyCode/VerifyCode";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 // ✅ Import VerifyCode component
 
@@ -33,19 +34,27 @@ interface FormData {
   password: string;
   confirmPassword: string;
   parish: string;
+  date_of_birth: string;
 }
 
 const schema = yup.object().shape({
   firstName: yup.string().required("First name is required"),
   lastName: yup.string().required("Last name is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
+  date_of_birth: yup
+    .string()
+    .required("Date of birth is required")
+    .test(
+      "is-valid-date",
+      "Invalid date",
+      (value) => !isNaN(Date.parse(value!))
+    )
+    .test("not-future", "Date of birth cannot be in the future", (value) => {
+      return new Date(value!) <= new Date();
+    }),
   password: yup
     .string()
     .min(6, "Password must be at least 6 characters")
-    .matches(
-      /[!@#$%^&*(),.?":{}|<>]/,
-      "Password must contain at least one special character"
-    )
     .required("Password is required"),
   confirmPassword: yup
     .string()
@@ -58,6 +67,8 @@ const SignUp: React.FC<SignUpProps> = ({ onSwitchToLogin, onClose }) => {
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     register,
@@ -68,13 +79,14 @@ const SignUp: React.FC<SignUpProps> = ({ onSwitchToLogin, onClose }) => {
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     try {
-      const { firstName, lastName, email, password, parish } = data;
+      const { firstName, lastName, email, password, parish, date_of_birth } =
+        data;
       const userData = {
         name: `${firstName} ${lastName}`,
         email,
         password,
         parish,
-        date_of_birth: "2000-01-01",
+        date_of_birth,
         is_over_18: true,
       };
 
@@ -173,22 +185,58 @@ const SignUp: React.FC<SignUpProps> = ({ onSwitchToLogin, onClose }) => {
             </FormGroup>
 
             <FormGroup>
+              <Label>Date of Birth*</Label>
+              <Input
+                {...register("date_of_birth")}
+                type="date"
+                placeholder="Enter your date of birth"
+              />
+              <ErrorMessage>{errors.date_of_birth?.message}</ErrorMessage>
+            </FormGroup>
+
+            <FormGroup style={{ position: "relative" }}>
               <Label>Password*</Label>
               <Input
                 {...register("password")}
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
               />
+              {/* Eye toggle */}
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: "absolute",
+                  right: "20px",
+                  top: "50%",
+                  transform: "translateY(-10%)",
+                  cursor: "pointer",
+                }}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
               <ErrorMessage>{errors.password?.message}</ErrorMessage>
             </FormGroup>
 
-            <FormGroup>
+            {/* Confirm Password */}
+            <FormGroup style={{ position: "relative" }}>
               <Label>Confirm Password*</Label>
               <Input
                 {...register("confirmPassword")}
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 placeholder="Confirm your password"
               />
+              <span
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                style={{
+                  position: "absolute",
+                  right: "20px",
+                  top: "50%",
+                  transform: "translateY(-10%)",
+                  cursor: "pointer",
+                }}
+              >
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
               <ErrorMessage>{errors.confirmPassword?.message}</ErrorMessage>
             </FormGroup>
 

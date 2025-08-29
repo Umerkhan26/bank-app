@@ -241,6 +241,7 @@ const CampaignDetail: React.FC = () => {
             <DateRange>💰 Your Points: {userPoints}</DateRange>
           </CampaignInfo>
           <RedeemContainer>
+            <p>Scan your crown to redeem for points</p>
             <QrCodeButton onClick={handleRedeem}>Redeem</QrCodeButton>
           </RedeemContainer>
         </ContentContainer>

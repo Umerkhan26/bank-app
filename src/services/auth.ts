@@ -41,7 +41,13 @@ export const loginUser = async (data: LoginData): Promise<LoginResponse> => {
     localStorage.setItem("token", token);
     return response.data;
   } catch (error: any) {
-    throw error.response?.data?.message || "Failed to log in";
+    const message =
+      error.response?.data?.message ||
+      error.message ||
+      "Something went wrong while logging in";
+
+    // ✅ Throw it so SignIn.tsx can also catch
+    throw message;
   }
 };
 
