@@ -100,7 +100,7 @@ const QrScanner: React.FC<QrScannerProps> = ({ onRequireLogin }) => {
 
       try {
         const response = await scanQRCode(token, lastSixDigits);
-        toast.success("QR Code scanned successfully!");
+        toast.success("Congratulations! You have earned 20 points 🎯");
 
         // ✅ Update points
         const totalPoints = Array.isArray(response.userPoints)

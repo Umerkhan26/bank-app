@@ -55,11 +55,13 @@ export const registerUser = async (
       headers: { "Content-Type": "application/json" },
     });
 
-    console.log("Registration Successful:", response.data);
+    console.log("response from regis", response.data);
     return response.data;
   } catch (error: any) {
     console.error("API Error:", error.response?.data || error);
-    throw error.response?.data?.message || "Registration failed";
+
+    const message = error.response?.data?.message || "Registration failed";
+    throw new Error(message); // ✅ always throw an Error object
   }
 };
 

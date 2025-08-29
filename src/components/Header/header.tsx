@@ -2400,6 +2400,7 @@ import {
   Logo,
   ScanButton,
   MobileMenuItem,
+  UploadButton,
 } from "./header.styles";
 import { getAllBrands } from "../../services/auth";
 import { toast } from "react-toastify";
@@ -3040,9 +3041,22 @@ const Header: React.FC = () => {
         : result.userPoints;
 
       dispatch(updatePoints(totalPoints));
-    } catch (error) {
-      console.error("Error scanning QR code:", error);
-      toast.error("Failed to scan QR code. Please try again.");
+    } catch (err: any) {
+      console.error("Error scanning QR code:", err);
+
+      const errorMsg =
+        err?.response?.data?.message ||
+        "Failed to scan QR code. Please try again.";
+
+      if (errorMsg.includes("already been used")) {
+        toast.error("This QR Code has already been used.");
+      } else if (errorMsg.includes("already scanned by this user")) {
+        toast.error("⚠️ You have already scanned this QR Code.");
+      } else if (errorMsg.includes("not found")) {
+        toast.error("Invalid QR Code.");
+      } else {
+        toast.error(errorMsg);
+      }
     } finally {
       setIsProcessing(false);
     }
@@ -3156,6 +3170,10 @@ const Header: React.FC = () => {
           )}
         </ScanButton>
 
+        {isLoggedIn && (
+          <UploadButton onClick={handleUploadClick}>Upload QR</UploadButton>
+        )}
+
         <MobileToggleButton onClick={toggleMobileMenu}>
           <FontAwesomeIcon icon={isMobileMenuOpen ? faTimes : faBars} />
         </MobileToggleButton>
@@ -3245,101 +3263,6 @@ const Header: React.FC = () => {
           onClick={toggleMobileMenu}
         />
 
-        {/* <MobileMenu isOpen={isMobileMenuOpen}>
-          <MobileMenuHeader>
-            <h3>Menu</h3>
-            <MobileCloseButton onClick={toggleMobileMenu}>
-              <FontAwesomeIcon icon={faTimes} />
-            </MobileCloseButton>
-          </MobileMenuHeader>
-
-          <StoreButton
-            onClick={() => {
-              handlestoreClick();
-              toggleMobileMenu();
-            }}
-          >
-            Store
-          </StoreButton>
-
-          {!isLoggedIn ? (
-            <Button
-              onClick={() => {
-                handleLoginClick();
-                toggleMobileMenu();
-              }}
-            >
-              Login
-            </Button>
-          ) : (
-            <>
-              <span>Welcome, {username}!</span>
-
-              <PointsDisplay>{userPoints} points</PointsDisplay>
-
-              <Link
-                to="/profile/user-history"
-                onClick={toggleMobileMenu}
-                style={{
-                  display: "block",
-                  padding: "8px 0",
-                  fontWeight: "500",
-                  color: "black",
-                  textDecoration: "none",
-                }}
-              >
-                Profile
-              </Link>
-              <Button
-                onClick={() => {
-                  handleLogout();
-                  toggleMobileMenu();
-                }}
-              >
-                Sign out
-              </Button>
-            </>
-          )}
-
-          <div>
-            <Link
-              to="/faq"
-              onClick={toggleMobileMenu}
-              style={{
-                display: "block",
-                padding: "6px 0",
-                color: "black",
-                textDecoration: "none",
-              }}
-            >
-              FAQ
-            </Link>
-            <Link
-              to="/terms"
-              onClick={toggleMobileMenu}
-              style={{
-                display: "block",
-                padding: "6px 0",
-                color: "black",
-                textDecoration: "none",
-              }}
-            >
-              Terms
-            </Link>
-            <Link
-              to="/privacy"
-              onClick={toggleMobileMenu}
-              style={{
-                display: "block",
-                padding: "6px 0",
-                color: "black",
-                textDecoration: "none",
-              }}
-            >
-              Privacy
-            </Link>
-          </div>
-        </MobileMenu> */}
         <MobileMenu isOpen={isMobileMenuOpen}>
           <MobileMenuHeader>
             <h3>Menu</h3>
