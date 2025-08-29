@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { jsPDF } from "jspdf";
 import {
@@ -10,15 +10,23 @@ import {
   DownloadButton,
   BackButton,
 } from "./ReceiptPage.styles";
+import Modal from "../../components/Modal/PremiumModal";
 
 const ReceiptPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const redemptionData = location.state?.redemptionData;
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   if (!redemptionData) {
     return <div>No receipt data available.</div>;
   }
+
+  useEffect(() => {
+    if (redemptionData) {
+      setIsPopupOpen(true);
+    }
+  }, [redemptionData]);
 
   const { bankPremium, message, receipt, user, userHistory } = redemptionData;
 
@@ -47,45 +55,82 @@ const ReceiptPage: React.FC = () => {
   };
 
   return (
-    <ReceiptContainer>
-      <ReceiptTitle>Redemption Receipt</ReceiptTitle>
-      <ReceiptInfo>
-        <Label>Message:</Label>
-        <Value>{message}</Value>
-        <Label>Receipt Code:</Label>
-        <Value>{receipt.code}</Value>
-        <Label>Status:</Label>
-        <Value>{receipt.status}</Value>
-        <Label>Premium Title:</Label>
-        <Value>{bankPremium.title}</Value>
-        <Label>Points Required:</Label>
-        <Value>{bankPremium.points_required}</Value>
-        <Label>Points Used:</Label>
-        <Value>{userHistory.points_used}</Value>
-        <Label>Enrolled Users:</Label>
-        <Value>{bankPremium.enrolled_users.length}</Value>
-        <Label>Total Redemptions:</Label>
-        <Value>{bankPremium.redemptions.length}</Value>
-        <Label>Brand ID:</Label>
-        <Value>{bankPremium.brand}</Value>
-        <Label>User:</Label>
-        <Value>{user.username}</Value>
-        <Label>User ID:</Label>
-        <Value>{user.userId}</Value>
-        <Label>User Brand ID:</Label>
-        <Value>{user.brandId}</Value>
-        <Label>Remaining Points:</Label>
-        <Value>{user.remaining_brand_points}</Value>
-        <Label>Transaction Type:</Label>
-        <Value>{userHistory.type}</Value>
-        <Label>Description:</Label>
-        <Value>{userHistory.description}</Value>
-        <Label>Date:</Label>
-        <Value>{new Date().toLocaleString()}</Value>
-      </ReceiptInfo>
-      <DownloadButton onClick={handleDownload}>Download Receipt</DownloadButton>
-      <BackButton onClick={() => navigate(-1)}>Back</BackButton>
-    </ReceiptContainer>
+    <>
+      <ReceiptContainer>
+        <ReceiptTitle>Redemption Receipt</ReceiptTitle>
+        <ReceiptInfo>
+          <Label>Message:</Label>
+          <Value>{message}</Value>
+          <Label>Receipt Code:</Label>
+          <Value>{receipt.code}</Value>
+          <Label>Status:</Label>
+          <Value>{receipt.status}</Value>
+          <Label>Premium Title:</Label>
+          <Value>{bankPremium.title}</Value>
+          <Label>Points Required:</Label>
+          <Value>{bankPremium.points_required}</Value>
+          <Label>Points Used:</Label>
+          <Value>{userHistory.points_used}</Value>
+          <Label>Enrolled Users:</Label>
+          <Value>{bankPremium.enrolled_users.length}</Value>
+          <Label>Total Redemptions:</Label>
+          <Value>{bankPremium.redemptions.length}</Value>
+          <Label>Brand ID:</Label>
+          <Value>{bankPremium.brand}</Value>
+          <Label>User:</Label>
+          <Value>{user.username}</Value>
+          <Label>User ID:</Label>
+          <Value>{user.userId}</Value>
+          <Label>User Brand ID:</Label>
+          <Value>{user.brandId}</Value>
+          <Label>Remaining Points:</Label>
+          <Value>{user.remaining_brand_points}</Value>
+          <Label>Transaction Type:</Label>
+          <Value>{userHistory.type}</Value>
+          <Label>Description:</Label>
+          <Value>{userHistory.description}</Value>
+          <Label>Date:</Label>
+          <Value>{new Date().toLocaleString()}</Value>
+        </ReceiptInfo>
+        <DownloadButton onClick={handleDownload}>
+          Download Receipt
+        </DownloadButton>
+        <BackButton onClick={() => navigate(-1)}>Back</BackButton>
+      </ReceiptContainer>
+
+      <Modal isOpen={isPopupOpen} onClose={() => setIsPopupOpen(false)}>
+        <div style={{ padding: "10px", textAlign: "center" }}>
+          <h4 style={{ whiteSpace: "nowrap", marginBottom: "10px" }}>
+            ✅ Redeem Successful!
+          </h4>
+
+          <p style={{ marginTop: "10px" }}>
+            Thank you for redeeming this premium. Please visit{" "}
+            <b>Banks Barbados Breweries</b> at <b>Newton Christ Church</b> on
+            Tuesday, Wednesday, or Thursday between <b>10 am to 2 pm</b> to
+            collect your premium.
+          </p>
+          <p>
+            Please show your receipt code to the team when collecting your item:{" "}
+            <b>{receipt.code}</b>
+          </p>
+          <button
+            onClick={() => setIsPopupOpen(false)}
+            style={{
+              marginTop: "10px",
+              padding: "10px 20px",
+              backgroundColor: "black",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+            }}
+          >
+            Close
+          </button>
+        </div>
+      </Modal>
+    </>
   );
 };
 

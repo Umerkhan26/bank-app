@@ -297,7 +297,7 @@ const BankPremiumDetail: React.FC = () => {
 
   const handleRedeem = async () => {
     if (!localStorage.getItem("token")) {
-      setIsLoginOpen(true); // open login modal
+      setIsLoginOpen(true);
       return;
     }
 
@@ -311,9 +311,7 @@ const BankPremiumDetail: React.FC = () => {
     } catch (err: any) {
       console.error("⚠️ Redeem failed:", err);
       toast.error(
-        err.response?.data?.error ||
-          err.message ||
-          "❌ Failed to redeem premium."
+        err.response?.data?.error || err.message || "Failed to redeem premium."
       );
     }
   };

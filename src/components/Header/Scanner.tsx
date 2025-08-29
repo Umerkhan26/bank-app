@@ -69,48 +69,6 @@ const QrScanner: React.FC<QrScannerProps> = ({ onRequireLogin }) => {
   const [openScanner, setOpenScanner] = useState(false);
   const [scanned, setScanned] = useState(false);
   const dispatch = useDispatch();
-  //   const handleResult = async (result: any, error: any) => {
-  //     if (!!result && !scanned) {
-  //       setScanned(true); // stop multiple triggers
-  //       const qrCodeData = result.getText();
-
-  //       // ✅ Extract last 6 digits
-  //       const lastSixDigits = qrCodeData.slice(-6);
-
-  //       const token = localStorage.getItem("token");
-  //       const userId = localStorage.getItem("userId");
-  //       if (!token || !userId) {
-  //         toast.error("No user information found. Please log in again.");
-  //         setOpenScanner(false);
-  //         return;
-  //       }
-  //       try {
-  //         // ✅ Send only last 6 digits to backend
-  //         const response = await scanQRCode(token, lastSixDigits);
-
-  //         console.log("QR API response:", response);
-  //         toast.success("QR Code scanned successfully!");
-  //         setOpenScanner(false);
-
-  //         // :white_check_mark: Update points if available
-  //         const totalPoints = Array.isArray(response.userPoints)
-  //           ? response.userPoints.reduce(
-  //               (sum: number, item: { points?: number }) =>
-  //                 sum + (item.points || 0),
-  //               0
-  //             )
-  //           : response.userPoints;
-  //         dispatch(updatePoints(totalPoints));
-  //       } catch (err) {
-  //         console.error("QR Scan API error:", err);
-  //         toast.error("Failed to scan QR code. Please try again.");
-  //         setOpenScanner(false);
-  //       }
-  //     }
-  //     if (!!error && !scanned) {
-  //       console.warn("QR error:", error);
-  //     }
-  //   };
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastScannedRef = useRef<string | null>(null); // ✅ store last QR code
