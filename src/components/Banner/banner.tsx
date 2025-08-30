@@ -175,7 +175,9 @@ const Banner: React.FC<BannerProps> = ({ onScanSuccess }) => {
             <p style={{ fontWeight: "bold", marginBottom: "10px" }}>
               QR Code Extracted Successfully!
             </p>
-            <QrCodeData>{qrCodeData}</QrCodeData>
+            <QrCodeData>
+              {qrCodeData.length > 6 ? `${qrCodeData.slice(-6)}` : qrCodeData}
+            </QrCodeData>
             {isProcessing ? (
               <div style={{ marginTop: "15px" }}>
                 <ClipLoader size={30} color="black" />

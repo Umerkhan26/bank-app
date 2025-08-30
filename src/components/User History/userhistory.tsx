@@ -1069,9 +1069,8 @@ const UserHistory = () => {
                 <tr>
                   <Th>Points Earned</Th>
                   <Th>Point Used</Th>
-                  <Th>User ID</Th>
-                  <Th>User Name</Th>
                   <Th>Type</Th>
+                  <Th>User Name</Th>
                   <Th>Date</Th>
                 </tr>
               </thead>
@@ -1090,15 +1089,10 @@ const UserHistory = () => {
                         {item.points_used}
                       </IconCell>
                     </Td>
-                    <Td>
-                      <IconCell>
-                        <IoDocument size={14} />
-                        {item.user_id?._id}
-                      </IconCell>
-                    </Td>
-                    <Td>{item.user_id?.name}</Td>
 
                     <Td>{item.type}</Td>
+                    <Td>{item.user_id?.name}</Td>
+
                     <Td>
                       <IconCell>
                         <IoCalendar size={14} />

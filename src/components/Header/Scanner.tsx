@@ -528,19 +528,10 @@ const QrScanner: React.FC<QrScannerProps> = ({ onRequireLogin }) => {
       setIsModalOpen(false);
     } catch (err: any) {
       console.error("QR Scan API error:", err);
-      const errorMsg =
-        err?.response?.data?.message ||
-        "Failed to scan QR code. Please try again.";
 
-      if (errorMsg.includes("already been used")) {
-        toast.error("This QR Code has already been used.");
-      } else if (errorMsg.includes("already scanned by this user")) {
-        toast.error("⚠️ You have already scanned this QR Code.");
-      } else if (errorMsg.includes("not found")) {
-        toast.error("Invalid QR Code.");
-      } else {
-        toast.error(errorMsg);
-      }
+      const errorMsg =
+        err?.response?.data?.message || "Failed to scan QR code.";
+      toast.error(errorMsg);
     } finally {
       setIsProcessing(false);
       setScanned(false);
@@ -654,7 +645,9 @@ const QrScanner: React.FC<QrScannerProps> = ({ onRequireLogin }) => {
             <p style={{ fontWeight: "bold", marginBottom: "10px" }}>
               QR Code Extracted Successfully!
             </p>
-            <QrCodeData>{qrCodeData}</QrCodeData>
+            <QrCodeData>
+              {qrCodeData.length > 6 ? `${qrCodeData.slice(-6)}` : qrCodeData}
+            </QrCodeData>
             {isProcessing ? (
               <div style={{ marginTop: "15px" }}>
                 <ClipLoader size={30} color="black" />

@@ -39,18 +39,11 @@ const Home: React.FC = () => {
 
       console.log("Scan result:", result);
     } catch (err: any) {
-      console.error("Error scanning QR code:", err);
-      const errorMsg = err?.response?.data?.message || "Failed to scan QR code";
+      console.error("QR Scan API error:", err);
 
-      if (errorMsg.includes("already been used")) {
-        toast.error("This QR Code has already been used.");
-      } else if (errorMsg.includes("already scanned by this user")) {
-        toast.error("⚠️ You have already scanned this QR Code.");
-      } else if (errorMsg.includes("not found")) {
-        toast.error("Invalid QR Code.");
-      } else {
-        toast.error(errorMsg);
-      }
+      const errorMsg =
+        err?.response?.data?.message || "Failed to scan QR code.";
+      toast.error(errorMsg);
     }
   };
 
