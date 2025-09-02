@@ -236,7 +236,7 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
       }
     } catch (error: any) {
       console.error("[USER_LOGIN] Login error:", error);
-      toast.error("Login failed! Please check your credentials.");
+      toast.error(error); // ✅ shows error in toast
     } finally {
       setLoading(false);
     }

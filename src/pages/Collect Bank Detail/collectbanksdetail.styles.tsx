@@ -11,9 +11,17 @@ export const Container = styled.div`
 
 export const RedeemContainer = styled.div`
   display: flex;
-  align-items: center;
+  flex-direction: column; /* stack vertically */
+  align-items: center; /* center horizontally */
   justify-content: center;
-  width: 100%;
+  text-align: center;
+  p {
+    margin-bottom: 20px;
+    margin-top: -15px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #374151;
+  }
 `;
 
 export const QrCodeButton = styled.button`

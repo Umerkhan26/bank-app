@@ -41,7 +41,13 @@ export const loginUser = async (data: LoginData): Promise<LoginResponse> => {
     localStorage.setItem("token", token);
     return response.data;
   } catch (error: any) {
-    throw error.response?.data?.message || "Failed to log in";
+    const message =
+      error.response?.data?.message ||
+      error.message ||
+      "Something went wrong while logging in";
+
+    // ✅ Throw it so SignIn.tsx can also catch
+    throw message;
   }
 };
 
@@ -55,11 +61,13 @@ export const registerUser = async (
       headers: { "Content-Type": "application/json" },
     });
 
-    console.log("Registration Successful:", response.data);
+    console.log("response from regis", response.data);
     return response.data;
   } catch (error: any) {
     console.error("API Error:", error.response?.data || error);
-    throw error.response?.data?.message || "Registration failed";
+
+    const message = error.response?.data?.message || "Registration failed";
+    throw new Error(message); // ✅ always throw an Error object
   }
 };
 
