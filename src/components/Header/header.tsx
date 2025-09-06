@@ -1219,6 +1219,7 @@ import { getAllBrands } from "../../services/auth";
 import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";
 import QrScanner from "./Scanner";
+import ForgotPassword from "../../pages/Forgot Password/ForgotPassword";
 
 interface ScanResult {
   userPoints: number;
@@ -1235,10 +1236,12 @@ const Header: React.FC = () => {
   const userId = localStorage.getItem("userId");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isExtracting, setIsExtracting] = useState(false);
+
   const [extractingMessage, setExtractingMessage] = useState<string>(
     "Preparing image for scanning..."
   );
   const [isScanning, setIsScanning] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -1758,10 +1761,10 @@ const Header: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    navigate("/");
-  };
+  // const handleCloseModal = () => {
+  //   setIsModalOpen(false);
+  //   navigate("/");
+  // };
 
   const handleLogout = () => {
     const userId = localStorage.getItem("userId");
@@ -2072,16 +2075,33 @@ const Header: React.FC = () => {
           </MobileMenuItem>
         </MobileMenu>
 
-        <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-          {isLogin ? (
+        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+          {isLogin && !isForgotPassword ? (
             <Login
-              onClose={handleCloseModal}
-              onSwitchToSignUp={() => setIsLogin(false)}
+              onSwitchToSignUp={() => {
+                setIsLogin(false);
+                setIsForgotPassword(false);
+              }}
+              onSwitchToForgot={() => {
+                setIsForgotPassword(true);
+              }}
+              onClose={() => setIsModalOpen(false)}
+            />
+          ) : !isLogin && !isForgotPassword ? (
+            <SignUp
+              onSwitchToLogin={() => {
+                setIsLogin(true);
+                setIsForgotPassword(false);
+              }}
+              onClose={() => setIsModalOpen(false)}
             />
           ) : (
-            <SignUp
-              onClose={handleCloseModal}
-              onSwitchToLogin={() => setIsLogin(true)}
+            <ForgotPassword
+              onSwitchToLogin={() => {
+                setIsLogin(true);
+                setIsForgotPassword(false);
+              }}
+              onClose={() => setIsModalOpen(false)}
             />
           )}
         </Modal>

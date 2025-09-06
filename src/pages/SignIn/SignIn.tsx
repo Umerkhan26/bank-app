@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Input from "../../components/Inputs/input";
 import {
   ButtonDiv,
+  FooterReset,
   FooterText,
   FormGroup,
   Label,
@@ -26,10 +27,12 @@ import {
   refreshFcmToken,
   requestNotificationPermission,
 } from "../../utils/firebase";
+import VerifyCode from "../VerifyCode/VerifyCode";
 
 interface LoginProps {
   onSwitchToSignUp?: () => void;
   onClose?: () => void;
+  onSwitchToForgot?: () => void;
 }
 
 interface SignInFormValues {
@@ -48,7 +51,11 @@ const signInValidationSchema: yup.ObjectSchema<SignInFormValues> = yup.object({
     .required("Password is required"),
 });
 
-const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
+const Login: React.FC<LoginProps> = ({
+  onSwitchToSignUp,
+  onClose,
+  onSwitchToForgot,
+}) => {
   const {
     register,
     handleSubmit,
@@ -62,6 +69,8 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [isTokenFound, setTokenFound] = useState(false);
   const [notification, setNotification] = useState({ title: "", body: "" });
+  const [showVerifyModal, setShowVerifyModal] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState<string>("");
 
   useEffect(() => {
     const setupNotifications = async () => {
@@ -198,6 +207,59 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
     }
   };
 
+  // const onSubmit: SubmitHandler<SignInFormValues> = async (data) => {
+  //   setLoading(true);
+  //   console.log("[USER_LOGIN] Login attempt with:", data);
+
+  //   try {
+  //     const response = await loginUser(data);
+  //     console.log("[USER_LOGIN] Login successful:", response);
+
+  //     if (response.token) {
+  //       const userId = response.user._id;
+  //       const userPoints = Array.isArray(response.user.points)
+  //         ? response.user.points.reduce((acc, p) => acc + p.points, 0)
+  //         : 0;
+
+  //       dispatch(
+  //         login({
+  //           token: response.token,
+  //           userId,
+  //           username: response.user.name,
+  //           userPoints,
+  //         })
+  //       );
+
+  //       toast.success("Login successful!");
+  //       onClose?.();
+
+  //       // Store userPoints safely
+  //       localStorage.setItem(`userPoints_${userId}`, userPoints.toString());
+
+  //       console.log("[USER_LOGIN] Registering FCM token...");
+  //       await handleFcmToken(
+  //         response.token,
+  //         userId,
+  //         response.user.address || ""
+  //       );
+  //     }
+  //   } catch (error: any) {
+  //     console.error("[USER_LOGIN] Login error:", error);
+
+  //     const errorMessage =
+  //       error.response?.data?.message || error.message || "An error occurred";
+
+  //     if (errorMessage.includes("Email not verified")) {
+  //       setPendingEmail(data.email); // store email for VerifyCode
+  //       setShowVerifyModal(true); // show modal
+  //     } else {
+  //       toast.error(errorMessage);
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const onSubmit: SubmitHandler<SignInFormValues> = async (data) => {
     setLoading(true);
     console.log("[USER_LOGIN] Login attempt with:", data);
@@ -209,7 +271,10 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
       if (response.token) {
         const userId = response.user._id;
         const userPoints = Array.isArray(response.user.points)
-          ? response.user.points.reduce((acc, p) => acc + p.points, 0)
+          ? response.user.points.reduce(
+              (acc: number, p: { points: number }) => acc + p.points,
+              0
+            )
           : 0;
 
         dispatch(
@@ -224,7 +289,6 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
         toast.success("Login successful!");
         onClose?.();
 
-        // Store userPoints safely
         localStorage.setItem(`userPoints_${userId}`, userPoints.toString());
 
         console.log("[USER_LOGIN] Registering FCM token...");
@@ -236,12 +300,23 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
       }
     } catch (error: any) {
       console.error("[USER_LOGIN] Login error:", error);
-      toast.error(error); // ✅ shows error in toast
+
+      // Check specifically for unverified email error
+      if (
+        error.name === "EMAIL_NOT_VERIFIED" ||
+        error.message.includes("Email not verified")
+      ) {
+        setPendingEmail(data.email);
+        setShowVerifyModal(true);
+        toast.info("Please verify your email to continue");
+      } else {
+        const errorMessage = error.message || "An error occurred during login";
+        toast.error(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
   };
-
   return (
     <>
       {loading && <Loader />}
@@ -301,11 +376,50 @@ const Login: React.FC<LoginProps> = ({ onSwitchToSignUp, onClose }) => {
           </SubmitButton>
         </ButtonDiv>
       </form>
-
+      <FooterReset>
+        Forgot your password?{" "}
+        <SwitchText onClick={onSwitchToForgot}>Reset here</SwitchText>
+      </FooterReset>
       <FooterText>
         Don't have an account?{" "}
         <SwitchText onClick={onSwitchToSignUp}>Register Here</SwitchText>
       </FooterText>
+
+      {showVerifyModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            background: "rgba(0,0,0,0.7)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 9999,
+          }}
+        >
+          <div
+            style={{
+              background: "white",
+              padding: "30px",
+              borderRadius: "12px",
+              maxWidth: "400px",
+              width: "90%",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+            }}
+          >
+            <VerifyCode
+              email={pendingEmail}
+              onVerified={() => {
+                toast.success("Email verified! Please log in again.");
+                setShowVerifyModal(false);
+              }}
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 };

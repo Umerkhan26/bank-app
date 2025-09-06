@@ -38,9 +38,28 @@ interface FormData {
 }
 
 const schema = yup.object().shape({
-  firstName: yup.string().required("First name is required"),
-  lastName: yup.string().required("Last name is required"),
-  email: yup.string().email("Invalid email").required("Email is required"),
+  firstName: yup
+    .string()
+    .transform((value) => (value ? value.replace(/\s+/g, " ").trim() : ""))
+    .required("First name is required")
+    .matches(
+      /^(?! )[A-Za-z]+(?:[ '’\-\.][A-Za-z]+)*-?$/,
+      "Please enter a valid name"
+    ),
+
+  lastName: yup
+    .string()
+    .transform((value) => (value ? value.replace(/\s+/g, " ").trim() : ""))
+    .required("Last name is required")
+    .matches(
+      /^(?! )[A-Za-z]+(?:[ '’\-\.][A-Za-z]+)*-?$/,
+      "Please enter a valid last name"
+    ),
+  email: yup
+    .string()
+    .trim()
+    .email("Invalid email")
+    .required("Email is required"),
   date_of_birth: yup
     .string()
     .required("Date of birth is required")

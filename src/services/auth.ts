@@ -1,22 +1,22 @@
 import axios from "axios";
 import { API_BASE_URL } from "./promotion";
 
-interface LoginData {
-  email: string;
-  password: string;
-}
+// interface LoginData {
+//   email: string;
+//   password: string;
+// }
 
-interface LoginResponse {
-  message: string;
-  token: string;
-  user: {
-    _id: string;
-    name: string;
-    email: string;
-    points: number;
-    address?: string;
-  };
-}
+// interface LoginResponse {
+//   message: string;
+//   token: string;
+//   user: {
+//     _id: string;
+//     name: string;
+//     email: string;
+//     points: number;
+//     address?: string;
+//   };
+// }
 
 interface RegisterData {
   name: string;
@@ -34,20 +34,46 @@ interface RegisterResponse {
   };
 }
 
-export const loginUser = async (data: LoginData): Promise<LoginResponse> => {
+// export const loginUser = async (data: LoginData): Promise<LoginResponse> => {
+//   try {
+//     const response = await axios.post(`${API_BASE_URL}/login`, data);
+//     const { token } = response.data;
+//     localStorage.setItem("token", token);
+//     return response.data;
+//   } catch (error: any) {
+//     const message =
+//       error.response?.data?.message ||
+//       error.message ||
+//       "Something went wrong while logging in";
+
+//     // ✅ Throw it so SignIn.tsx can also catch
+//     throw message;
+//   }
+// };
+
+export const loginUser = async (credentials: {
+  email: string;
+  password: string;
+}): Promise<any> => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/login`, data);
-    const { token } = response.data;
-    localStorage.setItem("token", token);
+    const response = await axios.post(`${API_BASE_URL}/login`, credentials);
     return response.data;
   } catch (error: any) {
-    const message =
-      error.response?.data?.message ||
-      error.message ||
-      "Something went wrong while logging in";
+    // Check if it's an unverified email error
+    if (
+      error.response?.status === 401 &&
+      error.response?.data?.message?.includes("Email not verified")
+    ) {
+      // Create a custom error that we can check for in the component
+      const customError = new Error(error.response.data.message);
+      customError.name = "EMAIL_NOT_VERIFIED";
+      throw customError;
+    }
 
-    // ✅ Throw it so SignIn.tsx can also catch
-    throw message;
+    // For other errors, throw the original error
+    throw new Error(
+      error.response?.data?.message || "Login failed. Please try again."
+    );
   }
 };
 
@@ -114,4 +140,47 @@ export const getAllBrands = async () => {
 export const verifyEmailCode = async (code: string) => {
   const response = await axios.get(`${API_BASE_URL}/verify-email/${code}`);
   return response.data;
+};
+
+export const sendForgotPasswordOTP = async (email: string) => {
+  const { data } = await axios.post(
+    `${API_BASE_URL}/send-otp-forgot-password`,
+    {
+      email,
+    }
+  );
+  return data;
+};
+
+export const verifyForgotPasswordOTP = async (
+  email: string,
+  otp: string
+): Promise<{ message: string; user: { id: string; email: string } }> => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/resend-otp-to-email`, {
+      email,
+      otp,
+    });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || "Failed to verify OTP");
+  }
+};
+
+export const resetPassword = async (
+  email: string,
+  newPassword: string
+): Promise<{ message: string }> => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/reset-password-now`, {
+      email,
+      newPassword,
+    });
+
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || "Failed to reset password"
+    );
+  }
 };
