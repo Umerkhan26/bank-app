@@ -1214,6 +1214,7 @@ import {
   Logo,
   ScanButton,
   MobileMenuItem,
+  MobileUploadButton,
 } from "./header.styles";
 import { getAllBrands } from "../../services/auth";
 import { toast } from "react-toastify";
@@ -1926,6 +1927,9 @@ const Header: React.FC = () => {
         <ScanButton>
           <QrScanner onRequireLogin={() => setIsModalOpen(true)} />
         </ScanButton>
+        <MobileUploadButton onClick={handleUploadClick}>
+          <span>Upload Qrcode</span>
+        </MobileUploadButton>
 
         <MobileToggleButton onClick={toggleMobileMenu}>
           <FontAwesomeIcon icon={isMobileMenuOpen ? faTimes : faBars} />

@@ -12,6 +12,7 @@ export const NavContainer = styled.nav`
   position: sticky;
   top: 0;
   z-index: 1000;
+  flex-wrap: nowrap;
 
   @media (max-width: 1024px) {
     padding: 1rem;
@@ -242,6 +243,26 @@ export const PointsDisplay = styled.div`
 
 export const NotificationDropdown = styled.div`
   position: relative;
+`;
+
+export const MobileUploadButton = styled.button`
+  display: none;
+
+  @media (max-width: 768px) {
+    padding: 8px 5px;
+    border: 1px solid black;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 11px;
+    margin-top: 5px;
+    display: flex;
+    margin-right: 19px;
+    white-space: nowrap;
+
+    &:hover {
+      // background: linear-gradient(135deg, #5a7de3, #9266d4);
+    }
+  }
 `;
 
 export const NotificationButton = styled.button`
