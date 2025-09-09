@@ -450,6 +450,232 @@
 
 // export default QrScanner;
 
+// import React, { useRef, useState } from "react";
+// import { Scanner } from "@yudiel/react-qr-scanner";
+// import { toast } from "react-toastify";
+// import { useDispatch } from "react-redux";
+// import { scanQRCode } from "../../services/qrcode";
+// import { updatePoints } from "../../redux/slices/auth";
+// import scan from "../../assets/Png/scan.jpg";
+// import Modal from "../Modal/modal";
+// import { QrCodeData, QrCodeButton } from "./header.styles";
+// import { ClipLoader } from "react-spinners";
+
+// interface QrScannerProps {
+//   onRequireLogin?: () => void;
+// }
+
+// const QrScanner: React.FC<QrScannerProps> = ({ onRequireLogin }) => {
+//   const [openScanner, setOpenScanner] = useState(false);
+//   const [qrCodeData, setQrCodeData] = useState<string | null>(null);
+//   const [isModalOpen, setIsModalOpen] = useState(false);
+//   const [isProcessing, setIsProcessing] = useState(false);
+//   const [scanned, setScanned] = useState(false);
+//   const dispatch = useDispatch();
+//   const lastScannedRef = useRef<string | null>(null);
+
+//   const handleScan = (results: any[]) => {
+//     if (!results || results.length === 0 || scanned) return;
+
+//     let qrData = results[0]?.rawValue || "";
+//     qrData = qrData.trim().replace(/\s+/g, "");
+
+//     if (!qrData || lastScannedRef.current === qrData) return;
+//     lastScannedRef.current = qrData;
+
+//     setQrCodeData(qrData);
+//     setIsModalOpen(true);
+//     setOpenScanner(false);
+//     setScanned(true);
+
+//     setTimeout(() => {
+//       setScanned(false);
+//       lastScannedRef.current = null;
+//     }, 5000);
+//   };
+
+//   const handleScanSubmit = async () => {
+//     if (!qrCodeData) {
+//       toast.error("No QR code data to submit.");
+//       return;
+//     }
+
+//     const token = localStorage.getItem("token");
+//     const userId = localStorage.getItem("userId");
+
+//     if (!token || !userId) {
+//       toast.error("No user information found. Please log in again.");
+//       setIsModalOpen(false);
+//       setScanned(false);
+//       return;
+//     }
+
+//     setIsProcessing(true);
+//     try {
+//       const lastSixDigits = qrCodeData.slice(-6);
+//       const response = await scanQRCode(token, lastSixDigits);
+//       toast.success("🎯 Congratulations! You have earned 20 points!");
+
+//       const totalPoints = Array.isArray(response.userPoints)
+//         ? response.userPoints.reduce(
+//             (sum: number, item: { points?: number }) =>
+//               sum + (item.points || 0),
+//             0
+//           )
+//         : response.userPoints;
+
+//       dispatch(updatePoints(totalPoints));
+//       setIsModalOpen(false);
+//     } catch (err: any) {
+//       console.error("QR Scan API error:", err);
+
+//       const errorMsg =
+//         err?.response?.data?.message || "Failed to scan QR code.";
+//       toast.error(errorMsg);
+//     } finally {
+//       setIsProcessing(false);
+//       setScanned(false);
+//     }
+//   };
+
+//   return (
+//     <div>
+//       {/* Camera Icon Button */}
+//       <button
+//         onClick={() => {
+//           const token = localStorage.getItem("token");
+//           const userId = localStorage.getItem("userId");
+
+//           if (!token || !userId) {
+//             onRequireLogin?.();
+//             return;
+//           }
+//           setOpenScanner(true);
+//           setScanned(false);
+//         }}
+//         style={{
+//           background: "transparent",
+//           border: "none",
+//           outline: "none",
+//           padding: 0,
+//           margin: 0,
+//         }}
+//       >
+//         <img
+//           src={scan}
+//           alt="Camera Icon"
+//           style={{
+//             width: "70px",
+//             height: "70px",
+//             marginRight: "35px",
+//             marginTop: "10px",
+//             display: "block",
+//           }}
+//         />
+//       </button>
+
+//       {/* Scanner Overlay */}
+//       {openScanner && (
+//         <div
+//           style={{
+//             position: "fixed",
+//             inset: 0,
+//             display: "flex",
+//             alignItems: "center",
+//             justifyContent: "center",
+//             backgroundColor: "rgba(0,0,0,0.8)",
+//             zIndex: 50,
+//           }}
+//         >
+//           <div
+//             style={{
+//               width: "288px",
+//               height: "288px",
+//               borderRadius: "10px",
+//               overflow: "hidden",
+//               backgroundColor: "black",
+//             }}
+//           >
+//             <Scanner
+//               onScan={handleScan}
+//               allowMultiple={false}
+//               components={{
+//                 finder: true,
+//               }}
+//               styles={{
+//                 container: { width: "100%", height: "100%" },
+//                 video: { width: "100%", height: "100%", objectFit: "cover" },
+//               }}
+//             />
+//           </div>
+//           <button
+//             onClick={() => {
+//               setOpenScanner(false);
+//               setScanned(false);
+//             }}
+//             style={{
+//               position: "absolute",
+//               top: "10px",
+//               right: "10px",
+//               padding: "10px",
+//               background: "red",
+//               color: "white",
+//               border: "none",
+//               borderRadius: "5px",
+//               cursor: "pointer",
+//             }}
+//           >
+//             Close
+//           </button>
+//         </div>
+//       )}
+
+//       {/* Modal */}
+//       <Modal
+//         isOpen={isModalOpen}
+//         onClose={() => {
+//           setIsModalOpen(false);
+//           setQrCodeData(null);
+//           setIsProcessing(false);
+//           setScanned(false);
+//         }}
+//       >
+//         {qrCodeData ? (
+//           <div style={{ textAlign: "center", padding: "10px" }}>
+//             <p style={{ fontWeight: "bold", marginBottom: "10px" }}>
+//               QR Code Extracted Successfully!
+//             </p>
+//             <QrCodeData>
+//               {qrCodeData.length > 6 ? `${qrCodeData.slice(-6)}` : qrCodeData}
+//             </QrCodeData>
+//             {isProcessing ? (
+//               <div style={{ marginTop: "15px" }}>
+//                 <ClipLoader size={30} color="black" />
+//                 <p style={{ marginTop: "10px" }}>Submitting to server...</p>
+//               </div>
+//             ) : (
+//               <QrCodeButton
+//                 onClick={handleScanSubmit}
+//                 disabled={isProcessing}
+//                 style={{ marginTop: "15px" }}
+//               >
+//                 Submit QR Code
+//               </QrCodeButton>
+//             )}
+//           </div>
+//         ) : (
+//           <p style={{ textAlign: "center", color: "red" }}>
+//             No QR code detected.
+//           </p>
+//         )}
+//       </Modal>
+//     </div>
+//   );
+// };
+
+// export default QrScanner;
+
+
 import React, { useRef, useState } from "react";
 import { Scanner } from "@yudiel/react-qr-scanner";
 import { toast } from "react-toastify";
@@ -464,6 +690,16 @@ import { ClipLoader } from "react-spinners";
 interface QrScannerProps {
   onRequireLogin?: () => void;
 }
+
+export {};
+
+declare global {
+  interface MediaTrackConstraintSet {
+    focusMode?: string;
+    focusDistance?: number;
+  }
+}
+
 
 const QrScanner: React.FC<QrScannerProps> = ({ onRequireLogin }) => {
   const [openScanner, setOpenScanner] = useState(false);
@@ -538,6 +774,26 @@ const QrScanner: React.FC<QrScannerProps> = ({ onRequireLogin }) => {
     }
   };
 
+const handleTapFocus = async () => {
+  try {
+    const video = document.querySelector("video") as HTMLVideoElement;
+    if (video && video.srcObject) {
+      const stream = video.srcObject as MediaStream;
+      const track = stream.getVideoTracks()[0];
+
+      if (track && typeof track.applyConstraints === "function") {
+        await track.applyConstraints({
+          advanced: [{ focusMode: "manual", focusDistance: 0.5 }],
+        } as MediaTrackConstraints); // ✅ Cast to avoid TS error
+        console.log("Manual focus applied");
+      }
+    }
+  } catch (err) {
+    console.log("Manual focus not supported on this device:", err);
+  }
+};
+
+
   return (
     <div>
       {/* Camera Icon Button */}
@@ -595,12 +851,17 @@ const QrScanner: React.FC<QrScannerProps> = ({ onRequireLogin }) => {
               overflow: "hidden",
               backgroundColor: "black",
             }}
+            onClick={handleTapFocus} // 👈 Added tap-to-focus support
           >
             <Scanner
               onScan={handleScan}
               allowMultiple={false}
               components={{
                 finder: true,
+              }}
+              constraints={{
+                facingMode: "environment",
+                focusMode: "continuous", // 👈 Keep continuous autofocus enabled
               }}
               styles={{
                 container: { width: "100%", height: "100%" },
