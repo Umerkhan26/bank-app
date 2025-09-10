@@ -348,7 +348,7 @@ export const BannerContainer = styled.div<{ windowWidth: number }>`
     background-size: 100% auto;
     background-position: center top;
     height: ${(props) => {
-      const aspectRatio = 254 / 433; // height/width
+      const aspectRatio = 230 / 433; // height/width
       return `calc(${props.windowWidth}px * ${aspectRatio})`;
     }};
     padding: 4rem 2rem;
@@ -359,7 +359,7 @@ export const BannerContainer = styled.div<{ windowWidth: number }>`
     background-size: contain;
     background-position: center top;
     height: ${(props) => {
-      const aspectRatio = 254 / 433;
+      const aspectRatio = 230 / 433;
       return `calc(${props.windowWidth}px * ${aspectRatio})`;
     }};
     padding: 2rem 1rem;
@@ -370,7 +370,7 @@ export const BannerContainer = styled.div<{ windowWidth: number }>`
     background-size: contain;
     background-position: center top;
     height: ${(props) => {
-      const aspectRatio = 254 / 433;
+      const aspectRatio = 230 / 433;
       return `calc(${props.windowWidth}px * ${aspectRatio})`;
     }};
     padding: 1.5rem 0.5rem;

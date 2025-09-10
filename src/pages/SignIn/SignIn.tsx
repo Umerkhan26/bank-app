@@ -355,7 +355,7 @@ const Login: React.FC<LoginProps> = ({
           />
         </FormGroup>
 
-        <div className="text-center mb-3">
+        <div className="text-center mb-2">
           {isTokenFound ? (
             <span className="text-success"></span>
           ) : (
