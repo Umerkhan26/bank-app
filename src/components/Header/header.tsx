@@ -1174,16 +1174,18 @@ import Login from "../../pages/SignIn/SignIn";
 import Modal from "../Modal/modal";
 import SignUp from "../../pages/SignUp/signup";
 import { Link, useNavigate } from "react-router-dom";
-import jsQR from "jsqr";
 import { scanQRCode } from "../../services/qrcode";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import { Html5Qrcode } from "html5-qrcode";
 import {
   logout,
   setSelectedBrand,
   updatePoints,
 } from "../../redux/slices/auth";
 import logo from "../../assets/Png/BANKS CURVED LOGO-09.png";
+import ReactCrop, { Crop } from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
 
 import {
   NavContainer,
@@ -1205,7 +1207,6 @@ import {
   ProfileFallback,
   PointsDisplay,
   QrCodeData,
-  ImagePreview,
   QrCodeButton,
   MobileMenuOverlay,
   MobileMenu,
@@ -1221,6 +1222,7 @@ import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";
 import QrScanner from "./Scanner";
 import ForgotPassword from "../../pages/Forgot Password/ForgotPassword";
+import jsQR from "jsqr";
 
 interface ScanResult {
   userPoints: number;
@@ -1237,6 +1239,10 @@ const Header: React.FC = () => {
   const userId = localStorage.getItem("userId");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isExtracting, setIsExtracting] = useState(false);
+  const [crop, setCrop] = useState<Crop>();
+  const [completedCrop, setCompletedCrop] = useState<Crop>();
+  const [croppedImage, setCroppedImage] = useState<string | null>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   const [extractingMessage, setExtractingMessage] = useState<string>(
     "Preparing image for scanning..."
@@ -1264,6 +1270,65 @@ const Header: React.FC = () => {
   const userPoints = useSelector((state: RootState) => state.auth.userPoints);
   console.log("Redux userPoints:", userPoints);
 
+  // Function to create a cropped image from the canvas
+  const getCroppedImg = (
+    image: HTMLImageElement,
+    crop: Crop
+  ): Promise<string> => {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) {
+      throw new Error("No 2d context");
+    }
+
+    const scaleX = image.naturalWidth / image.width;
+    const scaleY = image.naturalHeight / image.height;
+    const pixelRatio = window.devicePixelRatio;
+
+    canvas.width = Math.floor(crop.width * scaleX * pixelRatio);
+    canvas.height = Math.floor(crop.height * scaleY * pixelRatio);
+
+    ctx.scale(pixelRatio, pixelRatio);
+    ctx.imageSmoothingQuality = "high";
+
+    const cropX = crop.x * scaleX;
+    const cropY = crop.y * scaleY;
+
+    ctx.save();
+
+    // Move the crop origin to the canvas origin (0,0)
+    ctx.translate(-cropX, -cropY);
+    // Draw the image
+    ctx.drawImage(
+      image,
+      0,
+      0,
+      image.naturalWidth,
+      image.naturalHeight,
+      0,
+      0,
+      image.naturalWidth,
+      image.naturalHeight
+    );
+
+    ctx.restore();
+
+    return new Promise((resolve) => {
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            console.error("Canvas is empty");
+            return;
+          }
+          resolve(URL.createObjectURL(blob));
+        },
+        "image/jpeg",
+        1
+      );
+    });
+  };
+
   const handleUploadClick = () => {
     if (!isLoggedIn) {
       setIsModalOpen(true);
@@ -1274,6 +1339,9 @@ const Header: React.FC = () => {
     setQrCodeData(null);
     setScanResult(null);
     setIsProcessing(false);
+    setCrop(undefined);
+    setCompletedCrop(undefined);
+    setCroppedImage(null);
 
     const input = document.createElement("input");
     input.type = "file";
@@ -1281,34 +1349,64 @@ const Header: React.FC = () => {
     input.onchange = async (event) => {
       const file = (event.target as HTMLInputElement).files?.[0];
       if (file) {
+        // Check file size (limit to 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          toast.error("Please select an image smaller than 5MB");
+          return;
+        }
+
         const reader = new FileReader();
         reader.onload = async (e) => {
           const imageData = e.target?.result as string;
           setSelectedImage(imageData);
-          setLoading(true);
-
-          setIsExtracting(true);
-          setExtractingMessage("Preparing image for scanning...");
-
-          const qrData = await extractQRCode(imageData);
-          setLoading(false);
-
-          setIsExtracting(false);
-
-          if (qrData) {
-            console.log("Extracted QR Code Data:", qrData);
-            setQrCodeData(qrData);
-            setIsImageModalOpen(true);
-          } else {
-            setQrCodeData(null);
-            setIsImageModalOpen(true);
-            toast.error("No QR code found in the image.");
-          }
+          setIsImageModalOpen(true);
         };
         reader.readAsDataURL(file);
       }
     };
     input.click();
+  };
+
+  const handleCropComplete = async (crop: Crop) => {
+    setCompletedCrop(crop);
+
+    if (imgRef.current && crop.width && crop.height) {
+      try {
+        const croppedImageUrl = await getCroppedImg(imgRef.current, crop);
+        setCroppedImage(croppedImageUrl);
+      } catch (error) {
+        console.error("Error cropping image:", error);
+        toast.error("Error cropping image. Please try again.");
+      }
+    }
+  };
+
+  const handleScanCroppedImage = async () => {
+    if (!croppedImage) {
+      toast.error("Please crop the image first");
+      return;
+    }
+
+    setIsExtracting(true);
+    setExtractingMessage("Scanning for QR code...");
+
+    try {
+      const qrData = await extractQRCode(croppedImage);
+
+      if (qrData) {
+        console.log("Extracted QR Code Data:", qrData);
+        setQrCodeData(qrData);
+        toast.success("QR code detected!");
+      } else {
+        setQrCodeData(null);
+        toast.error("No QR code found in the cropped image.");
+      }
+    } catch (error) {
+      console.error("Error extracting QR code:", error);
+      toast.error("Error processing image. Please try again.");
+    } finally {
+      setIsExtracting(false);
+    }
   };
 
   const stopCamera = () => {
@@ -1340,26 +1438,59 @@ const Header: React.FC = () => {
   }, []);
 
   const extractQRCode = async (imageSrc: string): Promise<string | null> => {
+    try {
+      const file = await fetch(imageSrc)
+        .then((res) => res.blob())
+        .then(
+          (blob) =>
+            new File([blob], "qrcode.jpg", { type: blob.type || "image/jpeg" })
+        );
+
+      // Create a temporary container for the scanner
+      const tempContainer = document.createElement("div");
+      tempContainer.id = "temp-qr-scanner";
+      tempContainer.style.position = "absolute";
+      tempContainer.style.left = "-9999px";
+      document.body.appendChild(tempContainer);
+
+      // Initialize the scanner
+      const html5Qrcode = new Html5Qrcode("temp-qr-scanner");
+
+      // Scan the image file
+      const result = await html5Qrcode.scanFile(file, true);
+      console.log("QR Code detected:", result);
+
+      // Clean up
+      document.body.removeChild(tempContainer);
+
+      return getLastSegment(result);
+    } catch (error) {
+      console.log(
+        "QR code not found with html5-qrcode, trying alternative approach...",
+        error
+      );
+
+      // Clean up any existing temporary container
+      const existingContainer = document.getElementById("temp-qr-scanner");
+      if (existingContainer) {
+        document.body.removeChild(existingContainer);
+      }
+
+      // Fall back to the original jsQR implementation
+      return await extractQRCodeWithJsQR(imageSrc);
+    }
+  };
+
+  // Fallback implementation using jsQR
+  const extractQRCodeWithJsQR = async (
+    imageSrc: string
+  ): Promise<string | null> => {
     return new Promise((resolve) => {
       const image = new Image();
       image.crossOrigin = "Anonymous";
       image.src = imageSrc;
 
-      const getLastSegment = (
-        data: string | undefined | null
-      ): string | null => {
-        if (!data) return null;
-        return data.trim().split("/").pop() || null;
-      };
-
       image.onload = () => {
-        if (image.width <= 0 || image.height <= 0) {
-          console.error(
-            `Invalid image dimensions: width=${image.width}, height=${image.height}`
-          );
-          return resolve(null);
-        }
-
         const canvas = document.createElement("canvas");
         const context = canvas.getContext("2d");
         if (!context) {
@@ -1369,389 +1500,177 @@ const Header: React.FC = () => {
 
         canvas.width = image.width;
         canvas.height = image.height;
+        context.drawImage(image, 0, 0, image.width, image.height);
 
-        try {
-          context.drawImage(image, 0, 0, image.width, image.height);
-        } catch (e) {
-          console.error("Error drawing image on canvas:", e);
-          return resolve(null);
-        }
-
-        let imageData;
-        try {
-          imageData = context.getImageData(0, 0, image.width, image.height);
-        } catch (e) {
-          console.error("Error getting image data:", e);
-          return resolve(null);
-        }
-
-        if (
-          !imageData.data ||
-          imageData.data.length !== image.width * image.height * 4
-        ) {
-          console.error(
-            `Invalid ImageData: length=${imageData.data.length}, expected=${
-              image.width * image.height * 4
-            }`
-          );
-          return resolve(null);
-        }
-
-        try {
-          const code = jsQR(imageData.data, image.width, image.height);
-          if (code) return resolve(getLastSegment(code.data));
-        } catch (e) {
-          console.error("jsQR error on original image:", e);
-        }
-
-        const preprocessingMethods = [
-          applyContrastEnhancement,
-          applyBinarization,
-          applySharpening,
-          applyHistogramEqualization,
+        // Try multiple approaches
+        const approaches = [
+          () => tryDirectScan(context, image.width, image.height),
+          () => tryWithPreprocessing(context, image.width, image.height),
+          () => tryMultipleScales(context, image.width, image.height),
+          () => tryROIs(context, image.width, image.height),
         ];
 
-        for (const method of preprocessingMethods) {
-          try {
-            const processedImageData = method(
-              context,
-              image.width,
-              image.height
-            );
-            if (
-              !processedImageData.data ||
-              processedImageData.data.length !== image.width * image.height * 4
-            ) {
-              console.warn(`Invalid processed ImageData from ${method.name}`);
-              continue;
-            }
-            const code = jsQR(
-              processedImageData.data,
-              image.width,
-              processedImageData.height
-            );
-            if (code) return resolve(getLastSegment(code.data));
-          } catch (e) {
-            console.error(`Error in preprocessing method ${method.name}:`, e);
-          }
-        }
+        // Try each approach sequentially
+        const tryApproach = async (index: number): Promise<string | null> => {
+          if (index >= approaches.length) return null;
 
-        const roiSizes = [0.3, 0.5, 0.7];
-        for (const size of roiSizes) {
           try {
-            const qrCode = tryMultipleROIs(
-              context,
-              image.width,
-              image.height,
-              size
-            );
-            if (qrCode) return resolve(getLastSegment(qrCode));
-          } catch (e) {
-            console.error(`Error in tryMultipleROIs with size ${size}:`, e);
+            const result = await approaches[index]();
+            if (result) return result;
+            return tryApproach(index + 1);
+          } catch (error) {
+            console.error(`Approach ${index} failed:`, error);
+            return tryApproach(index + 1);
           }
-        }
+        };
 
-        const scales = [0.5, 1.0, 1.5, 2.0];
-        for (const scale of scales) {
-          try {
-            const qrCode = tryScaling(
-              context,
-              image.width,
-              image.height,
-              scale
-            );
-            if (qrCode) return resolve(getLastSegment(qrCode));
-          } catch (e) {
-            console.error(`Error in tryScaling with scale ${scale}:`, e);
-          }
-        }
-
-        console.warn("All QR code detection strategies failed");
-        resolve(null);
+        tryApproach(0).then(resolve);
       };
 
       image.onerror = () => {
-        console.error(
-          `Failed to load image from ${imageSrc}. Check CORS headers or URL validity.`
-        );
+        console.error("Failed to load image");
         resolve(null);
       };
     });
   };
 
-  const applyContrastEnhancement = (
+  const tryDirectScan = (
     context: CanvasRenderingContext2D,
     width: number,
     height: number
-  ): ImageData => {
-    const imageData = context.getImageData(0, 0, width, height);
-    const data = imageData.data;
-
-    let total = 0;
-    for (let i = 0; i < data.length; i += 4) {
-      total += (data[i] + data[i + 1] + data[i + 2]) / 3;
-    }
-    const avg = total / (data.length / 4);
-
-    const factor = (259 * (128 + 50)) / (255 * (259 - 50));
-    for (let i = 0; i < data.length; i += 4) {
-      data[i] = clamp(factor * (data[i] - avg) + avg);
-      data[i + 1] = clamp(factor * (data[i + 1] - avg) + avg);
-      data[i + 2] = clamp(factor * (data[i + 2] - avg) + avg);
-    }
-
-    return imageData;
-  };
-
-  const applyBinarization = (
-    context: CanvasRenderingContext2D,
-    width: number,
-    height: number
-  ): ImageData => {
-    const imageData = context.getImageData(0, 0, width, height);
-    const data = imageData.data;
-
-    const threshold = calculateOtsuThreshold(imageData);
-
-    for (let i = 0; i < data.length; i += 4) {
-      const brightness = (data[i] + data[i + 1] + data[i + 2]) / 3;
-      const value = brightness > threshold ? 255 : 0;
-      data[i] = value;
-      data[i + 1] = value;
-      data[i + 2] = value;
-    }
-
-    return imageData;
-  };
-
-  const applySharpening = (
-    context: CanvasRenderingContext2D,
-    width: number,
-    height: number
-  ): ImageData => {
-    const imageData = context.getImageData(0, 0, width, height);
-    const output = context.createImageData(width, height);
-    const kernel = [
-      [0, -1, 0],
-      [-1, 5, -1],
-      [0, -1, 0],
-    ];
-
-    applyConvolutionFilter(imageData, output, kernel);
-    return output;
-  };
-
-  const applyHistogramEqualization = (
-    context: CanvasRenderingContext2D,
-    width: number,
-    height: number
-  ): ImageData => {
-    const imageData = context.getImageData(0, 0, width, height);
-    const data = imageData.data;
-
-    const histogram = new Array(256).fill(0);
-    for (let i = 0; i < data.length; i += 4) {
-      const brightness = Math.floor((data[i] + data[i + 1] + data[i + 2]) / 3);
-      histogram[brightness]++;
-    }
-
-    const cdf = new Array(256);
-    cdf[0] = histogram[0];
-    for (let i = 1; i < 256; i++) {
-      cdf[i] = cdf[i - 1] + histogram[i];
-    }
-
-    const cdfMin = Math.min(...cdf.filter((val) => val > 0));
-    const totalPixels = width * height;
-
-    for (let i = 0; i < data.length; i += 4) {
-      const brightness = Math.floor((data[i] + data[i + 1] + data[i + 2]) / 3);
-      const newValue = Math.floor(
-        ((cdf[brightness] - cdfMin) / (totalPixels - cdfMin)) * 255
-      );
-      data[i] = newValue;
-      data[i + 1] = newValue;
-      data[i + 2] = newValue;
-    }
-
-    return imageData;
-  };
-
-  const clamp = (value: number): number => {
-    return Math.max(0, Math.min(255, value));
-  };
-
-  const calculateOtsuThreshold = (imageData: ImageData): number => {
-    const data = imageData.data;
-    const histogram = new Array(256).fill(0);
-
-    for (let i = 0; i < data.length; i += 4) {
-      const brightness = Math.floor((data[i] + data[i + 1] + data[i + 2]) / 3);
-      histogram[brightness]++;
-    }
-
-    const total = imageData.width * imageData.height;
-
-    let sum = 0;
-    for (let i = 0; i < 256; i++) sum += i * histogram[i];
-
-    let sumB = 0;
-    let wB = 0;
-    let wF = 0;
-    let maxVariance = 0;
-    let threshold = 0;
-
-    for (let i = 0; i < 256; i++) {
-      wB += histogram[i];
-      if (wB === 0) continue;
-
-      wF = total - wB;
-      if (wF === 0) break;
-
-      sumB += i * histogram[i];
-
-      const mB = sumB / wB;
-      const mF = (sum - sumB) / wF;
-
-      const variance = wB * wF * (mB - mF) * (mB - mF);
-      if (variance > maxVariance) {
-        maxVariance = variance;
-        threshold = i;
-      }
-    }
-
-    return threshold;
-  };
-
-  const applyConvolutionFilter = (
-    input: ImageData,
-    output: ImageData,
-    kernel: number[][]
-  ) => {
-    const width = input.width;
-    const height = input.height;
-    const inputData = input.data;
-    const outputData = output.data;
-    const kernelSize = kernel.length;
-    const kernelRadius = Math.floor(kernelSize / 2);
-
-    for (let y = 0; y < height; y++) {
-      for (let x = 0; x < width; x++) {
-        let r = 0,
-          g = 0,
-          b = 0;
-
-        for (let ky = 0; ky < kernelSize; ky++) {
-          for (let kx = 0; kx < kernelSize; kx++) {
-            const pixelX = x + kx - kernelRadius;
-            const pixelY = y + ky - kernelRadius;
-
-            if (
-              pixelX >= 0 &&
-              pixelX < width &&
-              pixelY >= 0 &&
-              pixelY < height
-            ) {
-              const idx = (pixelY * width + pixelX) * 4;
-              const weight = kernel[ky][kx];
-
-              r += inputData[idx] * weight;
-              g += inputData[idx + 1] * weight;
-              b += inputData[idx + 2] * weight;
-            }
-          }
-        }
-
-        const idx = (y * width + x) * 4;
-        outputData[idx] = clamp(r);
-        outputData[idx + 1] = clamp(g);
-        outputData[idx + 2] = clamp(b);
-        outputData[idx + 3] = inputData[idx + 3];
-      }
-    }
-  };
-
-  const tryMultipleROIs = (
-    context: CanvasRenderingContext2D,
-    width: number,
-    height: number,
-    sizeFactor: number
   ): string | null => {
-    const roiSize = Math.min(width, height) * sizeFactor;
-    const positions = [
-      { x: width / 2 - roiSize / 2, y: height / 2 - roiSize / 2 },
-      { x: 0, y: 0 },
-      { x: width - roiSize, y: 0 },
-      { x: 0, y: height - roiSize },
-      { x: width - roiSize, y: height - roiSize },
-    ];
+    const imageData = context.getImageData(0, 0, width, height);
+    const code = jsQR(imageData.data, width, height);
+    return code ? getLastSegment(code.data) : null;
+  };
 
-    for (const pos of positions) {
-      const roiCanvas = document.createElement("canvas");
-      const roiContext = roiCanvas.getContext("2d");
-      if (!roiContext) continue;
+  const tryWithPreprocessing = (
+    context: CanvasRenderingContext2D,
+    width: number,
+    height: number
+  ): string | null => {
+    const tempCanvas = document.createElement("canvas");
+    const tempContext = tempCanvas.getContext("2d");
+    if (!tempContext) return null;
 
-      roiCanvas.width = roiSize;
-      roiCanvas.height = roiSize;
+    tempCanvas.width = width;
+    tempCanvas.height = height;
 
-      roiContext.drawImage(
-        context.canvas,
-        pos.x,
-        pos.y,
-        roiSize,
-        roiSize,
+    // Apply preprocessing
+    const imageData = context.getImageData(0, 0, width, height);
+    const data = imageData.data;
+
+    // Apply contrast enhancement
+    const factor = 1.3;
+    for (let i = 0; i < data.length; i += 4) {
+      data[i] = clamp((data[i] - 128) * factor + 128);
+      data[i + 1] = clamp((data[i + 1] - 128) * factor + 128);
+      data[i + 2] = clamp((data[i + 2] - 128) * factor + 128);
+    }
+
+    tempContext.putImageData(imageData, 0, 0);
+    const processedImageData = tempContext.getImageData(0, 0, width, height);
+    const code = jsQR(processedImageData.data, width, height);
+
+    return code ? getLastSegment(code.data) : null;
+  };
+
+  const tryMultipleScales = (
+    context: CanvasRenderingContext2D,
+    width: number,
+    height: number
+  ): string | null => {
+    const scales = [0.5, 0.8, 1.0, 1.2, 1.5, 2.0];
+
+    for (const scale of scales) {
+      const scaledWidth = Math.floor(width * scale);
+      const scaledHeight = Math.floor(height * scale);
+
+      const tempCanvas = document.createElement("canvas");
+      const tempContext = tempCanvas.getContext("2d");
+      if (!tempContext) continue;
+
+      tempCanvas.width = scaledWidth;
+      tempCanvas.height = scaledHeight;
+
+      tempContext.drawImage(context.canvas, 0, 0, scaledWidth, scaledHeight);
+      const imageData = tempContext.getImageData(
         0,
         0,
-        roiSize,
-        roiSize
+        scaledWidth,
+        scaledHeight
       );
-
-      const roiImageData = roiContext.getImageData(0, 0, roiSize, roiSize);
-      const code = jsQR(roiImageData.data, roiSize, roiSize);
+      const code = jsQR(imageData.data, scaledWidth, scaledHeight);
 
       if (code) {
-        let qrCode = code.data.split("/").pop() || null;
-        if (qrCode) qrCode = qrCode.trim();
-        return qrCode;
+        return getLastSegment(code.data);
       }
     }
 
     return null;
   };
 
-  const tryScaling = (
+  const tryROIs = (
     context: CanvasRenderingContext2D,
     width: number,
-    height: number,
-    scale: number
+    height: number
   ): string | null => {
-    const newWidth = Math.floor(width * scale);
-    const newHeight = Math.floor(height * scale);
+    // Try different regions of interest
+    const rois = [
+      { x: 0, y: 0, width: width, height: height }, // Full image
+      {
+        x: width * 0.1,
+        y: height * 0.1,
+        width: width * 0.8,
+        height: height * 0.8,
+      }, // Center
+      { x: 0, y: 0, width: width * 0.5, height: height * 0.5 }, // Top-left
+      { x: width * 0.5, y: 0, width: width * 0.5, height: height * 0.5 }, // Top-right
+      { x: 0, y: height * 0.5, width: width * 0.5, height: height * 0.5 }, // Bottom-left
+      {
+        x: width * 0.5,
+        y: height * 0.5,
+        width: width * 0.5,
+        height: height * 0.5,
+      }, // Bottom-right
+    ];
 
-    const scaledCanvas = document.createElement("canvas");
-    const scaledContext = scaledCanvas.getContext("2d");
-    if (!scaledContext) return null;
+    for (const roi of rois) {
+      const tempCanvas = document.createElement("canvas");
+      const tempContext = tempCanvas.getContext("2d");
+      if (!tempContext) continue;
 
-    scaledCanvas.width = newWidth;
-    scaledCanvas.height = newHeight;
+      tempCanvas.width = roi.width;
+      tempCanvas.height = roi.height;
 
-    scaledContext.drawImage(context.canvas, 0, 0, newWidth, newHeight);
+      tempContext.drawImage(
+        context.canvas,
+        roi.x,
+        roi.y,
+        roi.width,
+        roi.height,
+        0,
+        0,
+        roi.width,
+        roi.height
+      );
 
-    const scaledImageData = scaledContext.getImageData(
-      0,
-      0,
-      newWidth,
-      newHeight
-    );
-    const code = jsQR(scaledImageData.data, newWidth, newHeight);
+      const imageData = tempContext.getImageData(0, 0, roi.width, roi.height);
+      const code = jsQR(imageData.data, roi.width, roi.height);
 
-    if (code) {
-      let qrCode = code.data.split("/").pop() || null;
-      if (qrCode) qrCode = qrCode.trim();
-      return qrCode;
+      if (code) {
+        return getLastSegment(code.data);
+      }
     }
 
     return null;
+  };
+
+  // Keep your existing helper functions
+  const clamp = (value: number): number => Math.max(0, Math.min(255, value));
+  const getLastSegment = (data: string | undefined | null): string | null => {
+    if (!data) return null;
+    return data.trim().split("/").pop() || null;
   };
 
   useEffect(() => {
@@ -1761,11 +1680,6 @@ const Header: React.FC = () => {
   const handleLoginClick = () => {
     setIsModalOpen(true);
   };
-
-  // const handleCloseModal = () => {
-  //   setIsModalOpen(false);
-  //   navigate("/");
-  // };
 
   const handleLogout = () => {
     const userId = localStorage.getItem("userId");
@@ -2116,46 +2030,157 @@ const Header: React.FC = () => {
             setIsProcessing(false);
             setLoading(false);
             stopCamera();
+            setCrop(undefined);
+            setCompletedCrop(undefined);
+            setCroppedImage(null);
           }}
         >
-          {loading ? (
-            <div style={{ textAlign: "center", padding: "10px" }}>
-              <p style={{ fontWeight: "bold", marginBottom: "5px" }}>
-                Extracting QR code from image...
-              </p>
-              <ClipLoader size={40} color="black" />
-            </div>
-          ) : qrCodeData ? (
-            <div style={{ textAlign: "center", padding: "10px" }}>
-              <p style={{ fontWeight: "bold", marginBottom: "10px" }}>
-                QR Code Extracted Successfully!
-              </p>
-              <QrCodeData>{qrCodeData}</QrCodeData>
-              {isProcessing ? (
-                <div style={{ marginTop: "15px" }}>
-                  <ClipLoader size={30} color="black" />
-                  <p style={{ marginTop: "10px" }}>Submitting to server...</p>
-                </div>
-              ) : (
-                <QrCodeButton
-                  onClick={handleScanSubmit}
-                  disabled={isProcessing}
-                  style={{ marginTop: "15px" }}
+          <div style={{ width: "85%", maxWidth: "450px", margin: "0 auto" }}>
+            {loading ? (
+              <div style={{ textAlign: "center", padding: "15px" }}>
+                <p
+                  style={{
+                    fontWeight: "bold",
+                    marginBottom: "10px",
+                    fontSize: "14px",
+                  }}
                 >
-                  Submit QR Code
-                </QrCodeButton>
-              )}
-            </div>
-          ) : (
-            selectedImage && (
-              <div style={{ textAlign: "center" }}>
-                <ImagePreview src={selectedImage} alt="QR Code" />
-                <p style={{ marginTop: "10px", color: "red" }}>
-                  No QR code found in this image.
+                  Extracting QR code from image...
                 </p>
+                <ClipLoader size={30} color="black" />
               </div>
-            )
-          )}
+            ) : qrCodeData ? (
+              <div style={{ textAlign: "center", padding: "15px" }}>
+                <p
+                  style={{
+                    fontWeight: "bold",
+                    marginBottom: "10px",
+                    fontSize: "14px",
+                  }}
+                >
+                  QR Code Extracted Successfully!
+                </p>
+                <QrCodeData style={{ fontSize: "12px", padding: "8px" }}>
+                  {qrCodeData}
+                </QrCodeData>
+                {isProcessing ? (
+                  <div style={{ marginTop: "15px" }}>
+                    <ClipLoader size={25} color="black" />
+                    <p style={{ marginTop: "8px", fontSize: "12px" }}>
+                      Submitting to server...
+                    </p>
+                  </div>
+                ) : (
+                  <QrCodeButton
+                    onClick={handleScanSubmit}
+                    disabled={isProcessing}
+                    style={{
+                      marginTop: "12px",
+                      padding: "8px 16px",
+                      fontSize: "12px",
+                    }}
+                  >
+                    Submit QR Code
+                  </QrCodeButton>
+                )}
+              </div>
+            ) : (
+              selectedImage && (
+                <div
+                  style={{
+                    textAlign: "center",
+                    maxWidth: "100%",
+                    padding: "10px",
+                  }}
+                >
+                  <div style={{ marginBottom: "12px" }}>
+                    <p
+                      style={{
+                        marginBottom: "8px",
+                        fontWeight: "bold",
+                        fontSize: "14px",
+                      }}
+                    >
+                      Crop the QR Code from your image
+                    </p>
+                    <ReactCrop
+                      crop={crop}
+                      onChange={(_, percentCrop) => setCrop(percentCrop)}
+                      onComplete={handleCropComplete}
+                      aspect={1}
+                      style={{ maxWidth: "100%" }}
+                    >
+                      <img
+                        ref={imgRef}
+                        alt="Crop me"
+                        src={selectedImage}
+                        style={{
+                          maxWidth: "100%",
+                          maxHeight: "40vh",
+                          objectFit: "contain",
+                        }}
+                        onLoad={() => {
+                          // Set an initial crop when image loads
+                          if (imgRef.current) {
+                            const { width, height } = imgRef.current;
+                            const size = Math.min(width, height) * 0.7;
+                            setCrop({
+                              unit: "px",
+                              width: size,
+                              height: size,
+                              x: (width - size) / 2,
+                              y: (height - size) / 2,
+                            });
+                          }
+                        }}
+                      />
+                    </ReactCrop>
+                  </div>
+
+                  {completedCrop && croppedImage && (
+                    <div style={{ marginBottom: "12px" }}>
+                      <p
+                        style={{
+                          fontWeight: "bold",
+                          marginBottom: "5px",
+                          fontSize: "12px",
+                        }}
+                      >
+                        Cropped Preview:
+                      </p>
+                      <img
+                        src={croppedImage}
+                        alt="Cropped QR Code"
+                        style={{
+                          maxWidth: "120px",
+                          maxHeight: "120px",
+                          border: "1px solid #ccc",
+                          marginBottom: "8px",
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "8px",
+                      justifyContent: "center",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <QrCodeButton
+                      onClick={handleScanCroppedImage}
+                      disabled={!croppedImage || isExtracting}
+                      style={{ padding: "6px 12px", fontSize: "12px" }}
+                    >
+                      {isExtracting ? "Scanning..." : "Scan Cropped Image"}
+                    </QrCodeButton>
+                  </div>
+                </div>
+              )
+            )}
+          </div>
         </Modal>
       </NavContainer>
     </>
