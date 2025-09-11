@@ -1350,8 +1350,8 @@ const Header: React.FC = () => {
       const file = (event.target as HTMLInputElement).files?.[0];
       if (file) {
         // Check file size (limit to 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-          toast.error("Please select an image smaller than 5MB");
+        if (file.size > 50 * 1024 * 1024) {
+          toast.error("Please select an image smaller than 50MB");
           return;
         }
 
