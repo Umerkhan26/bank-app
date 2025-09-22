@@ -198,6 +198,7 @@ const SignUp: React.FC<SignUpProps> = ({ onSwitchToLogin, onClose }) => {
                 <option value="Saint Andrew">Saint Andrew</option>
                 <option value="Saint George">Saint George</option>
                 <option value="Saint James">Saint James</option>
+                <option value="Saint Thomas">Saint Thomas </option>
               </select>
 
               <ErrorMessage>{errors.parish?.message}</ErrorMessage>
