@@ -283,11 +283,19 @@ import { useRef, useState } from "react";
 import img1 from "../../assets/pngegg.png";
 import { Outlet } from "react-router-dom";
 import { MdCameraAlt } from "react-icons/md";
-import { IoLocationSharp, IoStatsChart, IoMenu } from "react-icons/io5";
+import {
+  IoLocationSharp,
+  IoStatsChart,
+  IoMenu,
+  IoTrashBin,
+} from "react-icons/io5";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import { deleteOwnAccount } from "../../services/auth";
+import { toast } from "react-toastify";
+import { logout } from "../../redux/slices/auth";
 
 interface NavProps {
   isOpen: boolean;
@@ -507,6 +515,13 @@ export const NavIcon = styled.span`
 const ProfileMenu = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+
+  const token = useSelector((state: RootState) => state.auth.token);
+  // const navigate = useNavigate();
 
   const profile = {
     firstName: "Debby",
@@ -527,6 +542,38 @@ const ProfileMenu = () => {
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!password) {
+      toast.error("Please enter your password");
+      return;
+    }
+    if (!token) {
+      toast.error("Token is missing");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await deleteOwnAccount(password, token);
+
+      if (response.success) {
+        toast.success("Your account has been deleted successfully");
+
+        localStorage.clear();
+
+        dispatch(logout());
+
+        setShowDeleteModal(false);
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -569,11 +616,112 @@ const ProfileMenu = () => {
               User History
             </StyledNavLink>
           </li>
+
+          {/* <DropdownItem onClick={() => setShowDeleteModal(true)}>
+            Delete Account
+          </DropdownItem> */}
+
+          <li>
+            <StyledNavLink
+              to="#"
+              onClick={(e) => {
+                e.preventDefault();
+                setShowDeleteModal(true);
+              }}
+              style={{ cursor: "pointer" }}
+            >
+              <NavIcon>
+                <IoTrashBin size={16} color="red" />
+              </NavIcon>
+              Delete Account
+            </StyledNavLink>
+          </li>
         </NavUL>
       </NavContainer>
       <div style={{ flexGrow: 1, padding: "1rem", background: "#f8fafc" }}>
         <Outlet />
       </div>
+
+      {showDeleteModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.4)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              background: "white",
+              padding: "2rem",
+              borderRadius: "10px",
+              width: "90%",
+              maxWidth: "400px",
+              textAlign: "center",
+            }}
+          >
+            <h3 style={{ marginBottom: "1rem", color: "black" }}>
+              Confirm Account Deletion
+            </h3>
+            <p style={{ fontSize: "0.9rem", color: "#64748b" }}>
+              This action is <strong>irreversible</strong>. Please enter your
+              password to confirm.
+            </p>
+
+            <input
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "0.6rem",
+                border: "1px solid #ccc",
+                borderRadius: "6px",
+                marginTop: "1rem",
+                marginBottom: "1rem",
+              }}
+            />
+
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                style={{
+                  background: "#e2e8f0",
+                  color: "#334155",
+                  padding: "0.5rem 1rem",
+                  borderRadius: "6px",
+                  border: "none",
+                  cursor: "pointer",
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAccount}
+                style={{
+                  background: "red",
+                  color: "white",
+                  padding: "0.5rem 1rem",
+                  borderRadius: "6px",
+                  border: "none",
+                  cursor: "pointer",
+                }}
+                disabled={loading}
+              >
+                {loading ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </MenuContainer>
   );
 };

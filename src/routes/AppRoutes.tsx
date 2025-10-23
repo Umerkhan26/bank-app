@@ -15,6 +15,7 @@ import NoPromotion from "../components/Promotion/NoPromotion";
 import Privacy from "../components/privacyandPolicy/Privacy";
 import TermsConditions from "../components/Terms/TermsConditions";
 import FAQ from "../components/Faq/Faq";
+import DeleteAccount from "../pages/DeleteAccount/DeleteAccount";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -37,6 +38,7 @@ const AppRoutes: React.FC = () => {
         {/* <Route path="/register" element={<SignUp />} /> */}
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/store" element={<Store />} />
+        <Route path="/delete-account" element={<DeleteAccount />} />
         <Route path="/profile" element={<ProfileMenu />}>
           <Route path="user-history" element={<UserHistory />} />
         </Route>

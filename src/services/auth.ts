@@ -33,24 +33,6 @@ interface RegisterResponse {
     email: string;
   };
 }
-
-// export const loginUser = async (data: LoginData): Promise<LoginResponse> => {
-//   try {
-//     const response = await axios.post(`${API_BASE_URL}/login`, data);
-//     const { token } = response.data;
-//     localStorage.setItem("token", token);
-//     return response.data;
-//   } catch (error: any) {
-//     const message =
-//       error.response?.data?.message ||
-//       error.message ||
-//       "Something went wrong while logging in";
-
-//     // ✅ Throw it so SignIn.tsx can also catch
-//     throw message;
-//   }
-// };
-
 export const loginUser = async (credentials: {
   email: string;
   password: string;
@@ -182,5 +164,47 @@ export const resetPassword = async (
     throw new Error(
       error.response?.data?.message || "Failed to reset password"
     );
+  }
+};
+
+export const deleteOwnAccount = async (password: string, token: string) => {
+  try {
+    const response = await axios.delete(`${API_BASE_URL}/delete-account`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: { password }, // send password in body
+    });
+
+    return response.data;
+  } catch (error: any) {
+    console.error("Error deleting account:", error);
+    throw new Error(
+      error.response?.data?.message || "Failed to delete account"
+    );
+  }
+};
+
+export const sendDeleteAccountOTP = async (email: string) => {
+  try {
+    const res = await axios.post(`${API_BASE_URL}/send-delete-account-otp`, {
+      email,
+    });
+    return res.data;
+  } catch (error: any) {
+    throw error.response?.data || { success: false, message: "Server error" };
+  }
+};
+
+// ✅ Step 2: Verify OTP and delete account
+export const verifyDeleteAccountOTP = async (email: string, otp: string) => {
+  try {
+    const res = await axios.post(`${API_BASE_URL}/delete-account`, {
+      email,
+      otp,
+    });
+    return res.data;
+  } catch (error: any) {
+    throw error.response?.data || { success: false, message: "Server error" };
   }
 };
