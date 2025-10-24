@@ -20,13 +20,11 @@ const Home: React.FC = () => {
         return;
       }
 
-      // Extract last 6 digits as before
       const lastSixDigits = qrData.trim().replace(/\s+/g, "").slice(-6);
 
       const result = await scanQRCode(token, lastSixDigits);
       toast.success("Congratulations! You have earned 20 points 🎯");
 
-      // Update points in Redux store
       const totalPoints = Array.isArray(result.userPoints)
         ? result.userPoints.reduce(
             (sum: number, item: { points?: number }) =>

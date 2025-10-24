@@ -594,9 +594,37 @@ const Header: React.FC = () => {
     navigate("/store");
   };
 
+  // const toggleMobileMenu = () => {
+  //   setIsMobileMenuOpen(!isMobileMenuOpen);
+  // };
+
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+
+    // Add body scroll lock
+    if (!isMobileMenuOpen) {
+      // Opening menu: Lock body scroll
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed"; // Prevents iOS bounce
+      document.body.style.width = "100%"; // Prevents layout shift
+    } else {
+      // Closing menu: Restore body scroll
+      document.body.style.overflow = "unset";
+      document.body.style.position = "static";
+      document.body.style.width = "auto";
+    }
   };
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isMobileMenuOpen) {
+        toggleMobileMenu(); // This will unlock body
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [isMobileMenuOpen]);
 
   return (
     <>

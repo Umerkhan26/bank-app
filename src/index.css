@@ -10,6 +10,11 @@ body {
   padding: 0;
   width: 100%;
   overflow-x: hidden;
+  overflow-y: auto;
+}
+
+main {
+  overflow-y: visible;
 }
 
 @font-face {

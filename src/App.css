@@ -12,7 +12,12 @@ body {
   overflow-x: hidden;
 }
 
-.scanner-overlay {
+main {
+  overflow-y: visible;
+  height: calc(100vh - 80px);
+}
+
+/* .scanner-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -42,4 +47,4 @@ body {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-}
+} */

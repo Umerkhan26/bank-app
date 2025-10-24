@@ -302,7 +302,6 @@ const Banner: React.FC<BannerProps> = ({ onScanSuccess }) => {
         {/* Empty container - all content is in the background image */}
       </BannerContainer>
 
-      {/* Scanner Overlay and Modal components remain the same */}
       {isScanning && (
         <div
           style={{

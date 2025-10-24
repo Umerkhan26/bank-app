@@ -108,7 +108,7 @@ export const MobileMenu = styled.div<{ isOpen: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
-  width: 80%; // Changed from 100% to 80% for better appearance
+  width: 80%;
   height: 100vh;
   background-color: #ffffff;
   padding: 2rem;
@@ -117,6 +117,10 @@ export const MobileMenu = styled.div<{ isOpen: boolean }>`
     isOpen ? "translateX(0)" : "translateX(-100%)"};
   transition: transform 0.3s ease;
   overflow-y: auto;
+
+  body.mobile-menu-open & {
+    position: fixed;
+  }
 
   @media (max-width: 1024px) {
     display: flex;
