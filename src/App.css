@@ -17,7 +17,7 @@ main {
   height: calc(100vh - 80px);
 }
 
-/* .scanner-overlay {
+.scanner-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -47,4 +47,4 @@ main {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-} */
+}
