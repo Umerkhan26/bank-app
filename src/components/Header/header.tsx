@@ -868,7 +868,12 @@ const Header: React.FC = () => {
               {isLoggedIn ? (
                 <>
                   <DropdownItem>
-                    <Link to="/profile/user-history">Profile</Link>
+                    <Link
+                      to="/profile/user-history"
+                      style={{ textDecoration: "none", color: "inherit" }}
+                    >
+                      Profile
+                    </Link>
                   </DropdownItem>
                   <DropdownItem onClick={handleLogout}>Sign out</DropdownItem>
                 </>
