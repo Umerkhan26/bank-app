@@ -23,11 +23,6 @@ const NOTIFICATION_ICON = "/logo192.png";
 const NOTIFICATION_BADGE = "/badge.png";
 
 messaging.onBackgroundMessage((payload) => {
-  console.log("[SW] Received background message:", {
-    notification: payload.notification,
-    data: payload.data,
-  });
-
   const notificationTitle = payload.notification?.title || "New Notification";
   const notificationOptions = {
     body: payload.notification?.body || "You have a new message",
@@ -44,14 +39,12 @@ messaging.onBackgroundMessage((payload) => {
 
   try {
     self.registration.showNotification(notificationTitle, notificationOptions);
-    console.log("[SW] Notification displayed:", notificationTitle);
   } catch (error) {
     console.error("[SW] Error displaying background notification:", error);
   }
 });
 
 self.addEventListener("notificationclick", (event) => {
-  console.log("[SW] Notification click:", event.notification);
   event.notification.close();
 
   const urlToOpen = event.notification.data?.url || "/";
@@ -73,11 +66,9 @@ self.addEventListener("notificationclick", (event) => {
 });
 
 self.addEventListener("install", (event) => {
-  console.log("[SW] Installing service worker");
   event.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener("activate", (event) => {
-  console.log("[SW] Activating service worker");
   event.waitUntil(clients.claim());
 });

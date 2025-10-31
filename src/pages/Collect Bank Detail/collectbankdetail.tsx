@@ -395,10 +395,15 @@ import {
   Title,
   RedeemContainer,
   QrCodeButton,
+  ShimmerWrapper,
+  ShimmerTitle,
+  ShimmerImage,
+  ShimmerText,
+  ShimmerButton,
 } from "./collectbanksdetail.styles";
 import Login from "../SignIn/SignIn";
 import Modal from "../../components/Modal/modal";
-import Loader from "../../components/Loader/loader";
+// import Loader from "../../components/Loader/loader";
 import SignUp from "../SignUp/signup";
 import ForgotPassword from "../Forgot Password/ForgotPassword";
 const BankPremiumDetail: React.FC = () => {
@@ -455,7 +460,20 @@ const BankPremiumDetail: React.FC = () => {
     }
   };
 
-  if (loading) return <Loader />;
+  if (loading) {
+    return (
+      <Container>
+        <ShimmerWrapper>
+          <ShimmerTitle />
+          <ShimmerImage />
+          <ShimmerText />
+          <ShimmerText />
+          <ShimmerButton />
+        </ShimmerWrapper>
+      </Container>
+    );
+  }
+
   if (error) return <ErrorMessage>{error}</ErrorMessage>;
   if (!bankPremium) return <ErrorMessage>Bank premium not found.</ErrorMessage>;
 

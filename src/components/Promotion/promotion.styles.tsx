@@ -107,7 +107,7 @@
 //   }
 // `;
 
-import styled from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import Slider from "react-slick";
 
 export const PromotionsContainer = styled.div`
@@ -236,4 +236,37 @@ export const ApplyButton = styled.button`
   &:hover {
     background-color: #000;
   }
+`;
+
+const shimmer = keyframes`
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: 200px 0;
+  }
+`;
+
+export const ShimmerCard = styled.div`
+  width: 90%;
+  max-width: 1200px;
+  height: 350px;
+  border-radius: 1rem;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e6e6e6 50%, #f0f0f0 75%);
+  background-size: 400% 100%;
+  margin: 0 auto 20px;
+  ${css`
+    animation: ${shimmer} 1.5s infinite linear;
+  `}
+`;
+
+export const ShimmerImage = styled.div`
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e6e6e6 50%, #f0f0f0 75%);
+  background-size: 400% 100%;
+  ${css`
+    animation: ${shimmer} 1.5s infinite linear;
+  `}
 `;

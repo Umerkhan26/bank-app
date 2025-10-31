@@ -147,9 +147,37 @@
 //   }
 // `;
 
-import styled from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import Slider from "react-slick";
+const shimmer = keyframes`
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: 200px 0;
+  }
+`;
 
+export const ShimmerWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 90%;
+  max-width: 1200px;
+  margin: 2rem auto;
+`;
+
+export const ShimmerCard = styled.div`
+  width: 100%;
+  height: 350px;
+  border-radius: 1rem;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e6e6e6 50%, #f0f0f0 75%);
+  background-size: 400% 100%;
+  ${css`
+    animation: ${shimmer} 1.5s infinite linear;
+  `}
+`;
 export const CampaignsContainer = styled.div`
   padding: 1.5rem 2rem;
   background-color: #f8f9fa;

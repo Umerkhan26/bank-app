@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import BannerBackground from "../../assets/Banks Web Banners_433 X 254 Scan and Win 3.jpg";
 
 export const BannerContainer = styled.div<{ windowWidth: number }>`
@@ -176,4 +176,26 @@ export const DownloadImage = styled.img`
   @media (max-width: 480px) {
     width: 90px;
   }
+`;
+
+const shimmer = keyframes`
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: 200px 0;
+  }
+`;
+
+export const ShimmerBanner = styled.div`
+  width: 100%;
+  height: calc(
+    100vw * 230 / 433
+  ); /* maintains same aspect ratio as BannerContainer */
+  border-radius: 0;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e6e6e6 50%, #f0f0f0 75%);
+  background-size: 400% 100%;
+  ${css`
+    animation: ${shimmer} 1.5s infinite linear;
+  `};
 `;

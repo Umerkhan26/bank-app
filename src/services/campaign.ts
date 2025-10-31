@@ -33,7 +33,6 @@ export const fetchCampaigns = async (): Promise<Campaign[]> => {
 export const fetchCampaignById = async (id: string): Promise<Campaign> => {
   try {
     const response = await axios.get(`${API_BASE_URL}/getCampaignsById/${id}`);
-    console.log("campaignss id", response.data);
 
     // FIX: response.data is the campaign itself
     return response.data;

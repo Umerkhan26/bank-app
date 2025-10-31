@@ -5,8 +5,6 @@ export const getStores = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/getStore`);
 
-    console.log("Raw API Response:", response.data); // Debugging
-
     // Ensure the response contains a `stores` array
     if (!response.data?.stores || !Array.isArray(response.data.stores)) {
       throw new Error("Invalid API response format");
@@ -20,7 +18,6 @@ export const getStores = async () => {
       longitude: store.location?.longitude ?? null,
     }));
 
-    console.log("Formatted Stores:", formattedStores);
     return formattedStores;
   } catch (error: any) {
     console.error(

@@ -75,28 +75,21 @@ const Login: React.FC<LoginProps> = ({
   useEffect(() => {
     const setupNotifications = async () => {
       try {
-        console.log("[USER_LOGIN] Setting up notifications...");
         if ("serviceWorker" in navigator) {
           const registrations =
             await navigator.serviceWorker.getRegistrations();
-          console.log("[USER_LOGIN] Existing service workers:", registrations);
           for (const registration of registrations) {
             if (
               registration.scope !==
               "http://localhost:5173/firebase-cloud-messaging-push-scope"
             ) {
               await registration.unregister();
-              console.log(
-                "[USER_LOGIN] Unregistered unused service worker:",
-                registration.scope
-              );
             }
           }
         }
 
         const token = await requestNotificationPermission();
         if (token) {
-          console.log("[USER_LOGIN] FCM token obtained:", token);
           setTokenFound(true);
           // toast.success("Push notifications enabled!");
         } else {
@@ -106,7 +99,6 @@ const Login: React.FC<LoginProps> = ({
         }
 
         onForegroundMessage((payload) => {
-          console.log("[USER_LOGIN] Foreground message received:", payload);
           const { notification: { title, body } = {} } = payload;
           setNotification({
             title: title || "New Notification",
@@ -186,7 +178,6 @@ const Login: React.FC<LoginProps> = ({
           timeout: 10000,
         }
       );
-      console.log("[FCM] Server response:", response.data);
 
       // toast.update(fcmToast, {
       //   // render: "Push notifications enabled!",
@@ -262,11 +253,9 @@ const Login: React.FC<LoginProps> = ({
 
   const onSubmit: SubmitHandler<SignInFormValues> = async (data) => {
     setLoading(true);
-    console.log("[USER_LOGIN] Login attempt with:", data);
 
     try {
       const response = await loginUser(data);
-      console.log("[USER_LOGIN] Login successful:", response);
 
       if (response.token) {
         const userId = response.user._id;
@@ -291,7 +280,6 @@ const Login: React.FC<LoginProps> = ({
 
         localStorage.setItem(`userPoints_${userId}`, userPoints.toString());
 
-        console.log("[USER_LOGIN] Registering FCM token...");
         await handleFcmToken(
           response.token,
           userId,

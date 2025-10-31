@@ -28,14 +28,11 @@ let messaging: Messaging;
 
 const initMessaging = async (): Promise<Messaging | null> => {
   try {
-    console.log("[FIREBASE] Initializing messaging...");
     const isSupportedBrowser = await isSupported();
     if (!isSupportedBrowser) {
-      // console.warn("[FIREBASE] Messaging not supported in this browser");
       return null;
     }
     messaging = getMessaging(app);
-    console.log("[FIREBASE] Messaging initialized successfully");
     return messaging;
   } catch (error) {
     console.error("[FIREBASE] Error initializing messaging:", error);
@@ -49,7 +46,7 @@ export const requestNotificationPermission = async (): Promise<
   string | null
 > => {
   try {
-    console.log("[FIREBASE] Requesting notification permission...");
+    // console.log("[FIREBASE] Requesting notification permission...");
     const messagingInstance = await messagingPromise;
     if (!messagingInstance) {
       // console.warn("[FIREBASE] Messaging not available");
@@ -57,10 +54,6 @@ export const requestNotificationPermission = async (): Promise<
     }
 
     const currentPermission = Notification.permission;
-    console.log(
-      "[FIREBASE] Current notification permission:",
-      currentPermission
-    );
 
     if (currentPermission === "denied") {
       // console.warn("[FIREBASE] Notifications are blocked by user");
@@ -71,13 +64,8 @@ export const requestNotificationPermission = async (): Promise<
       "/firebase-messaging-sw.js",
       { scope: "/firebase-cloud-messaging-push-scope" }
     );
-    console.log("[FIREBASE] Service worker registered:", registration);
 
     const permission = await Notification.requestPermission();
-    console.log(
-      "[FIREBASE] Notification permission after request:",
-      permission
-    );
 
     if (permission !== "granted") {
       // console.warn("[FIREBASE] Notification permission denied");
@@ -90,7 +78,6 @@ export const requestNotificationPermission = async (): Promise<
       serviceWorkerRegistration: registration,
     });
 
-    console.log("[FIREBASE] ✅ FCM Token obtained:", token);
     return token;
   } catch (error) {
     console.error("[FIREBASE] Error getting FCM token:", error);
@@ -100,7 +87,6 @@ export const requestNotificationPermission = async (): Promise<
 
 export const refreshFcmToken = async (): Promise<string | null> => {
   try {
-    console.log("[FIREBASE] Refreshing FCM token...");
     const messagingInstance = await messagingPromise;
     if (!messagingInstance) {
       // console.warn("[FIREBASE] Messaging not available");
@@ -109,7 +95,6 @@ export const refreshFcmToken = async (): Promise<string | null> => {
 
     try {
       await deleteToken(messagingInstance);
-      console.log("[FIREBASE] Previous FCM token deleted");
     } catch (error) {
       // console.warn("[FIREBASE] No previous token or deletion failed:", error);
     }
@@ -118,13 +103,9 @@ export const refreshFcmToken = async (): Promise<string | null> => {
       "/firebase-messaging-sw.js",
       { scope: "/firebase-cloud-messaging-push-scope" }
     );
-    console.log("[FIREBASE] Service worker registered:", registration);
 
     const permission = await Notification.requestPermission();
-    console.log(
-      "[FIREBASE] Notification permission during refresh:",
-      permission
-    );
+
     if (permission !== "granted") {
       // console.warn("[FIREBASE] Notification permission denied during refresh");
       return null;
@@ -135,8 +116,6 @@ export const refreshFcmToken = async (): Promise<string | null> => {
         "BIsmCNy-LfpUp9Ph5OYephVUe_rPytEnrupacP505O2nD63ieW6Tnd1g-gTQBx4d9mE6IXr-JIcDNHG2M3EJx1I",
       serviceWorkerRegistration: registration,
     });
-
-    console.log("[FIREBASE] ✅ New FCM Token:", token);
     return token;
   } catch (error) {
     console.error("[FIREBASE] Error refreshing FCM token:", error);
@@ -147,11 +126,9 @@ export const refreshFcmToken = async (): Promise<string | null> => {
 export const onForegroundMessage = (
   callback: (payload: MessagePayload) => void
 ) => {
-  console.log("[FIREBASE] Setting up foreground message listener");
   messagingPromise.then((messagingInstance) => {
     if (messagingInstance) {
       onMessage(messagingInstance, async (payload) => {
-        console.log("[FIREBASE] Foreground message received:", payload);
         try {
           const permission = await Notification.requestPermission();
           if (permission === "granted" && payload.notification) {

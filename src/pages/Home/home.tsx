@@ -34,8 +34,6 @@ const Home: React.FC = () => {
         : result.userPoints;
 
       dispatch(updatePoints(totalPoints));
-
-      console.log("Scan result:", result);
     } catch (err: any) {
       console.error("QR Scan API error:", err);
 

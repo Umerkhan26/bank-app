@@ -1,4 +1,41 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
+
+const shimmer = keyframes`
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+`;
+
+export const ShimmerCard = styled.div`
+  background: #f6f7f8;
+  background-image: linear-gradient(
+    to right,
+    #f6f7f8 0%,
+    #edeef1 20%,
+    #f6f7f8 40%,
+    #f6f7f8 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 800px 104px;
+  display: inline-block;
+  position: relative;
+  animation: ${shimmer} 1.2s linear infinite;
+  border-radius: 12px;
+  width: 320px;
+  height: 380px;
+  margin: 10px;
+`;
+
+export const ShimmerContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  padding: 20px;
+`;
 
 export const PremiumContainer = styled.div`
   padding: 1.5rem 1rem;
@@ -70,7 +107,7 @@ export const PremiumTitle = styled.h3`
 export const PremiumDescription = styled.p`
   font-size: 1rem;
   color: #6b7280;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   font-weight: 400;
   text-align: left;
   line-height: 1.4;

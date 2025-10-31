@@ -63,13 +63,10 @@ export const registerUser = async (
   data: RegisterData
 ): Promise<RegisterResponse> => {
   try {
-    console.log("Sending Data to API:", data);
-
     const response = await axios.post(`${API_BASE_URL}/register`, data, {
       headers: { "Content-Type": "application/json" },
     });
 
-    console.log("response from regis", response.data);
     return response.data;
   } catch (error: any) {
     console.error("API Error:", error.response?.data || error);

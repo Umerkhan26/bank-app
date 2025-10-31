@@ -140,8 +140,10 @@ import {
   PremiumDescription,
   HeaderContainer,
   ViewMoreButton,
+  ShimmerContainer,
+  ShimmerCard,
 } from "./collectbank.styles";
-import { LoadingContainer, LoadingSpinner } from "../Campaign/campaign.styles";
+// import { LoadingContainer, LoadingSpinner } from "../Campaign/campaign.styles";
 
 interface BankPremium {
   _id: string;
@@ -151,6 +153,7 @@ interface BankPremium {
   points_required: number;
   buttonText?: string;
   description: string;
+  qty?: number | null;
 }
 
 const CollectBanksPremium: React.FC = () => {
@@ -189,9 +192,17 @@ const CollectBanksPremium: React.FC = () => {
 
   if (loading) {
     return (
-      <LoadingContainer>
-        <LoadingSpinner />
-      </LoadingContainer>
+      <PremiumContainer>
+        <HeaderContainer>
+          <Title>Collect Banks Premium</Title>
+        </HeaderContainer>
+
+        <ShimmerContainer>
+          {[1, 2, 3].map((i) => (
+            <ShimmerCard key={i} />
+          ))}
+        </ShimmerContainer>
+      </PremiumContainer>
     );
   }
 
@@ -217,11 +228,26 @@ const CollectBanksPremium: React.FC = () => {
               <PremiumPoints>{premium.points_required} points</PremiumPoints>
               <PremiumTitle>{premium.title}</PremiumTitle>
               <PremiumDescription>{premium.description}</PremiumDescription>
-              <ApplyButton
-                onClick={() => handleApply(premium._id || premium.id)}
+              <div
+                style={{
+                  marginBottom: "10px",
+                  fontSize: "15px",
+                  fontWeight: "500",
+                }}
               >
-                {premium.buttonText || "Redeem"}
-              </ApplyButton>
+                Qty: {premium.qty ?? "Unlimited"}
+              </div>
+              {premium.qty === 0 ? (
+                <div style={{ color: "red", fontWeight: "bold" }}>
+                  Out of Stock
+                </div>
+              ) : (
+                <ApplyButton
+                  onClick={() => handleApply(premium._id || premium.id)}
+                >
+                  {premium.buttonText || "Redeem"}
+                </ApplyButton>
+              )}
             </PremiumContent>
           </PremiumCard>
         ))}

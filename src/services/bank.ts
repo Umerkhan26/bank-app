@@ -25,12 +25,6 @@ export const redeemBankPremium = async (premiumId: string) => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("No auth token found. Please log in.");
 
-  console.log("👉 Redeem API call:", {
-    url: `${API_BASE_URL}/redeemBankPremium/${premiumId}/redeem`,
-    body: { premiumId },
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
   try {
     const response = await axios.post(
       `${API_BASE_URL}/redeemBankPremium/${premiumId}/redeem`,
@@ -42,7 +36,6 @@ export const redeemBankPremium = async (premiumId: string) => {
       }
     );
 
-    console.log("✅ Redeem API response:", response);
     return response.data;
   } catch (err: any) {
     console.error("❌ Redeem API error:", err.response || err.message || err);

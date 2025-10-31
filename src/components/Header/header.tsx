@@ -99,7 +99,6 @@ const Header: React.FC = () => {
     useSelector((state: RootState) => state.auth.username) || "User";
   const navigate = useNavigate();
   const userPoints = useSelector((state: RootState) => state.auth.userPoints);
-  console.log("Redux userPoints:", userPoints);
 
   // Function to create a cropped image from the canvas
   const getCroppedImg = (
@@ -225,7 +224,6 @@ const Header: React.FC = () => {
       const qrData = await extractQRCode(croppedImage);
 
       if (qrData) {
-        console.log("Extracted QR Code Data:", qrData);
         setQrCodeData(qrData);
         toast.success("QR code detected!");
       } else {
@@ -289,18 +287,12 @@ const Header: React.FC = () => {
 
       // Scan the image file
       const result = await html5Qrcode.scanFile(file, true);
-      console.log("QR Code detected:", result);
 
       // Clean up
       document.body.removeChild(tempContainer);
 
       return getLastSegment(result);
     } catch (error) {
-      console.log(
-        "QR code not found with html5-qrcode, trying alternative approach...",
-        error
-      );
-
       // Clean up any existing temporary container
       const existingContainer = document.getElementById("temp-qr-scanner");
       if (existingContainer) {
@@ -504,9 +496,7 @@ const Header: React.FC = () => {
     return data.trim().split("/").pop() || null;
   };
 
-  useEffect(() => {
-    console.log("Updated userPointsState:", userPointsState);
-  }, [userPointsState]);
+  useEffect(() => {}, [userPointsState]);
 
   const handleLoginClick = () => {
     setIsModalOpen(true);
@@ -543,7 +533,6 @@ const Header: React.FC = () => {
     try {
       const result = await scanQRCode(token, qrCodeData);
       setScanResult(result);
-      console.log("qrcode data", result);
 
       toast.success("Congratulations! You have earned 20 points 🎯");
 

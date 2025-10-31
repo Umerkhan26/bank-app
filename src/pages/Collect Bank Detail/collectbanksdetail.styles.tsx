@@ -1,4 +1,58 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
+
+const shimmer = keyframes`
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+`;
+
+export const ShimmerWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+`;
+
+export const ShimmerBox = styled.div`
+  background: linear-gradient(
+    to right,
+    #f6f7f8 0%,
+    #edeef1 20%,
+    #f6f7f8 40%,
+    #f6f7f8 100%
+  );
+  background-size: 1000px 100%;
+  animation: ${shimmer} 1.5s infinite linear;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+`;
+
+export const ShimmerTitle = styled(ShimmerBox)`
+  width: 60%;
+  height: 30px;
+  margin-top: 20px;
+`;
+
+export const ShimmerImage = styled(ShimmerBox)`
+  width: 100%;
+  max-width: 800px;
+  height: 350px;
+  border-radius: 12px;
+`;
+
+export const ShimmerText = styled(ShimmerBox)`
+  width: 80%;
+  height: 20px;
+`;
+
+export const ShimmerButton = styled(ShimmerBox)`
+  width: 150px;
+  height: 45px;
+  border-radius: 12px;
+`;
 
 export const Container = styled.div`
   max-width: 1200px;
@@ -11,8 +65,8 @@ export const Container = styled.div`
 
 export const RedeemContainer = styled.div`
   display: flex;
-  flex-direction: column; /* stack vertically */
-  align-items: center; /* center horizontally */
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
   text-align: center;
   p {
