@@ -145,24 +145,27 @@ import {
   QrCodeButton,
   RedeemContainer,
   SectionWrapper,
+  ShimmerCard,
+  ShimmerImage,
+  ShimmerLine,
+  ShimmerWrapper,
   Title,
 } from "./campaigndetails.styles";
 import Login from "../SignIn/SignIn";
 import Modal from "../../components/Modal/modal";
-import Loader from "../../components/Loader/loader";
 import SignUp from "../SignUp/signup";
 import ForgotPassword from "../Forgot Password/ForgotPassword";
+import Loader from "../../components/Loader/loader";
 
 const CampaignDetail: React.FC = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const [campaign, setCampaign] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isSignUpOpen, setIsSignUpOpen] = useState(false);
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
-
+  const [redeeming, setRedeeming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const userPoints = useSelector((state: RootState) => state.auth.userPoints);
 
@@ -189,6 +192,7 @@ const CampaignDetail: React.FC = () => {
       return;
     }
     try {
+      setRedeeming(true);
       const token = localStorage.getItem("token");
       if (!token) {
         toast.error("Unauthorized: Please login first.");
@@ -209,10 +213,35 @@ const CampaignDetail: React.FC = () => {
         console.error("❌ Redeem error (Unexpected):", err.message);
       }
       toast.error(err.response?.data?.message || "Failed to redeem campaign.");
+    } finally {
+      setRedeeming(false);
     }
   };
 
-  if (loading) return <Loader />;
+  if (redeeming) return <Loader />;
+
+  if (loading)
+    return (
+      <ShimmerWrapper>
+        <ShimmerCard>
+          <ShimmerImage />
+          <div
+            style={{
+              flex: 2,
+              display: "flex",
+              flexDirection: "column",
+              gap: "1rem",
+            }}
+          >
+            <ShimmerLine width="80%" height="25px" />
+            <ShimmerLine />
+            <ShimmerLine />
+            <ShimmerLine width="60%" />
+          </div>
+        </ShimmerCard>
+      </ShimmerWrapper>
+    );
+
   if (error) return <ErrorMessage>{error}</ErrorMessage>;
   if (!campaign) return <ErrorMessage>Campaign not found.</ErrorMessage>;
 

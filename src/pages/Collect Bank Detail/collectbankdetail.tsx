@@ -406,19 +406,19 @@ import Modal from "../../components/Modal/modal";
 // import Loader from "../../components/Loader/loader";
 import SignUp from "../SignUp/signup";
 import ForgotPassword from "../Forgot Password/ForgotPassword";
+import Loader from "../../components/Loader/loader";
 const BankPremiumDetail: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const [bankPremium, setBankPremium] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
   // ✅ three states for all auth modals
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isSignUpOpen, setIsSignUpOpen] = useState(false);
-  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false); // Add forgot password state
-
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+  const [redeemLoading, setRedeemLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const userPoints = useSelector((state: RootState) => state.auth.userPoints);
 
@@ -446,6 +446,7 @@ const BankPremiumDetail: React.FC = () => {
     }
 
     try {
+      setRedeemLoading(true);
       const response = await redeemBankPremium(id!);
       dispatch(updatePoints(response.user?.remaining_total_brand_points ?? 0));
 
@@ -457,8 +458,12 @@ const BankPremiumDetail: React.FC = () => {
       toast.error(
         err.response?.data?.error || err.message || "Failed to redeem premium."
       );
+    } finally {
+      setRedeemLoading(false);
     }
   };
+
+  if (redeemLoading) return <Loader />;
 
   if (loading) {
     return (

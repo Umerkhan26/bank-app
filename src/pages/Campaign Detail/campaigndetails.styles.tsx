@@ -1,5 +1,84 @@
 import styled from "styled-components";
 
+export const ShimmerWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+`;
+
+export const ShimmerCard = styled.div`
+  width: 90%;
+  max-width: 1000px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+`;
+
+export const ShimmerImage = styled.div`
+  flex: 1;
+  min-width: 300px;
+  height: 250px;
+  border-radius: 12px;
+  background: #f6f7f8;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150px;
+    height: 100%;
+    width: 150px;
+    background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.6) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    animation: shimmerMove 1.2s infinite;
+  }
+
+  @keyframes shimmerMove {
+    0% {
+      left: -150px;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+`;
+
+export const ShimmerLine = styled.div<{ width?: string; height?: string }>`
+  width: ${(props) => props.width || "100%"};
+  height: ${(props) => props.height || "20px"};
+  border-radius: 8px;
+  background: #f6f7f8;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150px;
+    height: 100%;
+    width: 150px;
+    background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.6) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    animation: shimmerMove 1.2s infinite;
+  }
+`;
+
 export const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;

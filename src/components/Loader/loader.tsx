@@ -20,7 +20,7 @@ const LoaderWrapper = styled.div`
   z-index: 1000;
 `;
 
-const Loader: React.FC<LoaderProps> = ({ size = 50, color = "black" }) => {
+const Loader: React.FC<LoaderProps> = ({ size = 40, color = "black" }) => {
   return (
     <LoaderWrapper>
       <ClipLoader size={size} color={color} />

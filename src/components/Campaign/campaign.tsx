@@ -52,7 +52,7 @@ const Campaigns: React.FC = () => {
     return <div>Error: {error}</div>;
   }
 
-  const campaign = campaigns[0]; // Show only the first campaign
+  const campaign = campaigns[0];
   if (!campaign) return <div>No campaigns available.</div>;
 
   return (
