@@ -140,8 +140,8 @@ import {
   PremiumDescription,
   HeaderContainer,
   ViewMoreButton,
-  ShimmerContainer,
   ShimmerCard,
+  ShimmerWrapper,
 } from "./collectbank.styles";
 // import { LoadingContainer, LoadingSpinner } from "../Campaign/campaign.styles";
 
@@ -197,11 +197,11 @@ const CollectBanksPremium: React.FC = () => {
           <Title>Collect Banks Premium</Title>
         </HeaderContainer>
 
-        <ShimmerContainer>
+        <ShimmerWrapper>
           {[1, 2, 3].map((i) => (
             <ShimmerCard key={i} />
           ))}
-        </ShimmerContainer>
+        </ShimmerWrapper>
       </PremiumContainer>
     );
   }

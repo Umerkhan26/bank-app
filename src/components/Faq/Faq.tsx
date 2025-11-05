@@ -15,13 +15,13 @@ const FAQ = () => {
   const faqs = [
     {
       id: "q1",
-      question: "1. What is the Banks Beer App?",
+      question: "1. What is the Banks Beer Website?",
       answer:
-        "The Banks Beer App is your digital companion for all things Banks — from exclusive promotions like the DMAX giveaway, to promotion alerts, points tracking, prize redemption, and much more.",
+        "The Banks Beer Website is your digital companion for all things Banks — from exclusive promotions like the DMAX giveaway, to promotion alerts, points tracking, prize redemption, and much more.",
     },
     {
       id: "q2",
-      question: "2. What can I do on the app?",
+      question: "2. What can I do on the Website?",
       answer: `You can:
       • 📲 Enter promotions
       • 🎁 Track and redeem points
@@ -34,29 +34,30 @@ const FAQ = () => {
     },
     {
       id: "q3",
-      question: "3. How do I download the Banks Beer App?",
+      question: "3. How do I access the Banks Beer Website?",
       answer:
-        "The app is available on Apple App Store (iOS) and Google Play Store (Android). Search 'Banks Beer App', tap Download, and follow setup instructions.",
+        'Visit  <a href="https://banksbeerpromotions.com/" target="_blank" rel="noopener noreferrer">  https://banksbeerpromotions.com/</a> on your browser. No download required — simply click the link and follow the setup instructions.',
     },
     {
       id: "q4",
       question: "4. Is it free to use?",
-      answer: "Yes — the Banks Beer App is 100% free to download and use.",
+      answer: "Yes — the Banks Beer Website is 100% free to use.",
     },
     {
       id: "q5",
-      question: "5. How do I enter the DMAX promotion through the app?",
-      answer: `1. Open the app and tap “Win a DMAX” on the homepage.
-2. Scan the QR code or upload a receipt showing your Banks purchase.
-3. Your entry will be confirmed and points updated instantly.
-4. Track entries and points in the ‘My Dashboard’ section.`,
+      question: "5. How do I enter the DMAX promotion through the Website?",
+      answer: `1. Visit <a href="https://banksbeerpromotions.com/" target="_blank" rel="noopener noreferrer">https://banksbeerpromotions.com/</a> and click login on the homepage.<br>
+2. Click “CLICK HERE” under Scan Your Crown To Win Points.<br>
+3. Scan the QR code or take a photo of the QR code on the crown and upload the photo.<br>
+4. Your entry will be confirmed and points updated instantly.<br>
+5. Track entries and points in the ‘My Dashboard’ section.`,
     },
     {
       id: "q6",
       question:
-        "6. What if I already entered on the website — should I also use the app?",
+        "6. What if I already entered on the website — should I also use the Website?",
       answer:
-        "Yes! The app syncs with your promo profile. Using the app gives you bonus content, entry status, and live notifications for winners, events, and prize announcements.",
+        "Yes! The Web App syncs with your promo profile. Using the Web App gives you bonus content, entry status, and live notifications for winners, events, and prize announcements.",
     },
     {
       id: "q7",
@@ -68,13 +69,13 @@ const FAQ = () => {
       id: "q8",
       question: "8. Can I track my entries and points?",
       answer:
-        "Absolutely. Tap “My Dashboard” to view points earned, entries submitted, and instant prize results.",
+        "Absolutely. Click “My Dashboard” to view points earned, entries submitted, and instant prize results.",
     },
     {
       id: "q9",
       question: "9. What devices are supported?",
       answer:
-        "The app works on iPhones running iOS 13+ and Android phones running Android 9.0 (Pie)+. Older devices may have reduced functionality.",
+        "The Website works on iPhones running iOS 13+ and Android phones running Android 9.0 (Pie)+. Older devices may have reduced functionality.",
     },
     {
       id: "q10",
@@ -86,20 +87,21 @@ const FAQ = () => {
       id: "q11",
       question: "11. What if I forget my password?",
       answer:
-        "Tap “Forgot Password” on the login screen and follow prompts to reset via email or SMS.",
+        "Click Forgot Password” on the login screen and follow prompts to reset via email or SMS.",
     },
     {
       id: "q12",
-      question: "12. What if the app isn’t working?",
+      question: "12. What if the Web App isn’t working?",
       answer: `Try:
+• Refreshing your browser
+• Clearing your cache
+• Checking your internet connection
 • Restarting your phone
-• Updating the app
-• Checking your internet
 If issues continue, contact 📧 banksbeerpromotions@gmail.com or 📞 (246) 230-9047.`,
     },
     {
       id: "q13",
-      question: "13. Will there be more promotions on the app?",
+      question: "13. Will there be more promotions on the Website?",
       answer:
         "Yes! Expect future campaigns, merch drops, loyalty programs, and exclusive Banks-only events.",
     },
@@ -107,7 +109,7 @@ If issues continue, contact 📧 banksbeerpromotions@gmail.com or 📞 (246) 230
       id: "q14",
       question: "14. How do I uninstall or delete my account?",
       answer:
-        "You can uninstall via phone settings. To permanently delete your account and data, email banksbeerpromotions@gmail.com with your request.",
+        "To permanently delete your account and data, email banksbeerpromotions@gmail.com with your request.",
     },
   ];
 
@@ -138,9 +140,10 @@ If issues continue, contact 📧 banksbeerpromotions@gmail.com or 📞 (246) 230
           {faqs.map((faq) => (
             <Section key={faq.id} id={faq.id}>
               <SectionTitle>{faq.question}</SectionTitle>
-              <SectionText style={{ whiteSpace: "pre-line" }}>
-                {faq.answer}
-              </SectionText>
+              <SectionText
+                style={{ whiteSpace: "pre-line" }}
+                dangerouslySetInnerHTML={{ __html: faq.answer }}
+              />
             </Section>
           ))}
         </ContentArea>

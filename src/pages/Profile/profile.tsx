@@ -287,7 +287,7 @@ import {
   IoLocationSharp,
   IoStatsChart,
   IoMenu,
-  IoTrashBin,
+  // IoTrashBin,
 } from "react-icons/io5";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
@@ -621,7 +621,7 @@ const ProfileMenu = () => {
             Delete Account
           </DropdownItem> */}
 
-          <li>
+          {/* <li>
             <StyledNavLink
               to="#"
               onClick={(e) => {
@@ -635,7 +635,7 @@ const ProfileMenu = () => {
               </NavIcon>
               Delete Account
             </StyledNavLink>
-          </li>
+          </li> */}
         </NavUL>
       </NavContainer>
       <div style={{ flexGrow: 1, padding: "1rem", background: "#f8fafc" }}>
