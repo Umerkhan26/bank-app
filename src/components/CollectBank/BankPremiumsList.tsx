@@ -13,8 +13,11 @@ import {
   ApplyButton,
   PremiumDescription,
   PremiumImageBox,
+  ShimmerWrapper,
+  ShimmerCard,
+  ShimmerImage,
+  ShimmerText,
 } from "./collectbank.styles";
-import { LoadingContainer, LoadingSpinner } from "../Campaign/campaign.styles";
 
 interface BankPremium {
   _id: string;
@@ -56,12 +59,22 @@ const BankPremiumsList: React.FC = () => {
 
     fetchData();
   }, []);
-
   if (loading) {
     return (
-      <LoadingContainer>
-        <LoadingSpinner />
-      </LoadingContainer>
+      <PremiumContainer>
+        <Title>All Bank Premiums</Title>
+        <ShimmerWrapper>
+          {[...Array(6)].map((_, index) => (
+            <ShimmerCard key={index}>
+              <ShimmerImage />
+              <ShimmerText width="60%" />
+              <ShimmerText width="80%" />
+              <ShimmerText width="40%" />
+              <ShimmerText width="70%" />
+            </ShimmerCard>
+          ))}
+        </ShimmerWrapper>
+      </PremiumContainer>
     );
   }
 

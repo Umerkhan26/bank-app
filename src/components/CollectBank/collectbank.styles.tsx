@@ -1,40 +1,87 @@
 import styled, { keyframes } from "styled-components";
 
-const shimmer = keyframes`
-  0% {
-    background-position: -468px 0;
+const shimmerMove = keyframes`
+  0% { left: -150px; }
+  100% { left: 100%; }
+`;
+
+export const ShimmerWrapper = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
   }
-  100% {
-    background-position: 468px 0;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    padding: 1rem;
   }
 `;
 
 export const ShimmerCard = styled.div`
-  background: #f6f7f8;
-  background-image: linear-gradient(
-    to right,
-    #f6f7f8 0%,
-    #edeef1 20%,
-    #f6f7f8 40%,
-    #f6f7f8 100%
-  );
-  background-repeat: no-repeat;
-  background-size: 800px 104px;
-  display: inline-block;
-  position: relative;
-  animation: ${shimmer} 1.2s linear infinite;
-  border-radius: 12px;
-  width: 320px;
-  height: 380px;
-  margin: 10px;
+  background: #fff;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 `;
 
-export const ShimmerContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 16px;
-  padding: 20px;
+export const ShimmerImage = styled.div`
+  width: 100%;
+  height: 180px;
+  border-radius: 0.5rem;
+  background: #f6f7f8;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150px;
+    width: 150px;
+    height: 100%;
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(255, 255, 255, 0.5) 50%,
+      transparent 100%
+    );
+    animation: ${shimmerMove} 1.2s infinite;
+  }
+`;
+
+export const ShimmerText = styled.div<{ width?: string }>`
+  width: ${(props) => props.width || "80%"};
+  height: 16px;
+  border-radius: 8px;
+  background: #f6f7f8;
+  margin-top: 10px;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150px;
+    width: 150px;
+    height: 100%;
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(255, 255, 255, 0.5) 50%,
+      transparent 100%
+    );
+    animation: ${shimmerMove} 1.2s infinite;
+  }
 `;
 
 export const PremiumContainer = styled.div`
