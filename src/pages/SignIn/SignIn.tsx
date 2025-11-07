@@ -144,11 +144,11 @@ const Login: React.FC<LoginProps> = ({
     address: string
   ) => {
     try {
-      console.log("[FCM] Starting FCM token registration for user:", userId);
+      // console.log("[FCM] Starting FCM token registration for user:", userId);
       // const fcmToast = toast.loading("Setting up push notifications...");
 
       const fcmToken = await refreshFcmToken();
-      console.log("[FCM] Retrieved FCM token:", fcmToken);
+      // console.log("[FCM] Retrieved FCM token:", fcmToken);
 
       // if (!fcmToken) {
       //   console.warn("[FCM] No FCM token obtained");
