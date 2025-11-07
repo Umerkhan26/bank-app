@@ -8,6 +8,7 @@ import UpcomingPromotions from "../../components/Promotion/promotion";
 import { scanQRCode } from "../../services/qrcode";
 import { useDispatch } from "react-redux";
 import { updatePoints } from "../../redux/slices/auth";
+import AdditionalItems from "../../components/AdditionalItems/AdditionalItems";
 
 const Home: React.FC = () => {
   const dispatch = useDispatch();
@@ -49,6 +50,7 @@ const Home: React.FC = () => {
       {/* <CampaignSteps /> */}
       <Campaigns />
       <CollectBanksPremium />
+      <AdditionalItems />
       <UpcomingPromotions />
       <BankOffer />
     </>

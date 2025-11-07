@@ -1,0 +1,204 @@
+import styled, { keyframes } from "styled-components";
+
+const shimmer = keyframes`
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+`;
+
+export const ShimmerWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+`;
+
+export const ShimmerBox = styled.div`
+  background: linear-gradient(
+    to right,
+    #f6f7f8 0%,
+    #edeef1 20%,
+    #f6f7f8 40%,
+    #f6f7f8 100%
+  );
+  background-size: 1000px 100%;
+  animation: ${shimmer} 1.5s infinite linear;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+`;
+
+export const ShimmerTitle = styled(ShimmerBox)`
+  width: 60%;
+  height: 30px;
+  margin-top: 20px;
+`;
+
+export const ShimmerImage = styled(ShimmerBox)`
+  width: 100%;
+  max-width: 800px;
+  height: 350px;
+  border-radius: 12px;
+`;
+
+export const ShimmerText = styled(ShimmerBox)`
+  width: 80%;
+  height: 20px;
+`;
+
+export const ShimmerButton = styled(ShimmerBox)`
+  width: 150px;
+  height: 45px;
+  border-radius: 12px;
+`;
+
+export const Container = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+`;
+
+export const RedeemContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  p {
+    margin-bottom: 20px;
+    margin-top: -15px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #374151;
+  }
+`;
+
+export const QrCodeButton = styled.button`
+  background: black;
+  color: white;
+  padding: 15px 25px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+
+  &:hover {
+    background: #333;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+    padding: 12px 20px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1rem;
+    padding: 10px 15px;
+  }
+`;
+
+export const Title = styled.h2`
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #1f2937;
+  text-align: center;
+  margin-bottom: 2rem;
+`;
+
+export const ImageContainer = styled.div`
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  }
+`;
+
+export const Image = styled.img`
+  display: block;
+  width: 100%;
+  height: auto;
+`;
+
+export const Description = styled.p`
+  font-size: 1.3rem;
+  color: #4b5563;
+  text-align: center;
+  max-width: 900px;
+  margin: 2rem auto;
+  line-height: 1.6;
+  white-space: pre-line;
+  word-wrap: break-word;
+`;
+
+export const ItemInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  background: #f9fafb;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+`;
+
+export const Points = styled.p`
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #d97706;
+`;
+
+export const DateRange = styled.p`
+  font-size: 1.1rem;
+  color: #374151;
+`;
+
+export const ErrorMessage = styled.div`
+  color: red;
+  font-size: 1.2rem;
+  text-align: center;
+  margin-top: 20px;
+`;
+
+export const LoadingContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+`;
+
+export const LoadingSpinner = styled.div`
+  width: 50px;
+  height: 50px;
+  border: 2px solid #f3f4f6;
+  border-top: 3px solid black;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
+export const LoadingText = styled.p`
+  margin-top: 10px;
+  font-size: 1.2rem;
+  color: #1e40af;
+`;
