@@ -80,7 +80,7 @@ const AdditionalItemDetail: React.FC = () => {
       const response = await redeemAdditionalItem(id!);
 
       // ✅ Correct path (based on your log)
-      const updatedPoints = response?.data?.data?.user?.remaining_brand_points;
+      const updatedPoints = response?.data?.user?.remaining_brand_points;
 
       if (updatedPoints !== undefined) {
         dispatch(updatePoints(updatedPoints));
@@ -147,7 +147,7 @@ const AdditionalItemDetail: React.FC = () => {
   }
 
   const isItemActive = item.active && new Date(item.end_date) > new Date();
-  const hasEnoughPoints = userPoints >= parseInt(item.points_required);
+  const hasEnoughPoints = (userPoints ?? 0) >= parseInt(item.points_required);
   const isInStock = item.qty === null || item.qty > 0;
 
   return (

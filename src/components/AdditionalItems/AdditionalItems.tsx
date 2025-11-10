@@ -52,8 +52,7 @@ const AdditionalItems: React.FC = () => {
         setError(null);
         const response = await fetchAllAdditionalItems();
 
-        // Updated to match the new service response structure
-        const items = response.data || [];
+        const items = response.data?.data || [];
         setItemsData(items);
       } catch (err: any) {
         console.error("Error fetching additional items:", err);
