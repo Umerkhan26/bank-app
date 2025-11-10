@@ -41,7 +41,7 @@ const ReceiptPage: React.FC = () => {
     doc.text(`Premium Title: ${bankPremium.title}`, 20, 70);
     doc.text(`Points Required: ${bankPremium.points_required}`, 20, 80);
     doc.text(`Points Used: ${userHistory.points_used}`, 20, 90);
-    doc.text(`Enrolled Users: ${bankPremium.enrolled_users.length}`, 20, 100);
+    // doc.text(`Enrolled Users: ${bankPremium.enrolled_users.length}`, 20, 100);
     // doc.text(`Total Redemptions: ${bankPremium.redemptions.length}`, 20, 110);
     // doc.text(`Brand ID: ${bankPremium.brand}`, 20, 120);
     doc.text(`User: ${user.username}`, 20, 130);
