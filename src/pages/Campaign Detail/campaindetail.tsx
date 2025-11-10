@@ -200,7 +200,6 @@ const CampaignDetail: React.FC = () => {
       }
 
       const response = await redeemCampaign(id!, token);
-      console.log("✅ Redeem response:", response);
 
       if (response?.user?.remaining_points !== undefined) {
         dispatch(updatePoints(response.user.remaining_points));

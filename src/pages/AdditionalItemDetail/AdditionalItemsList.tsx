@@ -44,7 +44,7 @@ const AdditionalItemsList: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await fetchAllAdditionalItems();
-        const items = response.data || [];
+        const items = response.data?.data || [];
         setItemsData(items);
       } catch (err: unknown) {
         if (err instanceof Error) {

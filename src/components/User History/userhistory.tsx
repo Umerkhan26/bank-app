@@ -299,7 +299,6 @@ const UserHistory = () => {
 
       try {
         const data = await fetchUserHistory(userId);
-        console.log("USer history", data);
         setHistory(data);
       } catch (err: any) {
         setError(err.message);
