@@ -49,8 +49,8 @@ const Home: React.FC = () => {
       <Banner onScanSuccess={handleScanSuccess} />
       {/* <CampaignSteps /> */}
       <Campaigns />
-      <CollectBanksPremium />
       <AdditionalItems />
+      <CollectBanksPremium />
       <UpcomingPromotions />
       <BankOffer />
     </>

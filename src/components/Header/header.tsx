@@ -850,9 +850,9 @@ const Header: React.FC = () => {
 
             <DropdownMenu>
               {/* Always show delete account */}
-              <DropdownItem onClick={() => navigate("/delete-account")}>
+              {/* <DropdownItem onClick={() => navigate("/delete-account")}>
                 Delete Account
-              </DropdownItem>
+              </DropdownItem> */}
 
               {isLoggedIn ? (
                 <>
@@ -924,10 +924,10 @@ const Header: React.FC = () => {
               </Button>
             </>
           )}
-
+          {/* 
           <MobileMenuItem to="/delete-account" onClick={toggleMobileMenu}>
             Delete Account
-          </MobileMenuItem>
+          </MobileMenuItem> */}
           <MobileMenuItem to="/faq" onClick={toggleMobileMenu}>
             FAQ
           </MobileMenuItem>
