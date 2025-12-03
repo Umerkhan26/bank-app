@@ -1,5 +1,5 @@
 import styled, { css, keyframes } from "styled-components";
-import BannerBackground from "../../assets/Banks Web Banners_433 X 254 Scan and Win 3.jpg";
+import BannerBackground from "../../assets/WhatsApp Image 2025-12-03 at 22.16.41_e9c7e5c2.jpg";
 
 export const BannerContainer = styled.div<{ windowWidth: number }>`
   background-image: url(${BannerBackground});
