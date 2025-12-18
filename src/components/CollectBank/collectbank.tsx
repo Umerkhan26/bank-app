@@ -207,7 +207,28 @@ const CollectBanksPremium: React.FC = () => {
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return null;
+  }
+
+  if (premiumData.length === 0) {
+    return (
+      <PremiumContainer>
+        <HeaderContainer>
+          <Title>Collect Banks Premium</Title>
+        </HeaderContainer>
+
+        <div
+          style={{
+            padding: "32px",
+            textAlign: "center",
+            color: "#888",
+            fontSize: "15px",
+          }}
+        >
+          No bank premiums available right now.
+        </div>
+      </PremiumContainer>
+    );
   }
 
   return (

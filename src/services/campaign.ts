@@ -1,7 +1,7 @@
 import axios from "axios";
 import { API_BASE_URL } from "./promotion";
 
-interface Campaign {
+export interface Campaign {
   _id: string;
   title: string;
   description: string;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { fetchCampaigns } from "../../services/campaign";
+import { Campaign, fetchCampaigns } from "../../services/campaign";
 import { useNavigate } from "react-router-dom";
 import {
   CampaignCard,
@@ -14,7 +14,7 @@ import {
 } from "./campaign.styles";
 
 const Campaigns: React.FC = () => {
-  const [campaigns, setCampaigns] = useState<any[]>([]);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -28,8 +28,12 @@ const Campaigns: React.FC = () => {
       try {
         const data = await fetchCampaigns();
         setCampaigns(data);
-      } catch (err: any) {
-        setError(err.message || "Something went wrong");
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Failed to load campaigns");
+        }
       } finally {
         setLoading(false);
       }
@@ -49,7 +53,25 @@ const Campaigns: React.FC = () => {
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return null;
+  }
+
+  if (campaigns.length === 0) {
+    return (
+      <CampaignsContainer>
+        <CampaignsTitle>Campaigns</CampaignsTitle>
+        <div
+          style={{
+            padding: "32px",
+            textAlign: "center",
+            color: "#888",
+            fontSize: "15px",
+          }}
+        >
+          No campaigns available right now.
+        </div>
+      </CampaignsContainer>
+    );
   }
 
   const campaign = campaigns[0];
@@ -59,17 +81,17 @@ const Campaigns: React.FC = () => {
     <CampaignsContainer>
       <CampaignsTitle>Campaigns</CampaignsTitle>
       <CampaignCard
-        onClick={() => handleApply(campaign._id || campaign.id)}
+        onClick={() => handleApply(campaign._id || campaign._id)}
         style={{ cursor: "pointer" }}
       >
         <CampaignImage
-          src={campaign.image_url || campaign.image}
+          src={campaign.image_url || campaign.image_url}
           alt={campaign.title}
           style={{ height: "auto" }}
         />
         <CampaignContent>
           <CampaignPoints>
-            {campaign.points_required || campaign.points} Points
+            {campaign.points_required || campaign.points_required} Points
           </CampaignPoints>
           <CampaignTitle>{campaign.title}</CampaignTitle>
           {/* <CampaignDescription>{campaign.description}</CampaignDescription> */}

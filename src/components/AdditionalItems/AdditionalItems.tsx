@@ -182,7 +182,7 @@ import {
   //   PremiumDescription,
   ShimmerWrapper,
   ShimmerCard,
-  ErrorMessage,
+  // ErrorMessage,
 } from "./additionalItems.styles";
 
 interface AdditionalItem {
@@ -239,28 +239,7 @@ const AdditionalItems: React.FC = () => {
   }
 
   if (error) {
-    return (
-      <PremiumContainer>
-        {/* <Title>Additional Items</Title> */}
-        <ErrorMessage>
-          Error: {error}
-          <button
-            onClick={() => window.location.reload()}
-            style={{
-              marginLeft: "10px",
-              padding: "5px 10px",
-              backgroundColor: "#ef4444",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
-          >
-            Retry
-          </button>
-        </ErrorMessage>
-      </PremiumContainer>
-    );
+    return null;
   }
 
   const item = itemsData[0];
