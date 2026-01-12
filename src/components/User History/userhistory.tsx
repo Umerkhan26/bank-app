@@ -685,7 +685,11 @@ import { IoPricetag, IoDocument, IoCalendar } from "react-icons/io5";
 
 interface HistoryItem {
   _id: string;
-  user_id: string;
+  user_id: {
+    _id: string;
+    name: string;
+    email: string;
+  };
   description: string;
   points_earned: number;
   points_used: string;
@@ -1065,8 +1069,8 @@ const UserHistory = () => {
                 <tr>
                   <Th>Points Earned</Th>
                   <Th>Point Used</Th>
-                  <Th>Reference ID</Th>
                   <Th>Type</Th>
+                  <Th>User Name</Th>
                   <Th>Date</Th>
                 </tr>
               </thead>
@@ -1085,8 +1089,10 @@ const UserHistory = () => {
                         {item.points_used}
                       </IconCell>
                     </Td>
-                    <Td>{item.reference_id}</Td>
+
                     <Td>{item.type}</Td>
+                    <Td>{item.user_id?.name}</Td>
+
                     <Td>
                       <IconCell>
                         <IoCalendar size={14} />

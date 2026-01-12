@@ -60,14 +60,21 @@ export const ButtonDiv = styled.div`
 
 export const FooterText = styled.p`
   text-align: center;
+  // margin-top: 3px;
+  font-size: 0.9rem;
+`;
+
+export const FooterReset = styled.p`
+  text-align: center;
   margin-top: 10px;
+  margin-bottom: 8px;
   font-size: 0.9rem;
 `;
 
 export const SwitchText = styled.span`
   color: #007bff;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 600;
 
   &:hover {
     text-decoration: underline;

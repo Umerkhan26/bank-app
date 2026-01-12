@@ -151,6 +151,7 @@ import Login from "../SignIn/SignIn";
 import Modal from "../../components/Modal/modal";
 import Loader from "../../components/Loader/loader";
 import SignUp from "../SignUp/signup";
+import ForgotPassword from "../Forgot Password/ForgotPassword";
 
 const CampaignDetail: React.FC = () => {
   const { id } = useParams();
@@ -158,9 +159,9 @@ const CampaignDetail: React.FC = () => {
   const [campaign, setCampaign] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
-  // ✅ two modals: login and signup
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isSignUpOpen, setIsSignUpOpen] = useState(false);
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
   const userPoints = useSelector((state: RootState) => state.auth.userPoints);
@@ -184,7 +185,7 @@ const CampaignDetail: React.FC = () => {
 
   const handleRedeem = async () => {
     if (!localStorage.getItem("token")) {
-      setIsLoginOpen(true); // ✅ open login modal
+      setIsLoginOpen(true);
       return;
     }
     try {
@@ -241,6 +242,7 @@ const CampaignDetail: React.FC = () => {
             <DateRange>💰 Your Points: {userPoints}</DateRange>
           </CampaignInfo>
           <RedeemContainer>
+            <p>Scan your crown to redeem for points</p>
             <QrCodeButton onClick={handleRedeem}>Redeem</QrCodeButton>
           </RedeemContainer>
         </ContentContainer>
@@ -254,6 +256,10 @@ const CampaignDetail: React.FC = () => {
             setIsLoginOpen(false);
             setIsSignUpOpen(true);
           }}
+          onSwitchToForgot={() => {
+            setIsLoginOpen(false);
+            setIsForgotPasswordOpen(true);
+          }}
         />
       </Modal>
 
@@ -263,6 +269,20 @@ const CampaignDetail: React.FC = () => {
           onClose={() => setIsSignUpOpen(false)}
           onSwitchToLogin={() => {
             setIsSignUpOpen(false);
+            setIsLoginOpen(true);
+          }}
+        />
+      </Modal>
+
+      {/* ✅ Forgot Password Modal */}
+      <Modal
+        isOpen={isForgotPasswordOpen}
+        onClose={() => setIsForgotPasswordOpen(false)}
+      >
+        <ForgotPassword
+          onClose={() => setIsForgotPasswordOpen(false)}
+          onSwitchToLogin={() => {
+            setIsForgotPasswordOpen(false);
             setIsLoginOpen(true);
           }}
         />

@@ -62,7 +62,7 @@ export const FooterText = styled.p`
 export const SwitchText = styled.span`
   color: #007bff;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 600;
   &:hover {
     text-decoration: underline;
   }
